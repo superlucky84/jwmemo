@@ -1,11 +1,16 @@
 
+import jQuery from 'jquery';
+global.$ = jQuery;
+
 const initialStateList = {
-  number: 1
+  lists: [],
+  note: '',
 }
 
 export default function jnotereducer(state = initialStateList, action) {
-  console.log('kkjjjj');
-  console.log(action.type);
+
+  let new_state = {};
+
   switch (action.type) {
     /* 글쓰기 */
     case 'WRITENOTE':
@@ -21,9 +26,47 @@ export default function jnotereducer(state = initialStateList, action) {
     case 'DELETENOTE':
       break;
 
+    /* 글 삭제 */
+    case 'DELETENOTE':
+      break;
+
+    /* 글 하나 */
+    case 'GETONE':
+      $.ajax({
+        type: 'GET',
+        async: false,
+        url: '/jnote/read/' + action.id,
+        success: function(data) {
+          console.log('GETONE');
+          console.log(data);
+          new_state = Object.assign({},state,{
+            note: data.note
+          });
+        }
+      });
+      return new_state;
+
+      break;
+
+    /* 글 리스트 */
+    case 'GETLIST':
+
+      $.ajax({
+        type: 'GET',
+        async: false,
+        url: '/jnote/read',
+        success: function(data) {
+          new_state = Object.assign({},state,{
+            lists: data
+          });
+        }
+      });
+      return new_state;
+      break;
+
     /* 기본값 리턴 */
     default:
       return state;
+      break;
   }
-  return state
 }

@@ -31,3 +31,22 @@ function deleteNote () {
     id
   }
 }
+
+/**
+ * GET LIST
+ */
+export function getList () {
+  return {
+    type: 'GETLIST'
+  }
+}
+
+/**
+ * GET ONE
+ */
+export function getOne (id) {
+  return {
+    type: 'GETONE',
+    id
+  }
+}

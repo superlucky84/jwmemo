@@ -1,0 +1,69 @@
+html, body {
+  height: 100%; 
+}
+header {
+  background-color: #cdc;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 10px 0 10px;
+  margin: 0; 
+}
+header .left {
+  float: left; 
+}
+header .left .title {
+  display: inline-block;
+}
+header .right {
+  float: right; 
+}
+div#container {
+  width: 100%;
+  height: -webkit-calc(100% - 82px); 
+}
+div#container div {
+  float: left;
+  height: 100%; 
+}
+div#container div.control {
+  width: 49%;
+  display: none; 
+}
+div#container div.control textarea {
+  width: -webkit-calc(100% - 8px);
+  height: 98%; 
+}
+div#container div.list {
+  width: 49%; 
+}
+div#container div.list li {
+  height: 40px;
+  border-bottom: 1px solid #cdc;
+  margin: 0; 
+  padding: 7px 7px;
+  cursor: pointer;
+}
+div#container div.split {
+  background-color: #cdc;
+  width: 10px;
+  cursor: col-resize; 
+}
+div#container div.view {
+  width: 49%; 
+}
+footer {
+  background-color: #cdc;
+  height: 40px;
+  line-height: 42px;
+  padding: 0 10px 0 10px;
+  margin: 0; 
+}
+footer .left {
+  float: left; 
+}
+footer .right {
+  float: right; 
+}
+#jnote, #app-container {
+  height: 100%
+}

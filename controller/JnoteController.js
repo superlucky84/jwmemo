@@ -48,8 +48,15 @@ router.get('/read', function (req, res, next) {
  * READ ONE
  */
 router.get('/read/:id', function (req, res, next) {
-    res.send('READ');
-    console.log(req.params.id);
+
+    var result = {};
+    JmemoModel.findOne({_id: req.params.id},{note:1},function (error,view) {
+      console.log(view);
+      result = view;
+      res.json(result);
+    });
+
+    //db.jmemos.findOne({ _id: ObjectId("56c85c388cd1c2e60de32d76") },{title:1,note:1});
 });
 
 /**

@@ -25,14 +25,22 @@ div#container div {
   float: left;
   height: 100%; 
 }
-div#container div.control {
+div#container div.write {
   width: 49%;
-  display: none; 
 }
-div#container div.control textarea {
+div#container div.write textarea {
   width: -webkit-calc(100% - 8px);
-  height: 98%; 
+  height: -webkit-calc(100% - 92px);
+  margin: 0px 0 14px 14px;
+  border: 1px solid #000;
 }
+div#container div.write input[type=text] {
+  width: -webkit-calc(100% - 8px);
+  height: 37px;
+  margin: 14px 0 14px 14px;
+  border: 1px solid #000
+}
+
 div#container div.list {
   width: 49%; 
 }

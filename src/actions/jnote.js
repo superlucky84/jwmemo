@@ -3,11 +3,9 @@
 /**
  * ADD NOTE
  */
-export function writeNote (title,note) {
+export function writeNote () {
   return {
-    type: 'WRITENOTE',
-    title,
-    note
+    type: 'WRITENOTE'
   }
 }
 
@@ -25,10 +23,9 @@ function updateNote () {
 /**
  * DELETE NOTE
  */
-function deleteNote () {
+export function deleteNote () {
   return {
     type: 'DELETENOTE',
-    id
   }
 }
 
@@ -48,5 +45,13 @@ export function getOne (id) {
   return {
     type: 'GETONE',
     id
+  }
+}
+
+
+export function updateForm (type, text) {
+  return {
+    type: 'UPDATEFORM_' + type.toUpperCase(),
+    text 
   }
 }

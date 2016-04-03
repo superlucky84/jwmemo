@@ -20,10 +20,6 @@ export default class List extends Component {
 
   render() {
 
-    //const { user, error, params, hostname, env, locale, dialog } = this.props;
-    console.log("this.props.lists");
-    console.log(this.props.lists);
-
     return (
       <div className="list">
         <ul>

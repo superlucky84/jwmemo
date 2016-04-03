@@ -4,7 +4,12 @@ global.$ = jQuery;
 
 const initialStateList = {
   lists: [],
+  noteId: 0,
   note: '',
+  write: {
+    title: '',
+    note: ''
+  }
 }
 
 export default function jnotereducer(state = initialStateList, action) {
@@ -12,22 +17,90 @@ export default function jnotereducer(state = initialStateList, action) {
   let new_state = {};
 
   switch (action.type) {
+
     /* 글쓰기 */
     case 'WRITENOTE':
-      console.log('WRITENOTE---');
-      console.log(action);
+      $.ajax({
+        type: 'POST',
+        async: false,
+        url: '/jnote/create',
+        data: {
+          title: state.write.title,
+          note: state.write.note
+        },
+        success: function(data) {
+          let newArray = [data].concat(state.lists);
+          new_state = Object.assign({},state,{
+            lists: newArray,
+            write: {
+              title: '',
+              note: ''
+            }
+          });
+        }
+      });
+      return new_state;
+
+      break;
+
+    /* 타이틀 폼수정 */
+    case 'UPDATEFORM_TITLE':
+      new_state = Object.assign({},state,{
+        write: {
+          title: action.text,
+          note: state.write.note
+        }
+      });
+      return new_state;
+      break;
+
+    /* 컨텐츠 폼수정 */
+    case 'UPDATEFORM_NOTE':
+      new_state = Object.assign({},state,{
+        write: {
+          title: state.write.title,
+          note: action.text
+        }
+      });
+      return new_state;
       break;
 
     /* 글수정 */
     case 'UPDATENOTE':
       break;
 
-    /* 글 삭제 */
-    case 'DELETENOTE':
-      break;
 
     /* 글 삭제 */
     case 'DELETENOTE':
+
+      $.ajax({
+        type: 'POST',
+        async: false,
+        url: '/jnote/delete',
+        data: {
+          id: state.noteId
+        },
+        success: function(data) {
+
+          console.log('REMOVERESULT',data);
+
+          let choiceTarget = null;
+          state.lists.forEach(function(item,idx){
+            if(item._id == state.noteId){
+              choiceTarget = idx;
+              return;
+            }
+          });
+
+          new_state = Object.assign({},state);
+          new_state.lists.splice(choiceTarget, 1);
+        }
+      });
+
+
+
+
+      return new_state;
       break;
 
     /* 글 하나 */
@@ -40,7 +113,8 @@ export default function jnotereducer(state = initialStateList, action) {
           console.log('GETONE');
           console.log(data);
           new_state = Object.assign({},state,{
-            note: data.note
+            note: data.note,
+            noteId: action.id
           });
         }
       });

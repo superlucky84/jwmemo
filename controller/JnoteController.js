@@ -19,23 +19,27 @@ var JmemoModel = require('../model/JmemoModel.js');
 /**
  * CREATE
  */
-router.get('/create', function (req, res, next) {
-    res.send('CREATE');
+router.post('/create', function (req, res, next) {
+
     var JmemoInstance = new JmemoModel({
-      title: 'titletitle2',
-      note: 'notenote2',
+      title: req.body.title,
+      note: req.body.note,
       favorite: false,
-      category: ['v','j']
+      category: []
+      //category: ['v','j']
     });
-    JmemoInstance.save();
-    //res.render('index',{});
+    JmemoInstance.save(function(data){
+      console.log('save_data');
+      console.log(data);
+    });
+    res.json(JmemoInstance);
 });
 
 /**
  * READ LIST
  */
 router.get('/read', function (req, res, next) {
-  JmemoModel.find({},function (error, lists) {
+  JmemoModel.find({}).sort({regdate: -1}).exec(function (error, lists) {
     var result = [];
     lists.forEach(function (list) {
       result.push(list);
@@ -70,9 +74,12 @@ router.get('/UPDATE', function (req, res, next) {
 /**
  * Delete
  */
-router.get('/DELETE', function (req, res, next) {
-    res.send('DELETE');
-    //res.render('index',{});
+router.post('/delete', function (req, res, next) {
+    JmemoModel.remove({_id: req.body.id}, function() {
+      res.json({
+        result: true
+      });
+    });
 });
 
 module.exports = router;

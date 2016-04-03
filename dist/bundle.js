@@ -26396,7 +26396,12 @@
 
 	var initialStateList = {
 	  lists: [],
-	  note: ''
+	  noteId: 0,
+	  note: '',
+	  write: {
+	    title: '',
+	    note: ''
+	  }
 	};
 
 	function jnotereducer() {
@@ -26407,10 +26412,52 @@
 	  var new_state = {};
 
 	  switch (action.type) {
+
 	    /* 글쓰기 */
 	    case 'WRITENOTE':
-	      console.log('WRITENOTE---');
-	      console.log(action);
+	      $.ajax({
+	        type: 'POST',
+	        async: false,
+	        url: '/jnote/create',
+	        data: {
+	          title: state.write.title,
+	          note: state.write.note
+	        },
+	        success: function success(data) {
+	          var newArray = [data].concat(state.lists);
+	          new_state = Object.assign({}, state, {
+	            lists: newArray,
+	            write: {
+	              title: '',
+	              note: ''
+	            }
+	          });
+	        }
+	      });
+	      return new_state;
+
+	      break;
+
+	    /* 타이틀 폼수정 */
+	    case 'UPDATEFORM_TITLE':
+	      new_state = Object.assign({}, state, {
+	        write: {
+	          title: action.text,
+	          note: state.write.note
+	        }
+	      });
+	      return new_state;
+	      break;
+
+	    /* 컨텐츠 폼수정 */
+	    case 'UPDATEFORM_NOTE':
+	      new_state = Object.assign({}, state, {
+	        write: {
+	          title: state.write.title,
+	          note: action.text
+	        }
+	      });
+	      return new_state;
 	      break;
 
 	    /* 글수정 */
@@ -26419,10 +26466,32 @@
 
 	    /* 글 삭제 */
 	    case 'DELETENOTE':
-	      break;
 
-	    /* 글 삭제 */
-	    case 'DELETENOTE':
+	      $.ajax({
+	        type: 'POST',
+	        async: false,
+	        url: '/jnote/delete',
+	        data: {
+	          id: state.noteId
+	        },
+	        success: function success(data) {
+
+	          console.log('REMOVERESULT', data);
+
+	          var choiceTarget = null;
+	          state.lists.forEach(function (item, idx) {
+	            if (item._id == state.noteId) {
+	              choiceTarget = idx;
+	              return;
+	            }
+	          });
+
+	          new_state = Object.assign({}, state);
+	          new_state.lists.splice(choiceTarget, 1);
+	        }
+	      });
+
+	      return new_state;
 	      break;
 
 	    /* 글 하나 */
@@ -26435,7 +26504,8 @@
 	          console.log('GETONE');
 	          console.log(data);
 	          new_state = Object.assign({}, state, {
-	            note: data.note
+	            note: data.note,
+	            noteId: action.id
 	          });
 	        }
 	      });
@@ -36325,18 +36395,18 @@
 	  value: true
 	});
 	exports.writeNote = writeNote;
+	exports.deleteNote = deleteNote;
 	exports.getList = getList;
 	exports.getOne = getOne;
+	exports.updateForm = updateForm;
 	//import { INCREASE, DECREASE } from '../constants'
 
 	/**
 	 * ADD NOTE
 	 */
-	function writeNote(title, note) {
+	function writeNote() {
 	  return {
-	    type: 'WRITENOTE',
-	    title: title,
-	    note: note
+	    type: 'WRITENOTE'
 	  };
 	}
 
@@ -36356,8 +36426,7 @@
 	 */
 	function deleteNote() {
 	  return {
-	    type: 'DELETENOTE',
-	    id: id
+	    type: 'DELETENOTE'
 	  };
 	}
 
@@ -36377,6 +36446,13 @@
 	  return {
 	    type: 'GETONE',
 	    id: id
+	  };
+	}
+
+	function updateForm(type, text) {
+	  return {
+	    type: 'UPDATEFORM_' + type.toUpperCase(),
+	    text: text
 	  };
 	}
 
@@ -36458,7 +36534,10 @@
 	      return _react2.default.createElement(
 	        'div',
 	        { id: 'app-container' },
-	        _react2.default.createElement(_Header2.default, null),
+	        _react2.default.createElement(_Header2.default, {
+	          dispatch: this.props.dispatch,
+	          location: this.props.location
+	        }),
 	        _react2.default.createElement(
 	          'div',
 	          { id: 'container' },
@@ -36490,7 +36569,7 @@
 /* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -36502,6 +36581,10 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _reactRouterRedux = __webpack_require__(237);
+
+	var _jnote = __webpack_require__(240);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -36510,54 +36593,94 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	/* IMPORT ACTIONS */
+
+
 	var Header = function (_Component) {
 	  _inherits(Header, _Component);
 
 	  function Header(props, children) {
 	    _classCallCheck(this, Header);
 
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Header).call(this, props));
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Header).call(this, props));
+
+	    console.log('header_props');
+	    console.log(_this.props);
+	    return _this;
 	  }
 
 	  _createClass(Header, [{
-	    key: "render",
+	    key: 'handleChangeWritepage',
+	    value: function handleChangeWritepage() {
+	      this.props.dispatch((0, _reactRouterRedux.push)('/write'));
+	    }
+	  }, {
+	    key: 'handleWriteMemo',
+	    value: function handleWriteMemo() {
+	      // VALIDATE
+
+	      // ACTION
+	      this.props.dispatch((0, _jnote.writeNote)());
+	    }
+	  }, {
+	    key: 'handleDeleteMemo',
+	    value: function handleDeleteMemo() {
+
+	      // ACTION
+	      this.props.dispatch((0, _jnote.deleteNote)());
+	      this.props.dispatch((0, _reactRouterRedux.push)('/'));
+	    }
+	  }, {
+	    key: 'render',
 	    value: function render() {
 
+	      var BUTTON = [];
+
+	      switch (this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/, "$1")) {
+	        case 'view':
+	          BUTTON.push(_react2.default.createElement(
+	            'button',
+	            { key: 'edit' },
+	            'Edit'
+	          ));
+	          BUTTON.push(_react2.default.createElement(
+	            'button',
+	            { key: 'delete', onClick: this.handleDeleteMemo.bind(this) },
+	            'Delete'
+	          ));
+	          break;
+	        case 'write':
+	          BUTTON.push(_react2.default.createElement(
+	            'button',
+	            { key: 'send', onClick: this.handleWriteMemo.bind(this) },
+	            'Send'
+	          ));
+	          break;
+	      }
+	      //BUTTON.push(<button key='login'>LOGIN</button>);
+	      //BUTTON.push(<button key='signin'>SIGNIN</button>);
+
 	      return _react2.default.createElement(
-	        "header",
+	        'header',
 	        null,
 	        _react2.default.createElement(
-	          "div",
-	          { className: "left" },
+	          'div',
+	          { className: 'left' },
 	          _react2.default.createElement(
-	            "div",
-	            { className: "title" },
-	            "Record"
+	            'div',
+	            { className: 'title' },
+	            'Record'
 	          ),
 	          _react2.default.createElement(
-	            "button",
-	            null,
-	            "Write"
+	            'button',
+	            { onClick: this.handleChangeWritepage.bind(this) },
+	            'Write'
 	          )
 	        ),
 	        _react2.default.createElement(
-	          "div",
-	          { className: "right" },
-	          _react2.default.createElement(
-	            "button",
-	            null,
-	            "Edit"
-	          ),
-	          _react2.default.createElement(
-	            "button",
-	            null,
-	            "LOGIN"
-	          ),
-	          _react2.default.createElement(
-	            "button",
-	            null,
-	            "SIGNIN"
-	          )
+	          'div',
+	          { className: 'right' },
+	          BUTTON
 	        )
 	      );
 	    }
@@ -36675,10 +36798,6 @@
 	    key: 'render',
 	    value: function render() {
 	      var _this2 = this;
-
-	      //const { user, error, params, hostname, env, locale, dialog } = this.props;
-	      console.log("this.props.lists");
-	      console.log(this.props.lists);
 
 	      return _react2.default.createElement(
 	        'div',
@@ -36831,7 +36950,7 @@
 /* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -36843,6 +36962,10 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _reactRedux = __webpack_require__(169);
+
+	var _jnote = __webpack_require__(240);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -36850,6 +36973,9 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	/* IMPORT ACTIONS */
+
 
 	var Write = function (_Component) {
 	  _inherits(Write, _Component);
@@ -36861,13 +36987,35 @@
 	  }
 
 	  _createClass(Write, [{
-	    key: "render",
+	    key: 'changeTitle',
+	    value: function changeTitle(event) {
+	      this.props.dispatch((0, _jnote.updateForm)('title', event.target.value));
+	    }
+	  }, {
+	    key: 'changeNote',
+	    value: function changeNote(event) {
+	      this.props.dispatch((0, _jnote.updateForm)('NOTE', event.target.value));
+	    }
+	  }, {
+	    key: 'render',
 	    value: function render() {
 
+	      console.log("this.propsJJJJJJJJJJJ");
+	      console.log(this.props);
+
 	      return _react2.default.createElement(
-	        "div",
-	        { className: "view" },
-	        "VIEW"
+	        'div',
+	        { className: 'write' },
+	        _react2.default.createElement('input', { type: 'text',
+	          placeholder: 'Title',
+	          onChange: this.changeTitle.bind(this),
+	          value: this.props.writeTitle
+	        }),
+	        _react2.default.createElement('textarea', {
+	          placeholder: 'Memo',
+	          onChange: this.changeNote.bind(this),
+	          value: this.props.writeNote
+	        })
 	      );
 	    }
 	  }]);
@@ -36875,7 +37023,18 @@
 	  return Write;
 	}(_react.Component);
 
+	/**
+	 *  REDUX STATE 주입
+	 */
+
+
 	exports.default = Write;
+	exports.default = (0, _reactRedux.connect)(function (state) {
+	  return {
+	    writeTitle: state.default.write.title,
+	    writeNote: state.default.write.note
+	  };
+	})(Write);
 
 /***/ }
 /******/ ]);

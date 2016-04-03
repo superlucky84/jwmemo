@@ -34,7 +34,10 @@ export default class App extends Component {
 
     return (
         <div id="app-container">
-          <Header />
+          <Header 
+            dispatch={this.props.dispatch} 
+            location={this.props.location} 
+          />
           <div id="container">
             <List {...this.props} />
             <div className="split"></div>

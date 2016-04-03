@@ -2,9 +2,6 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   margin: 0;
   padding: 0;
   border: 0;
-  font-family: gulim, sans-serif; 
-  font-size: 27px;
-  line-height: 1.4;
   vertical-align: baseline; 
 }
 
@@ -14,7 +11,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 }
 
 body {
-  line-height: 1; 
+  font-family: gulim, sans-serif; 
+  font-size: 27px;
+  line-height: 1.4;
+}
+textarea, input{
+  font-family: gulim, sans-serif; 
+  font-size: 27px;
+  line-height: 1.4;
 }
 
 ol, ul {

@@ -30,17 +30,41 @@ export default class Header extends Component {
     this.props.dispatch(push('/'));
   }
 
+  handleShowMarkview() {
+    console.log('handleShowMarkview');
+  }
+
   render() {
 
     let BUTTON = [];
 
     switch (this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/,"$1")) {
       case 'view':
-        BUTTON.push(<button key='edit'>Edit</button>);
-        BUTTON.push(<button key='delete' onClick={this.handleDeleteMemo.bind(this)}>Delete</button>);
+        BUTTON.push(
+          <button 
+            key='markview'
+            onClick={this.handleShowMarkview.bind(this)}>Markview
+          </button>
+        );
+        BUTTON.push(
+          <button 
+            key='edit'>Edit
+          </button>
+        );
+        BUTTON.push(
+          <button 
+            key='delete' 
+            onClick={this.handleDeleteMemo.bind(this)}>Delete
+          </button>
+        );
         break;
       case 'write':
-        BUTTON.push(<button key='send' onClick={this.handleWriteMemo.bind(this)}>Send</button>);
+        BUTTON.push(
+          <button 
+            key='send' 
+            onClick={this.handleWriteMemo.bind(this)}>Send
+          </button>
+        );
         break;
     }
     //BUTTON.push(<button key='login'>LOGIN</button>);

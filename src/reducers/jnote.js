@@ -1,11 +1,12 @@
-
 import jQuery from 'jquery';
 global.$ = jQuery;
 
 const initialStateList = {
   lists: [],
-  noteId: 0,
-  note: '',
+  view: {
+    noteId: 0,
+    note: ''
+  },
   write: {
     title: '',
     note: ''
@@ -39,8 +40,9 @@ export default function jnotereducer(state = initialStateList, action) {
           });
         }
       });
-      return new_state;
 
+
+      return new_state;
       break;
 
     /* 타이틀 폼수정 */
@@ -78,7 +80,7 @@ export default function jnotereducer(state = initialStateList, action) {
         async: false,
         url: '/jnote/delete',
         data: {
-          id: state.noteId
+          id: state.view.noteId
         },
         success: function(data) {
 
@@ -86,7 +88,7 @@ export default function jnotereducer(state = initialStateList, action) {
 
           let choiceTarget = null;
           state.lists.forEach(function(item,idx){
-            if(item._id == state.noteId){
+            if(item._id == state.view.noteId){
               choiceTarget = idx;
               return;
             }
@@ -96,10 +98,6 @@ export default function jnotereducer(state = initialStateList, action) {
           new_state.lists.splice(choiceTarget, 1);
         }
       });
-
-
-
-
       return new_state;
       break;
 
@@ -113,13 +111,14 @@ export default function jnotereducer(state = initialStateList, action) {
           console.log('GETONE');
           console.log(data);
           new_state = Object.assign({},state,{
-            note: data.note,
-            noteId: action.id
+            view: {
+              note: data.note,
+              noteId: action.id
+            }
           });
         }
       });
       return new_state;
-
       break;
 
     /* 글 리스트 */
@@ -144,3 +143,4 @@ export default function jnotereducer(state = initialStateList, action) {
       break;
   }
 }
+

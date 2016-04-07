@@ -54,10 +54,11 @@ div#container div.list li {
 div#container div.split {
   background-color: #cdc;
   width: 10px;
-  cursor: col-resize; 
+  cursor: col-resize;
 }
 div#container div.view {
   width: 49%; 
+  white-space: pre-wrap;
 }
 footer {
   background-color: #cdc;

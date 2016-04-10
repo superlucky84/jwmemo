@@ -45,7 +45,7 @@ div#container div.list {
   width: 49%; 
 }
 div#container div.list li {
-  height: 40px;
+  /*height: 40px;*/
   border-bottom: 1px solid #cdc;
   margin: 0; 
   padding: 7px 7px;

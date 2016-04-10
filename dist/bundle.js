@@ -129,7 +129,8 @@
 	      { path: '/', component: _App2.default },
 	      _react2.default.createElement(_reactRouter.IndexRoute, { component: _Empty2.default }),
 	      _react2.default.createElement(_reactRouter.Route, { path: 'view/:id', component: _View2.default }),
-	      _react2.default.createElement(_reactRouter.Route, { path: 'write', component: _Write2.default })
+	      _react2.default.createElement(_reactRouter.Route, { path: 'write', component: _Write2.default }),
+	      _react2.default.createElement(_reactRouter.Route, { path: 'write/:id', component: _Write2.default })
 	    )
 	  )
 	), document.getElementById('jnote'));
@@ -26398,9 +26399,11 @@
 	  lists: [],
 	  view: {
 	    noteId: 0,
+	    title: '',
 	    note: ''
 	  },
 	  write: {
+	    noteId: 0,
 	    title: '',
 	    note: ''
 	  }
@@ -26440,10 +26443,58 @@
 	      return new_state;
 	      break;
 
+	    /* 글수정 */
+	    case 'EDITNOTE':
+
+	      $.ajax({
+	        type: 'POST',
+	        async: false,
+	        url: '/jnote/update',
+	        data: {
+	          id: state.write.noteId,
+	          title: state.write.title,
+	          note: state.write.note
+	        },
+	        success: function success(data) {
+
+	          var choiceTarget = null;
+	          state.lists.forEach(function (item, idx) {
+	            if (item._id == data._id) {
+	              choiceTarget = idx;
+	              return;
+	            }
+	          });
+
+	          console.log('choiceTarget', choiceTarget);
+
+	          new_state = Object.assign({}, state);
+
+	          new_state.lists[choiceTarget] = data;
+
+	          console.log('jjLIST', data, new_state.lists);
+	        }
+	      });
+
+	      return new_state;
+	      break;
+
+	    /* wirte 내용을 view 내용과 상태 동기화 */
+	    case 'UPDATEFORM_SYNC':
+	      new_state = Object.assign({}, state, {
+	        write: {
+	          noteId: state.view.noteId,
+	          title: state.view.title,
+	          note: state.view.note
+	        }
+	      });
+	      return new_state;
+	      break;
+
 	    /* 타이틀 폼수정 */
 	    case 'UPDATEFORM_TITLE':
 	      new_state = Object.assign({}, state, {
 	        write: {
+	          noteId: state.write.noteId,
 	          title: action.text,
 	          note: state.write.note
 	        }
@@ -26455,15 +26506,12 @@
 	    case 'UPDATEFORM_NOTE':
 	      new_state = Object.assign({}, state, {
 	        write: {
+	          noteId: state.write.noteId,
 	          title: state.write.title,
 	          note: action.text
 	        }
 	      });
 	      return new_state;
-	      break;
-
-	    /* 글수정 */
-	    case 'UPDATENOTE':
 	      break;
 
 	    /* 글 삭제 */
@@ -26507,6 +26555,7 @@
 	          new_state = Object.assign({}, state, {
 	            view: {
 	              note: data.note,
+	              title: data.title,
 	              noteId: action.id
 	            }
 	          });
@@ -36397,6 +36446,7 @@
 	  value: true
 	});
 	exports.writeNote = writeNote;
+	exports.editNote = editNote;
 	exports.deleteNote = deleteNote;
 	exports.getList = getList;
 	exports.getOne = getOne;
@@ -36415,11 +36465,10 @@
 	/**
 	 * UPDATE NOTE
 	 */
-	function updateNote() {
+	function editNote(id) {
 	  return {
-	    type: 'UPDATENOTE',
-	    id: id,
-	    note: note
+	    type: 'EDITNOTE',
+	    id: id
 	  };
 	}
 
@@ -36608,21 +36657,42 @@
 
 	    console.log('header_props');
 	    console.log(_this.props);
+	    _this.noteId = null;
 	    return _this;
 	  }
 
 	  _createClass(Header, [{
 	    key: 'handleChangeWritepage',
 	    value: function handleChangeWritepage() {
+
+	      this.props.dispatch((0, _jnote.updateForm)('title', ''));
+	      this.props.dispatch((0, _jnote.updateForm)('note', ''));
 	      this.props.dispatch((0, _reactRouterRedux.push)('/write'));
+	    }
+	  }, {
+	    key: 'handleEditMemo',
+	    value: function handleEditMemo() {
+	      console.log("this.props.routeParams");
+
+	      this.props.dispatch((0, _jnote.updateForm)('sync'));
+	      this.props.dispatch((0, _reactRouterRedux.push)('/write/' + this.noteId));
 	    }
 	  }, {
 	    key: 'handleWriteMemo',
 	    value: function handleWriteMemo() {
 	      // VALIDATE
 
-	      // ACTION
-	      this.props.dispatch((0, _jnote.writeNote)());
+	      // 수정
+	      if (this.noteId) {
+	        console.log('EDIT', this.noteId);
+	        this.props.dispatch((0, _jnote.editNote)(this.noteId));
+	        this.props.dispatch((0, _reactRouterRedux.push)('/view/' + this.noteId));
+	      }
+	      // 생성
+	      else {
+	          console.log('CREATER');
+	          this.props.dispatch((0, _jnote.writeNote)());
+	        }
 	    }
 	  }, {
 	    key: 'handleDeleteMemo',
@@ -36643,8 +36713,12 @@
 
 	      var BUTTON = [];
 
-	      switch (this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/, "$1")) {
+	      this.viewType = this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/, "$1");
+	      this.noteId = this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/, "$2");
+
+	      switch (this.viewType) {
 	        case 'view':
+
 	          BUTTON.push(_react2.default.createElement(
 	            'button',
 	            {
@@ -36655,7 +36729,8 @@
 	          BUTTON.push(_react2.default.createElement(
 	            'button',
 	            {
-	              key: 'edit' },
+	              key: 'edit',
+	              onClick: this.handleEditMemo.bind(this) },
 	            'Edit'
 	          ));
 	          BUTTON.push(_react2.default.createElement(
@@ -36667,6 +36742,7 @@
 	          ));
 	          break;
 	        case 'write':
+
 	          BUTTON.push(_react2.default.createElement(
 	            'button',
 	            {
@@ -36692,7 +36768,8 @@
 	          ),
 	          _react2.default.createElement(
 	            'button',
-	            { onClick: this.handleChangeWritepage.bind(this) },
+	            {
+	              onClick: this.handleChangeWritepage.bind(this) },
 	            'Write'
 	          )
 	        ),
@@ -38322,7 +38399,15 @@
 	  }, {
 	    key: 'changeNote',
 	    value: function changeNote(event) {
-	      this.props.dispatch((0, _jnote.updateForm)('NOTE', event.target.value));
+	      this.props.dispatch((0, _jnote.updateForm)('note', event.target.value));
+	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      if (this.props.routeParams.id) {
+	        this.props.dispatch((0, _jnote.getOne)(this.props.routeParams.id));
+	        this.props.dispatch((0, _jnote.updateForm)('sync'));
+	      }
 	    }
 	  }, {
 	    key: 'render',

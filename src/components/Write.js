@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 /* IMPORT ACTIONS */
-import {updateForm} from '../actions/jnote'
+import {updateForm, getOne} from '../actions/jnote'
 
 
 export default class Write extends Component {
@@ -16,7 +16,14 @@ export default class Write extends Component {
   }
 
   changeNote(event) {
-    this.props.dispatch(updateForm('NOTE',event.target.value));
+    this.props.dispatch(updateForm('note',event.target.value));
+  }
+
+  componentDidMount() {
+    if (this.props.routeParams.id) {
+      this.props.dispatch(getOne(this.props.routeParams.id));
+      this.props.dispatch(updateForm('sync'));
+    }
   }
 
   render() {

@@ -12,11 +12,10 @@ export function writeNote () {
 /**
  * UPDATE NOTE
  */
-function updateNote () {
+export function editNote (id) {
   return {
-    type: 'UPDATENOTE',
-    id,
-    note
+    type: 'EDITNOTE',
+    id
   }
 }
 

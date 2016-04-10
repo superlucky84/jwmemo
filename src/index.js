@@ -52,6 +52,7 @@ ReactDOM.render(
           <IndexRoute component={Empty}/>
           <Route path="view/:id"  component={View}/>
           <Route path="write" component={Write}/>
+          <Route path="write/:id" component={Write}/>
         </Route>
       </Router>
   </Provider>,

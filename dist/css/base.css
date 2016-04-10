@@ -12,12 +12,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 
 body {
   font-family: gulim, sans-serif; 
-  font-size: 27px;
+  font-size: 17px;
   line-height: 1.4;
 }
 textarea, input{
   font-family: gulim, sans-serif; 
-  font-size: 27px;
+  font-size: 17px;
   line-height: 1.4;
 }
 

@@ -54,7 +54,7 @@ router.get('/read', function (req, res, next) {
 router.get('/read/:id', function (req, res, next) {
 
     var result = {};
-    JmemoModel.findOne({_id: req.params.id},{note:1},function (error,view) {
+    JmemoModel.findOne({_id: req.params.id},{note:1, title:1},function (error,view) {
       console.log(view);
       result = view;
       res.json(result);
@@ -66,9 +66,23 @@ router.get('/read/:id', function (req, res, next) {
 /**
  * UPDATE 
  */
-router.get('/UPDATE', function (req, res, next) {
-    res.send('UPDATE');
-    //res.render('index',{});
+router.post('/update', function (req, res, next) {
+
+  JmemoModel.findById(req.body.id, function (err, jmemomodel) {
+    if (err) { 
+      return handleError(err);
+    }
+    jmemomodel.title = req.body.title;
+    jmemomodel.note = req.body.note;
+    jmemomodel.save(function (err) {
+      if (err) return handleError(err);
+      res.json(jmemomodel);
+    });
+  });
+
+
+
+
 });
 
 /**

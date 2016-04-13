@@ -17,11 +17,48 @@ export default class App extends Component {
     super(props);
     console.log('CHILDREN');
     console.log(this.props);
+
+    this.state = {
+      downstate: false,
+      shodowleft: null,
+      realleft: null
+    }
+
   }
 
   componentDidMount() {
     /** * 리스트를 가져온다 */
     this.props.dispatch(getList());
+  }
+
+  handleMouseDown() {
+    console.log('down');
+    this.setState({ downstate: true });
+  }
+  handleMouseUp(e) {
+    console.log('up');
+    if (this.state.downstate) {
+      console.log('E: ',e);
+
+      console.log( document.getElementById('container') );
+
+      this.setState({ 
+        downstate: false,
+        realleft: { left: e.pageX }
+      });
+    }
+  }
+  handleMouseLeave() {
+    console.log('leave');
+    this.setState({ downstate: false });
+  }
+  handleMouseMove(e) {
+    console.log('move');
+    if (this.state.downstate) {
+      this.setState({
+        shodowleft: { left: e.pageX }
+      });
+    }
   }
   render() {
 
@@ -29,8 +66,11 @@ export default class App extends Component {
     //<Link to="/view">View</Link>
     //<Link to="/">Home</Link>
 
-    console.log('this.props');
-    console.log(this.props);
+    let SPLITSHADOW =  null;
+    if (this.state.downstate) {
+      SPLITSHADOW = <div className="split-shadow" style={this.state.shodowleft}></div>;
+    }
+
 
     return (
         <div id="app-container">
@@ -38,9 +78,19 @@ export default class App extends Component {
             dispatch={this.props.dispatch} 
             location={this.props.location} 
           />
-          <div id="container">
+          <div id="container"
+            onMouseMove={this.handleMouseMove.bind(this,event)}
+            onMouseUp={this.handleMouseUp.bind(this,event)}
+            onMouseLeave={this.handleMouseLeave.bind(this)}
+          >
             <List {...this.props} />
-            <div className="split"></div>
+            <div 
+              onMouseDown={this.handleMouseDown.bind(this)} 
+              className="split"
+              style={this.state.realleft}
+            >
+            </div>
+            {SPLITSHADOW}
             {this.props.children}
           </div>
           <Footer />

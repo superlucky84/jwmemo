@@ -1,0 +1,89 @@
+header,footer {
+  border: 1px solid #000;
+  height: 25px;
+}
+
+/* HEADER */
+header {
+  position: relative;
+}
+header .left, header .right {
+  position: absolute;
+}
+header .left {
+  left: 0;
+}
+header .right {
+  right: 0;
+}
+
+
+/* FOOTER */
+footer {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  text-align: right;
+}
+
+/* CONTAINER */
+#container {
+  position: absolute;
+  top: 25px;
+  left: 0px;
+  right: 0px;
+  bottom: 25px;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+}
+
+div.list, div.view, div.write, div.split, div.split-shadow  {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+div.list {
+  left: 0;
+  right: calc(50% + 2px);
+  border: 1px solid green;
+}
+
+div.view {
+  border: 1px solid blue;
+}
+
+div.split , div.split-shadow {
+  border: 1px solid #000;
+  left: calc(50% - 2px);
+  width: 4px;
+  cursor: col-resize;
+}
+div.split-shadow {
+  border-color: red;
+}
+
+div.view, div.write {
+  left: calc(50% + 2px);
+  right: 0;
+  padding: 10px;
+}
+
+div.write input[type=text] {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+div.write textarea {
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 10px;
+  height: calc(100% - 40px);
+}
+
+
+
+
+
+

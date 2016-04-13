@@ -36562,6 +36562,13 @@
 
 	    console.log('CHILDREN');
 	    console.log(_this.props);
+
+	    _this.state = {
+	      downstate: false,
+	      shodowleft: null,
+	      realleft: null
+	    };
+
 	    return _this;
 	  }
 
@@ -36572,6 +36579,43 @@
 	      this.props.dispatch((0, _jnote.getList)());
 	    }
 	  }, {
+	    key: 'handleMouseDown',
+	    value: function handleMouseDown() {
+	      console.log('down');
+	      this.setState({ downstate: true });
+	    }
+	  }, {
+	    key: 'handleMouseUp',
+	    value: function handleMouseUp(e) {
+	      console.log('up');
+	      if (this.state.downstate) {
+	        console.log('E: ', e);
+
+	        console.log(document.getElementById('container'));
+
+	        this.setState({
+	          downstate: false,
+	          realleft: { left: e.pageX }
+	        });
+	      }
+	    }
+	  }, {
+	    key: 'handleMouseLeave',
+	    value: function handleMouseLeave() {
+	      console.log('leave');
+	      this.setState({ downstate: false });
+	    }
+	  }, {
+	    key: 'handleMouseMove',
+	    value: function handleMouseMove(e) {
+	      console.log('move');
+	      if (this.state.downstate) {
+	        this.setState({
+	          shodowleft: { left: e.pageX }
+	        });
+	      }
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 
@@ -36579,8 +36623,10 @@
 	      //<Link to="/view">View</Link>
 	      //<Link to="/">Home</Link>
 
-	      console.log('this.props');
-	      console.log(this.props);
+	      var SPLITSHADOW = null;
+	      if (this.state.downstate) {
+	        SPLITSHADOW = _react2.default.createElement('div', { className: 'split-shadow', style: this.state.shodowleft });
+	      }
 
 	      return _react2.default.createElement(
 	        'div',
@@ -36591,9 +36637,18 @@
 	        }),
 	        _react2.default.createElement(
 	          'div',
-	          { id: 'container' },
+	          { id: 'container',
+	            onMouseMove: this.handleMouseMove.bind(this, event),
+	            onMouseUp: this.handleMouseUp.bind(this, event),
+	            onMouseLeave: this.handleMouseLeave.bind(this)
+	          },
 	          _react2.default.createElement(_List2.default, this.props),
-	          _react2.default.createElement('div', { className: 'split' }),
+	          _react2.default.createElement('div', {
+	            onMouseDown: this.handleMouseDown.bind(this),
+	            className: 'split',
+	            style: this.state.realleft
+	          }),
+	          SPLITSHADOW,
 	          this.props.children
 	        ),
 	        _react2.default.createElement(_Footer2.default, null)
@@ -36761,11 +36816,6 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'left' },
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'title' },
-	            'Record'
-	          ),
 	          _react2.default.createElement(
 	            'button',
 	            {

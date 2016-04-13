@@ -35,6 +35,7 @@
     "webpack": "^1.12.13"
   },
   "scripts": {
-    "start": "node runserver/www.js"
+    "start": "node runserver/www.js",
+    "jj": "mongod & node runserver/www.js & "
   }
 }

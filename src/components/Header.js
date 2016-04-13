@@ -104,7 +104,6 @@ export default class Header extends Component {
     return (
       <header>
         <div className="left">
-          <div className="title">Record</div>
           <button 
             onClick={this.handleChangeWritepage.bind(this)}>
             Write

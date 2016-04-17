@@ -1,3 +1,7 @@
+header,footer,div,main,section {
+  box-sizing: border-box;
+}
+
 header,footer {
   border: 1px solid #000;
   height: 25px;
@@ -50,9 +54,6 @@ div.list {
   border: 1px solid green;
 }
 
-div.view {
-  border: 1px solid blue;
-}
 
 div.split , div.split-shadow {
   border: 1px solid #000;
@@ -68,6 +69,12 @@ div.view, div.write {
   left: calc(50% + 2px);
   right: 0;
   padding: 10px;
+}
+
+div.view {
+  border: 1px solid blue;
+  overflow-y: scroll;
+  /*white-space: pre-wrap;*/
 }
 
 div.write input[type=text] {

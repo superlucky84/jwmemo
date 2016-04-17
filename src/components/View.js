@@ -32,11 +32,12 @@ export default class View extends Component {
     });
     */
 
-    const note = marked(this.props.note.toString().replace(/\n/gi,"<br>"), {sanitize: false});
+    //const note = marked(this.props.note.toString().replace(/\n/gi,"<br>"), {sanitize: false});
+    const note = marked(this.props.note.toString(), {sanitize: false});
     //const note = marked(this.props.note);
 
     return (
-      <div className="view" dangerouslySetInnerHTML={{__html: note}} />
+      <div className="view markdown-body" dangerouslySetInnerHTML={{__html: note}} />
     );
   }
 }

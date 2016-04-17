@@ -36781,19 +36781,20 @@
 	              onClick: this.handleShowMarkview.bind(this) },
 	            'Markview'
 	          ));
+	          /*
+	          BUTTON.push(
+	            <button 
+	              key='delete' 
+	              onClick={this.handleDeleteMemo.bind(this)}>Delete
+	            </button>
+	          );
+	          */
 	          BUTTON.push(_react2.default.createElement(
 	            'button',
 	            {
 	              key: 'edit',
 	              onClick: this.handleEditMemo.bind(this) },
 	            'Edit'
-	          ));
-	          BUTTON.push(_react2.default.createElement(
-	            'button',
-	            {
-	              key: 'delete',
-	              onClick: this.handleDeleteMemo.bind(this) },
-	            'Delete'
 	          ));
 	          break;
 	        case 'write':
@@ -37087,10 +37088,11 @@
 	      });
 	      */
 
-	      var note = (0, _marked2.default)(this.props.note.toString().replace(/\n/gi, "<br>"), { sanitize: false });
+	      //const note = marked(this.props.note.toString().replace(/\n/gi,"<br>"), {sanitize: false});
+	      var note = (0, _marked2.default)(this.props.note.toString(), { sanitize: false });
 	      //const note = marked(this.props.note);
 
-	      return _react2.default.createElement('div', { className: 'view', dangerouslySetInnerHTML: { __html: note } });
+	      return _react2.default.createElement('div', { className: 'view markdown-body', dangerouslySetInnerHTML: { __html: note } });
 	    }
 	  }]);
 

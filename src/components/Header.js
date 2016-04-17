@@ -73,16 +73,18 @@ export default class Header extends Component {
             onClick={this.handleShowMarkview.bind(this)}>Markview
           </button>
         );
-        BUTTON.push(
-          <button 
-            key='edit'
-            onClick={this.handleEditMemo.bind(this)}>Edit
-          </button>
-        );
+        /*
         BUTTON.push(
           <button 
             key='delete' 
             onClick={this.handleDeleteMemo.bind(this)}>Delete
+          </button>
+        );
+        */
+        BUTTON.push(
+          <button 
+            key='edit'
+            onClick={this.handleEditMemo.bind(this)}>Edit
           </button>
         );
         break;

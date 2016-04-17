@@ -1,5 +1,16 @@
 //import { INCREASE, DECREASE } from '../constants'
 
+
+/**
+ * TOGGLE_PREVIEW
+ */
+export function togglePreview () {
+  return {
+    type: 'TOGGLE_PREVIEW'
+  }
+}
+
+
 /**
  * ADD NOTE
  */

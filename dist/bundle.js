@@ -76,11 +76,11 @@
 
 	var _App2 = _interopRequireDefault(_App);
 
-	var _Empty = __webpack_require__(245);
+	var _Empty = __webpack_require__(247);
 
 	var _Empty2 = _interopRequireDefault(_Empty);
 
-	var _View = __webpack_require__(246);
+	var _View = __webpack_require__(245);
 
 	var _View2 = _interopRequireDefault(_View);
 
@@ -26406,6 +26406,9 @@
 	    noteId: 0,
 	    title: '',
 	    note: ''
+	  },
+	  preview: {
+	    opened: false
 	  }
 	};
 
@@ -26417,6 +26420,21 @@
 	  var new_state = {};
 
 	  switch (action.type) {
+
+	    /* 글쓰기 */
+	    case 'TOGGLE_PREVIEW':
+
+	      var opened = true;
+	      if (state.preview.opened) {
+	        opened = false;
+	      }
+	      console.log('TOGGLE_PREVIEW!!!', opened);
+
+	      new_state = Object.assign({}, state);
+	      new_state.preview.opened = opened;
+
+	      return new_state;
+	      break;
 
 	    /* 글쓰기 */
 	    case 'WRITENOTE':
@@ -36445,6 +36463,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.togglePreview = togglePreview;
 	exports.writeNote = writeNote;
 	exports.editNote = editNote;
 	exports.deleteNote = deleteNote;
@@ -36452,6 +36471,15 @@
 	exports.getOne = getOne;
 	exports.updateForm = updateForm;
 	//import { INCREASE, DECREASE } from '../constants'
+
+	/**
+	 * TOGGLE_PREVIEW
+	 */
+	function togglePreview() {
+	  return {
+	    type: 'TOGGLE_PREVIEW'
+	  };
+	}
 
 	/**
 	 * ADD NOTE
@@ -36538,6 +36566,10 @@
 	var _List = __webpack_require__(244);
 
 	var _List2 = _interopRequireDefault(_List);
+
+	var _View = __webpack_require__(245);
+
+	var _View2 = _interopRequireDefault(_View);
 
 	var _jnote = __webpack_require__(240);
 
@@ -36633,16 +36665,17 @@
 	        { id: 'app-container' },
 	        _react2.default.createElement(_Header2.default, {
 	          dispatch: this.props.dispatch,
-	          location: this.props.location
+	          location: this.props.location,
+	          preview: this.props.preview
 	        }),
 	        _react2.default.createElement(
 	          'div',
-	          { id: 'container',
-	            onMouseMove: this.handleMouseMove.bind(this, event),
-	            onMouseUp: this.handleMouseUp.bind(this, event),
-	            onMouseLeave: this.handleMouseLeave.bind(this)
+	          { id: 'container'
+	            //onMouseMove={this.handleMouseMove.bind(this,event)}
+	            //onMouseUp={this.handleMouseUp.bind(this,event)}
+	            //onMouseLeave={this.handleMouseLeave.bind(this)}
 	          },
-	          _react2.default.createElement(_List2.default, this.props),
+	          this.props.preview ? _react2.default.createElement(_View2.default, { viewType: 'preview' }) : _react2.default.createElement(_List2.default, this.props),
 	          _react2.default.createElement('div', {
 	            onMouseDown: this.handleMouseDown.bind(this),
 	            className: 'split',
@@ -36667,7 +36700,8 @@
 	exports.default = App;
 	exports.default = (0, _reactRedux.connect)(function (state) {
 	  return {
-	    lists: state.default.lists
+	    lists: state.default.lists,
+	    preview: state.default.preview.opened
 	  };
 	})(App);
 
@@ -36735,7 +36769,11 @@
 	  }, {
 	    key: 'handleWriteMemo',
 	    value: function handleWriteMemo() {
-	      // VALIDATE
+
+	      // Previe 닫음
+	      if (this.props.preview) {
+	        this.props.dispatch((0, _jnote.togglePreview)());
+	      }
 
 	      // 수정
 	      if (this.noteId) {
@@ -36753,14 +36791,20 @@
 	    key: 'handleDeleteMemo',
 	    value: function handleDeleteMemo() {
 
+	      // Previe 닫음
+	      if (this.props.preview) {
+	        this.props.dispatch((0, _jnote.togglePreview)());
+	      }
+
 	      // ACTION
 	      this.props.dispatch((0, _jnote.deleteNote)());
 	      this.props.dispatch((0, _reactRouterRedux.push)('/'));
 	    }
 	  }, {
-	    key: 'handleShowMarkview',
-	    value: function handleShowMarkview() {
-	      console.log('handleShowMarkview');
+	    key: 'handleShowPreview',
+	    value: function handleShowPreview() {
+	      console.log('handleShowPreview');
+	      this.props.dispatch((0, _jnote.togglePreview)());
 	    }
 	  }, {
 	    key: 'render',
@@ -36774,13 +36818,6 @@
 	      switch (this.viewType) {
 	        case 'view':
 
-	          BUTTON.push(_react2.default.createElement(
-	            'button',
-	            {
-	              key: 'markview',
-	              onClick: this.handleShowMarkview.bind(this) },
-	            'Markview'
-	          ));
 	          /*
 	          BUTTON.push(
 	            <button 
@@ -36798,6 +36835,19 @@
 	          ));
 	          break;
 	        case 'write':
+
+	          var previewToggle = "preivew";
+	          if (this.props.preview) {
+	            previewToggle = "list";
+	          }
+
+	          BUTTON.push(_react2.default.createElement(
+	            'button',
+	            {
+	              key: previewToggle,
+	              onClick: this.handleShowPreview.bind(this) },
+	            previewToggle
+	          ));
 
 	          BUTTON.push(_react2.default.createElement(
 	            'button',
@@ -36973,56 +37023,6 @@
 /* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var Empty = function (_Component) {
-	  _inherits(Empty, _Component);
-
-	  function Empty(props) {
-	    _classCallCheck(this, Empty);
-
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Empty).call(this, props));
-	  }
-
-	  _createClass(Empty, [{
-	    key: "render",
-	    value: function render() {
-
-	      return _react2.default.createElement(
-	        "div",
-	        { className: "view" },
-	        "Empty"
-	      );
-	    }
-	  }]);
-
-	  return Empty;
-	}(_react.Component);
-
-	exports.default = Empty;
-
-/***/ },
-/* 246 */
-/***/ function(module, exports, __webpack_require__) {
-
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
@@ -37037,7 +37037,7 @@
 
 	var _reactRedux = __webpack_require__(169);
 
-	var _marked = __webpack_require__(247);
+	var _marked = __webpack_require__(246);
 
 	var _marked2 = _interopRequireDefault(_marked);
 
@@ -37069,15 +37069,16 @@
 	  _createClass(View, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.props.dispatch((0, _jnote.getOne)(this.props.routeParams.id));
+	      if (this.props.routeParams && this.props.routeParams.id) {
+	        this.props.dispatch((0, _jnote.getOne)(this.props.routeParams.id));
+	      }
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
 
-	      /*
-	      marked.setOptions({
-	        renderer: new marked.Renderer(),
+	      _marked2.default.setOptions({
+	        renderer: new _marked2.default.Renderer(),
 	        gfm: true,
 	        tables: true,
 	        breaks: false,
@@ -37086,13 +37087,19 @@
 	        smartLists: true,
 	        smartypants: false
 	      });
-	      */
 
-	      //const note = marked(this.props.note.toString().replace(/\n/gi,"<br>"), {sanitize: false});
-	      var note = (0, _marked2.default)(this.props.note.toString(), { sanitize: false });
-	      //const note = marked(this.props.note);
+	      var note = "";
+	      var classname = '';
 
-	      return _react2.default.createElement('div', { className: 'view markdown-body', dangerouslySetInnerHTML: { __html: note } });
+	      if (this.props.viewType == 'preview') {
+	        note = (0, _marked2.default)(this.props.previewNote.toString(), { sanitize: false });
+	        classname = 'preview markdown-body';
+	      } else {
+	        note = (0, _marked2.default)(this.props.note.toString(), { sanitize: false });
+	        classname = 'view markdown-body';
+	      }
+
+	      return _react2.default.createElement('div', { className: classname, dangerouslySetInnerHTML: { __html: note } });
 	    }
 	  }]);
 
@@ -37107,12 +37114,13 @@
 	exports.default = View;
 	exports.default = (0, _reactRedux.connect)(function (state) {
 	  return {
-	    note: state.default.view.note
+	    note: state.default.view.note,
+	    previewNote: state.default.write.note
 	  };
 	})(View);
 
 /***/ },
-/* 247 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -38402,6 +38410,56 @@
 	}());
 
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 247 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Empty = function (_Component) {
+	  _inherits(Empty, _Component);
+
+	  function Empty(props) {
+	    _classCallCheck(this, Empty);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Empty).call(this, props));
+	  }
+
+	  _createClass(Empty, [{
+	    key: "render",
+	    value: function render() {
+
+	      return _react2.default.createElement(
+	        "div",
+	        { className: "view" },
+	        "Empty"
+	      );
+	    }
+	  }]);
+
+	  return Empty;
+	}(_react.Component);
+
+	exports.default = Empty;
 
 /***/ },
 /* 248 */

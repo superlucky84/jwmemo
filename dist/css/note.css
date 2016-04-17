@@ -42,13 +42,13 @@ footer {
   border-right: 1px solid #000;
 }
 
-div.list, div.view, div.write, div.split, div.split-shadow  {
+div.list, div.view, div.preview, div.write, div.split, div.split-shadow  {
   position: absolute;
   top: 0;
   bottom: 0;
 }
 
-div.list {
+div.list, div.preview {
   left: 0;
   right: calc(50% + 2px);
   border: 1px solid green;
@@ -68,13 +68,15 @@ div.split-shadow {
 div.view, div.write {
   left: calc(50% + 2px);
   right: 0;
+}
+
+div.view, div.write, div.preview {
   padding: 10px;
 }
 
-div.view {
+div.view, div.preview {
   border: 1px solid blue;
   overflow-y: scroll;
-  /*white-space: pre-wrap;*/
 }
 
 div.write input[type=text] {

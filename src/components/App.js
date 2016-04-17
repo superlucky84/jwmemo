@@ -5,6 +5,7 @@ import { Link, browserHistory } from 'react-router'
 import Header from './Header'
 import Footer from './Footer'
 import List from './List'
+import View from './View'
 
 
 /* IMPORT ACTIONS */
@@ -35,6 +36,7 @@ export default class App extends Component {
     console.log('down');
     this.setState({ downstate: true });
   }
+
   handleMouseUp(e) {
     console.log('up');
     if (this.state.downstate) {
@@ -48,10 +50,12 @@ export default class App extends Component {
       });
     }
   }
+
   handleMouseLeave() {
     console.log('leave');
     this.setState({ downstate: false });
   }
+
   handleMouseMove(e) {
     console.log('move');
     if (this.state.downstate) {
@@ -60,6 +64,7 @@ export default class App extends Component {
       });
     }
   }
+
   render() {
 
     //const { user, error, params, hostname, env, locale, dialog } = this.props;
@@ -71,19 +76,23 @@ export default class App extends Component {
       SPLITSHADOW = <div className="split-shadow" style={this.state.shodowleft}></div>;
     }
 
-
     return (
         <div id="app-container">
           <Header 
             dispatch={this.props.dispatch} 
             location={this.props.location} 
+            preview={this.props.preview}
           />
           <div id="container"
-            onMouseMove={this.handleMouseMove.bind(this,event)}
-            onMouseUp={this.handleMouseUp.bind(this,event)}
-            onMouseLeave={this.handleMouseLeave.bind(this)}
+            //onMouseMove={this.handleMouseMove.bind(this,event)}
+            //onMouseUp={this.handleMouseUp.bind(this,event)}
+            //onMouseLeave={this.handleMouseLeave.bind(this)}
           >
-            <List {...this.props} />
+            {
+              ( this.props.preview )
+              ? <View viewType="preview" />
+              : <List {...this.props} />
+            }
             <div 
               onMouseDown={this.handleMouseDown.bind(this)} 
               className="split"
@@ -105,6 +114,7 @@ export default class App extends Component {
  */
 export default connect(function (state) {
     return {
-      lists: state.default.lists
+      lists: state.default.lists,
+      preview: state.default.preview.opened
     };
 })(App);

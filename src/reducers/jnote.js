@@ -12,6 +12,9 @@ const initialStateList = {
     noteId: 0,
     title: '',
     note: ''
+  },
+  preview: {
+    opened: false
   }
 }
 
@@ -20,6 +23,22 @@ export default function jnotereducer(state = initialStateList, action) {
   let new_state = {};
 
   switch (action.type) {
+
+    /* 글쓰기 */
+    case 'TOGGLE_PREVIEW':
+
+      let opened = true;
+      if (state.preview.opened) {
+        opened = false;
+      }
+      console.log('TOGGLE_PREVIEW!!!', opened);
+
+      new_state = Object.assign({},state);
+      new_state.preview.opened = opened;
+
+
+      return new_state;
+      break;
 
     /* 글쓰기 */
     case 'WRITENOTE':

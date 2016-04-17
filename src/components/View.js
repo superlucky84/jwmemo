@@ -14,12 +14,13 @@ export default class View extends Component {
   }
 
   componentDidMount() {
-    this.props.dispatch(getOne(this.props.routeParams.id));
+    if (this.props.routeParams && this.props.routeParams.id) {
+      this.props.dispatch(getOne(this.props.routeParams.id));
+    }
   }
 
   render() {
 
-    /*
     marked.setOptions({
       renderer: new marked.Renderer(),
       gfm: true,
@@ -30,14 +31,21 @@ export default class View extends Component {
       smartLists: true,
       smartypants: false
     });
-    */
 
-    //const note = marked(this.props.note.toString().replace(/\n/gi,"<br>"), {sanitize: false});
-    const note = marked(this.props.note.toString(), {sanitize: false});
-    //const note = marked(this.props.note);
+    let note = "";
+    let classname = '';
+
+    if ( this.props.viewType == 'preview' ) {
+      note = marked(this.props.previewNote.toString(), {sanitize: false});
+      classname = 'preview markdown-body';
+    }
+    else {
+      note = marked(this.props.note.toString(), {sanitize: false});
+      classname = 'view markdown-body';
+    }
 
     return (
-      <div className="view markdown-body" dangerouslySetInnerHTML={{__html: note}} />
+      <div className={classname} dangerouslySetInnerHTML={{__html: note}} />
     );
   }
 }
@@ -47,7 +55,8 @@ export default class View extends Component {
  */
 export default connect(function (state) {
     return {
-      note: state.default.view.note
+      note: state.default.view.note,
+      previewNote: state.default.write.note
     };
 })(View);
 

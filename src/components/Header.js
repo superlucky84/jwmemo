@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { push } from 'react-router-redux'
 
 /* IMPORT ACTIONS */
-import {writeNote, editNote, deleteNote ,updateForm} from '../actions/jnote'
+import {writeNote, editNote, deleteNote ,updateForm, togglePreview} from '../actions/jnote'
 
 export default class Header extends Component {
 
@@ -28,8 +28,12 @@ export default class Header extends Component {
   }
 
   handleWriteMemo() {
-    // VALIDATE
 
+
+    // Previe 닫음
+    if ( this.props.preview ) {
+      this.props.dispatch(togglePreview());
+    }
 
     // 수정
     if (this.noteId) {
@@ -47,14 +51,20 @@ export default class Header extends Component {
 
   handleDeleteMemo() {
 
+    // Previe 닫음
+    if ( this.props.preview ) {
+      this.props.dispatch(togglePreview());
+    }
+
     // ACTION
     this.props.dispatch(deleteNote());
     this.props.dispatch(push('/'));
   }
 
 
-  handleShowMarkview() {
-    console.log('handleShowMarkview');
+  handleShowPreview() {
+    console.log('handleShowPreview');
+    this.props.dispatch(togglePreview());
   }
 
   render() {
@@ -67,12 +77,6 @@ export default class Header extends Component {
     switch ( this.viewType ) {
       case 'view':
 
-        BUTTON.push(
-          <button 
-            key='markview'
-            onClick={this.handleShowMarkview.bind(this)}>Markview
-          </button>
-        );
         /*
         BUTTON.push(
           <button 
@@ -90,6 +94,17 @@ export default class Header extends Component {
         break;
       case 'write':
 
+        let previewToggle = "preivew";
+        if ( this.props.preview ) {
+          previewToggle = "list";
+        }
+
+        BUTTON.push(
+          <button 
+            key={previewToggle}
+            onClick={this.handleShowPreview.bind(this)}>{previewToggle}
+          </button>
+        );
 
         BUTTON.push(
           <button 

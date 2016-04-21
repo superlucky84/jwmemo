@@ -93,6 +93,7 @@ div.list ul {
 div.list li {
   border-bottom: 1px solid #aaa;
   padding: 10px;
+  cursor: default;
 }
 
 div.split , div.split-shadow {

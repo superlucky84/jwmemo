@@ -36822,23 +36822,24 @@
 	          BUTTON.push(
 	            <button 
 	              key='delete' 
-	              onClick={this.handleDeleteMemo.bind(this)}>Delete
+	              onClick={this.handleDeleteMemo.bind(this)}>DELETE
 	            </button>
 	          );
 	          */
+
 	          BUTTON.push(_react2.default.createElement(
 	            'button',
 	            {
 	              key: 'edit',
 	              onClick: this.handleEditMemo.bind(this) },
-	            'Edit'
+	            'EDIT'
 	          ));
 	          break;
 	        case 'write':
 
-	          var previewToggle = "preivew";
+	          var previewToggle = "PREVIEW";
 	          if (this.props.preview) {
-	            previewToggle = "list";
+	            previewToggle = "LIST";
 	          }
 
 	          BUTTON.push(_react2.default.createElement(
@@ -36854,7 +36855,7 @@
 	            {
 	              key: 'send',
 	              onClick: this.handleWriteMemo.bind(this) },
-	            'Send'
+	            'SEND'
 	          ));
 	          break;
 	      }
@@ -36871,7 +36872,7 @@
 	            'button',
 	            {
 	              onClick: this.handleChangeWritepage.bind(this) },
-	            'Write'
+	            'WRITE'
 	          )
 	        ),
 	        _react2.default.createElement(
@@ -36924,14 +36925,13 @@
 	  _createClass(Footer, [{
 	    key: "render",
 	    value: function render() {
-
 	      return _react2.default.createElement(
 	        "footer",
 	        null,
 	        _react2.default.createElement(
 	          "div",
 	          { className: "right" },
-	          "Copyright 2015"
+	          "©2016 SUPERLUCKY inc"
 	        )
 	      );
 	    }

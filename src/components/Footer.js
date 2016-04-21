@@ -7,11 +7,10 @@ export default class Footer extends Component {
   }
 
   render() {
-
     return (
       <footer>
         <div className="right">
-        Copyright 2015
+        &copy;2016 SUPERLUCKY inc
         </div>
       </footer>
     );

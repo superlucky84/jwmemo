@@ -29,7 +29,6 @@ export default class Header extends Component {
 
   handleWriteMemo() {
 
-
     // Previe 닫음
     if ( this.props.preview ) {
       this.props.dispatch(togglePreview());
@@ -46,7 +45,6 @@ export default class Header extends Component {
       console.log('CREATER');
       this.props.dispatch(writeNote());
     }
-
   }
 
   handleDeleteMemo() {
@@ -81,22 +79,23 @@ export default class Header extends Component {
         BUTTON.push(
           <button 
             key='delete' 
-            onClick={this.handleDeleteMemo.bind(this)}>Delete
+            onClick={this.handleDeleteMemo.bind(this)}>DELETE
           </button>
         );
         */
+
         BUTTON.push(
           <button 
             key='edit'
-            onClick={this.handleEditMemo.bind(this)}>Edit
+            onClick={this.handleEditMemo.bind(this)}>EDIT
           </button>
         );
         break;
       case 'write':
 
-        let previewToggle = "preivew";
+        let previewToggle = "PREVIEW";
         if ( this.props.preview ) {
-          previewToggle = "list";
+          previewToggle = "LIST";
         }
 
         BUTTON.push(
@@ -109,7 +108,7 @@ export default class Header extends Component {
         BUTTON.push(
           <button 
             key='send' 
-            onClick={this.handleWriteMemo.bind(this)}>Send
+            onClick={this.handleWriteMemo.bind(this)}>SEND
           </button>
         );
         break;
@@ -123,7 +122,7 @@ export default class Header extends Component {
         <div className="left">
           <button 
             onClick={this.handleChangeWritepage.bind(this)}>
-            Write
+            WRITE
           </button>
         </div>
         <div className="right">

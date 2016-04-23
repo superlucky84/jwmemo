@@ -6,10 +6,9 @@ import {writeNote, editNote, deleteNote ,updateForm, togglePreview} from '../act
 
 export default class Header extends Component {
 
-  constructor(props,children) {
+  constructor(props) {
     super(props);
     console.log('header_props');
-    console.log(this.props);
     this.noteId = null;
   }
 
@@ -86,8 +85,16 @@ export default class Header extends Component {
 
         BUTTON.push(
           <button 
+            key='write'
             onClick={this.handleChangeWritepage.bind(this)}>
             WRITE
+          </button>
+        );
+
+        BUTTON.push(
+          <button 
+            key='edit'
+            onClick={this.handleEditMemo.bind(this)}>EDIT
           </button>
         );
 
@@ -98,12 +105,6 @@ export default class Header extends Component {
           </button>
         );
 
-        BUTTON.push(
-          <button 
-            key='edit'
-            onClick={this.handleEditMemo.bind(this)}>EDIT
-          </button>
-        );
         break;
       case 'write':
 

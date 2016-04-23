@@ -36749,13 +36749,12 @@
 	var Header = function (_Component) {
 	  _inherits(Header, _Component);
 
-	  function Header(props, children) {
+	  function Header(props) {
 	    _classCallCheck(this, Header);
 
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Header).call(this, props));
 
 	    console.log('header_props');
-	    console.log(_this.props);
 	    _this.noteId = null;
 	    return _this;
 	  }
@@ -36841,8 +36840,17 @@
 	          BUTTON.push(_react2.default.createElement(
 	            'button',
 	            {
+	              key: 'write',
 	              onClick: this.handleChangeWritepage.bind(this) },
 	            'WRITE'
+	          ));
+
+	          BUTTON.push(_react2.default.createElement(
+	            'button',
+	            {
+	              key: 'edit',
+	              onClick: this.handleEditMemo.bind(this) },
+	            'EDIT'
 	          ));
 
 	          BUTTON.push(_react2.default.createElement(
@@ -36853,13 +36861,6 @@
 	            'DELETE'
 	          ));
 
-	          BUTTON.push(_react2.default.createElement(
-	            'button',
-	            {
-	              key: 'edit',
-	              onClick: this.handleEditMemo.bind(this) },
-	            'EDIT'
-	          ));
 	          break;
 	        case 'write':
 
@@ -37105,6 +37106,13 @@
 	    value: function componentDidMount() {
 	      if (this.props.routeParams && this.props.routeParams.id) {
 	        this.props.dispatch((0, _jnote.getOne)(this.props.routeParams.id));
+	      }
+	    }
+	  }, {
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps(nextprops) {
+	      if (nextprops.routeParams && nextprops.routeParams.id) {
+	        nextprops.dispatch((0, _jnote.getOne)(nextprops.routeParams.id));
 	      }
 	    }
 	  }, {

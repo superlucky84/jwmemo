@@ -8,9 +8,15 @@ export default class Empty extends Component {
   }
 
   render() {
+    let splitStyle = null;
+    if (this.props.realleft) {
+      splitStyle = {
+        left: "calc("+this.props.realleft+"% + 2px)"
+      }
+    }
 
     return (
-      <div className="view">Empty</div>
+      <div className="view" style={splitStyle}>Empty</div>
     );
   }
 }

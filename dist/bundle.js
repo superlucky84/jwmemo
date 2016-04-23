@@ -38508,10 +38508,16 @@
 	  _createClass(Empty, [{
 	    key: "render",
 	    value: function render() {
+	      var splitStyle = null;
+	      if (this.props.realleft) {
+	        splitStyle = {
+	          left: "calc(" + this.props.realleft + "% + 2px)"
+	        };
+	      }
 
 	      return _react2.default.createElement(
 	        "div",
-	        { className: "view" },
+	        { className: "view", style: splitStyle },
 	        "Empty"
 	      );
 	    }

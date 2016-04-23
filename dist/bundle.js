@@ -36545,6 +36545,8 @@
 	  value: true
 	});
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _react = __webpack_require__(1);
@@ -36592,9 +36594,6 @@
 
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(App).call(this, props));
 
-	    console.log('CHILDREN');
-	    console.log(_this.props);
-
 	    _this.state = {
 	      downstate: false,
 	      shodowleft: null,
@@ -36619,16 +36618,10 @@
 	  }, {
 	    key: 'handleMouseUp',
 	    value: function handleMouseUp(e) {
-	      console.log('up');
+
 	      if (this.state.downstate) {
-	        console.log('E: ', e);
-
-	        console.log(document.getElementById('container'));
-
-	        this.setState({
-	          downstate: false,
-	          realleft: { left: e.pageX }
-	        });
+	        var realleft = Math.round(e.pageX / $('#container').width() * 100);
+	        this.changeShadowLeft(realleft);
 	      }
 	    }
 	  }, {
@@ -36640,12 +36633,20 @@
 	  }, {
 	    key: 'handleMouseMove',
 	    value: function handleMouseMove(e) {
-	      console.log('move');
 	      if (this.state.downstate) {
+	        console.log('move');
 	        this.setState({
-	          shodowleft: { left: e.pageX }
+	          shadowleft: { left: e.pageX }
 	        });
 	      }
+	    }
+	  }, {
+	    key: 'changeShadowLeft',
+	    value: function changeShadowLeft(realleft) {
+	      this.setState({
+	        downstate: false,
+	        realleft: realleft
+	      });
 	    }
 	  }, {
 	    key: 'render',
@@ -36655,10 +36656,19 @@
 	      //<Link to="/view">View</Link>
 	      //<Link to="/">Home</Link>
 
+	      var realleft = this.state.realleft;
+	      var splitStyle = {
+	        left: realleft + "%"
+	      };
+
 	      var SPLITSHADOW = null;
 	      if (this.state.downstate) {
-	        SPLITSHADOW = _react2.default.createElement('div', { className: 'split-shadow', style: this.state.shodowleft });
+	        SPLITSHADOW = _react2.default.createElement('div', { className: 'split-shadow', style: this.state.shadowleft });
 	      }
+
+	      var CHILDREN = _react2.default.cloneElement(this.props.children, {
+	        realleft: realleft
+	      });
 
 	      return _react2.default.createElement(
 	        'div',
@@ -36670,19 +36680,19 @@
 	        }),
 	        _react2.default.createElement(
 	          'div',
-	          { id: 'container'
-	            //onMouseMove={this.handleMouseMove.bind(this,event)}
-	            //onMouseUp={this.handleMouseUp.bind(this,event)}
-	            //onMouseLeave={this.handleMouseLeave.bind(this)}
+	          { id: 'container',
+	            onMouseMove: this.handleMouseMove.bind(this, event),
+	            onMouseUp: this.handleMouseUp.bind(this, event),
+	            onMouseLeave: this.handleMouseLeave.bind(this)
 	          },
-	          this.props.preview ? _react2.default.createElement(_View2.default, { viewType: 'preview' }) : _react2.default.createElement(_List2.default, this.props),
+	          this.props.preview ? _react2.default.createElement(_View2.default, { viewType: 'preview', realleft: this.state.realleft }) : _react2.default.createElement(_List2.default, _extends({}, this.props, { realleft: this.state.realleft })),
 	          _react2.default.createElement('div', {
 	            onMouseDown: this.handleMouseDown.bind(this),
 	            className: 'split',
-	            style: this.state.realleft
+	            style: splitStyle
 	          }),
 	          SPLITSHADOW,
-	          this.props.children
+	          CHILDREN
 	        ),
 	        _react2.default.createElement(_Footer2.default, null)
 	      );
@@ -36996,9 +37006,17 @@
 	    value: function render() {
 	      var _this2 = this;
 
+	      var splitStyle = null;
+	      if (this.props.realleft) {
+	        var realright = 100 - this.props.realleft;
+	        splitStyle = {
+	          right: realright + "%"
+	        };
+	      }
+
 	      return _react2.default.createElement(
 	        'div',
-	        { className: 'list' },
+	        { className: 'list', style: splitStyle },
 	        _react2.default.createElement(
 	          'ul',
 	          null,
@@ -37060,10 +37078,7 @@
 	  function View(props) {
 	    _classCallCheck(this, View);
 
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(View).call(this, props));
-
-	    console.log('a');
-	    return _this;
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(View).call(this, props));
 	  }
 
 	  _createClass(View, [{
@@ -37090,16 +37105,35 @@
 
 	      var note = "";
 	      var classname = '';
+	      var splitStyle = null;
 
 	      if (this.props.viewType == 'preview') {
+
 	        note = (0, _marked2.default)(this.props.previewNote.toString(), { sanitize: false });
 	        classname = 'preview markdown-body';
+
+	        if (this.props.realleft) {
+	          var realright = 100 - this.props.realleft;
+	          splitStyle = {
+	            right: realright + "%"
+	          };
+	        }
 	      } else {
+
 	        note = (0, _marked2.default)(this.props.note.toString(), { sanitize: false });
 	        classname = 'view markdown-body';
+
+	        if (this.props.realleft) {
+	          splitStyle = {
+	            left: "calc(" + this.props.realleft + "% + 2px)"
+	          };
+	        }
 	      }
 
-	      return _react2.default.createElement('div', { className: classname, dangerouslySetInnerHTML: { __html: note } });
+	      return _react2.default.createElement('div', {
+	        style: splitStyle,
+	        className: classname,
+	        dangerouslySetInnerHTML: { __html: note } });
 	    }
 	  }]);
 
@@ -38523,12 +38557,16 @@
 	    key: 'render',
 	    value: function render() {
 
-	      console.log("this.propsJJJJJJJJJJJ");
-	      console.log(this.props);
+	      var splitStyle = null;
+	      if (this.props.realleft) {
+	        splitStyle = {
+	          left: "calc(" + this.props.realleft + "% + 2px)"
+	        };
+	      }
 
 	      return _react2.default.createElement(
 	        'div',
-	        { className: 'write' },
+	        { className: 'write', style: splitStyle },
 	        _react2.default.createElement('input', { type: 'text',
 	          placeholder: 'Title',
 	          onChange: this.changeTitle.bind(this),

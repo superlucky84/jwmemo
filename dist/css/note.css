@@ -81,7 +81,7 @@ div.list, div.preview {
 }
 
 div.list {
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 div.list ul {
@@ -104,7 +104,8 @@ div.split , div.split-shadow {
   cursor: col-resize;
 }
 div.split-shadow {
-  border-color: red;
+  border-color: black;
+  z-index: 99;
 }
 
 div.view, div.write {
@@ -118,7 +119,7 @@ div.view, div.write, div.preview {
 
 div.view, div.preview {
   /*border: 1px solid blue;*/
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 div.write input[type=text] {

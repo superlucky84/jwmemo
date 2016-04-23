@@ -20,8 +20,17 @@ export default class List extends Component {
 
   render() {
 
+
+    let splitStyle = null;
+    if(this.props.realleft){
+      let realright = 100 - this.props.realleft;
+      splitStyle = {
+        right: realright+"%"
+      };
+    }
+
     return (
-      <div className="list">
+      <div className="list" style={splitStyle}>
         <ul>
           {
           this.props.lists.map((item,idx)=>(

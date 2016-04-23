@@ -16,8 +16,6 @@ export default class App extends Component {
 
   constructor(props,children) {
     super(props);
-    console.log('CHILDREN');
-    console.log(this.props);
 
     this.state = {
       downstate: false,
@@ -38,16 +36,10 @@ export default class App extends Component {
   }
 
   handleMouseUp(e) {
-    console.log('up');
+
     if (this.state.downstate) {
-      console.log('E: ',e);
-
-      console.log( document.getElementById('container') );
-
-      this.setState({ 
-        downstate: false,
-        realleft: { left: e.pageX }
-      });
+      let realleft =  Math.round((e.pageX / $('#container').width() ) * 100);
+      this.changeShadowLeft(realleft);
     }
   }
 
@@ -57,12 +49,19 @@ export default class App extends Component {
   }
 
   handleMouseMove(e) {
-    console.log('move');
     if (this.state.downstate) {
+      console.log('move');
       this.setState({
-        shodowleft: { left: e.pageX }
+        shadowleft: { left: e.pageX }
       });
     }
+  }
+
+  changeShadowLeft(realleft) {
+    this.setState({ 
+      downstate: false,
+      realleft
+    });
   }
 
   render() {
@@ -71,10 +70,20 @@ export default class App extends Component {
     //<Link to="/view">View</Link>
     //<Link to="/">Home</Link>
 
+
+    let realleft = this.state.realleft;
+    let splitStyle = {
+      left: realleft+"%"
+    };
+
     let SPLITSHADOW =  null;
     if (this.state.downstate) {
-      SPLITSHADOW = <div className="split-shadow" style={this.state.shodowleft}></div>;
+      SPLITSHADOW = <div className="split-shadow" style={this.state.shadowleft}></div>;
     }
+
+    let CHILDREN = React.cloneElement(this.props.children, {
+      realleft
+    });
 
     return (
         <div id="app-container">
@@ -84,23 +93,23 @@ export default class App extends Component {
             preview={this.props.preview}
           />
           <div id="container"
-            //onMouseMove={this.handleMouseMove.bind(this,event)}
-            //onMouseUp={this.handleMouseUp.bind(this,event)}
-            //onMouseLeave={this.handleMouseLeave.bind(this)}
+            onMouseMove={this.handleMouseMove.bind(this,event)}
+            onMouseUp={this.handleMouseUp.bind(this,event)}
+            onMouseLeave={this.handleMouseLeave.bind(this)}
           >
             {
               ( this.props.preview )
-              ? <View viewType="preview" />
-              : <List {...this.props} />
+              ? <View viewType="preview" realleft={this.state.realleft} />
+              : <List {...this.props} realleft={this.state.realleft} />
             }
             <div 
               onMouseDown={this.handleMouseDown.bind(this)} 
               className="split"
-              style={this.state.realleft}
+              style={splitStyle}
             >
             </div>
             {SPLITSHADOW}
-            {this.props.children}
+            {CHILDREN}
           </div>
           <Footer />
         </div>

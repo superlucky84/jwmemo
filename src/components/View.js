@@ -10,9 +10,7 @@ export default class View extends Component {
   constructor(props) {
     super(props);
 
-    console.log('a');
-  }
-
+  } 
   componentDidMount() {
     if (this.props.routeParams && this.props.routeParams.id) {
       this.props.dispatch(getOne(this.props.routeParams.id));
@@ -34,18 +32,37 @@ export default class View extends Component {
 
     let note = "";
     let classname = '';
+    let splitStyle = null;
 
     if ( this.props.viewType == 'preview' ) {
+
       note = marked(this.props.previewNote.toString(), {sanitize: false});
       classname = 'preview markdown-body';
+
+      if(this.props.realleft){
+        let realright = 100 - this.props.realleft;
+        splitStyle = {
+          right: realright+"%"
+        };
+      }
     }
     else {
+
       note = marked(this.props.note.toString(), {sanitize: false});
       classname = 'view markdown-body';
+
+      if (this.props.realleft) {
+        splitStyle = {
+          left: "calc("+this.props.realleft+"% + 2px)"
+        }
+      }
     }
 
     return (
-      <div className={classname} dangerouslySetInnerHTML={{__html: note}} />
+      <div 
+        style={splitStyle}
+        className={classname} 
+        dangerouslySetInnerHTML={{__html: note}} />
     );
   }
 }

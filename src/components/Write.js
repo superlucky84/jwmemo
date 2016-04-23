@@ -28,11 +28,15 @@ export default class Write extends Component {
 
   render() {
 
-    console.log("this.propsJJJJJJJJJJJ");
-    console.log(this.props);
+    let splitStyle = null;
+    if (this.props.realleft) {
+      splitStyle = {
+        left: "calc("+this.props.realleft+"% + 2px)"
+      }
+    }
 
     return (
-      <div className="write">
+      <div className="write" style={splitStyle}>
         <input type="text" 
           placeholder="Title" 
           onChange={this.changeTitle.bind(this)} 

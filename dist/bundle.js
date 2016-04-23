@@ -36777,6 +36777,16 @@
 	      this.props.dispatch((0, _reactRouterRedux.push)('/write/' + this.noteId));
 	    }
 	  }, {
+	    key: 'handleWriteCancel',
+	    value: function handleWriteCancel() {
+
+	      if (this.noteId) {
+	        this.props.dispatch((0, _reactRouterRedux.push)('/view/' + this.noteId));
+	      } else {
+	        this.props.dispatch((0, _reactRouterRedux.push)('/'));
+	      }
+	    }
+	  }, {
 	    key: 'handleWriteMemo',
 	    value: function handleWriteMemo() {
 
@@ -36828,14 +36838,20 @@
 	      switch (this.viewType) {
 	        case 'view':
 
-	          /*
-	          BUTTON.push(
-	            <button 
-	              key='delete' 
-	              onClick={this.handleDeleteMemo.bind(this)}>DELETE
-	            </button>
-	          );
-	          */
+	          BUTTON.push(_react2.default.createElement(
+	            'button',
+	            {
+	              onClick: this.handleChangeWritepage.bind(this) },
+	            'WRITE'
+	          ));
+
+	          BUTTON.push(_react2.default.createElement(
+	            'button',
+	            {
+	              key: 'delete',
+	              onClick: this.handleDeleteMemo.bind(this) },
+	            'DELETE'
+	          ));
 
 	          BUTTON.push(_react2.default.createElement(
 	            'button',
@@ -36867,6 +36883,14 @@
 	              onClick: this.handleWriteMemo.bind(this) },
 	            'SEND'
 	          ));
+
+	          BUTTON.push(_react2.default.createElement(
+	            'button',
+	            {
+	              key: 'cancel',
+	              onClick: this.handleWriteCancel.bind(this) },
+	            'CANCEL'
+	          ));
 	          break;
 	      }
 	      //BUTTON.push(<button key='login'>LOGIN</button>);
@@ -36878,12 +36902,7 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'left' },
-	          _react2.default.createElement(
-	            'button',
-	            {
-	              onClick: this.handleChangeWritepage.bind(this) },
-	            'WRITE'
-	          )
+	          ' JINWOO '
 	        ),
 	        _react2.default.createElement(
 	          'div',

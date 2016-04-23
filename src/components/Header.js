@@ -26,6 +26,15 @@ export default class Header extends Component {
     this.props.dispatch(updateForm('sync'));
     this.props.dispatch(push('/write/'+this.noteId));
   }
+  handleWriteCancel() {
+
+    if (this.noteId) {
+      this.props.dispatch(push('/view/'+this.noteId));
+    }
+    else {
+      this.props.dispatch(push('/'));
+    }
+  }
 
   handleWriteMemo() {
 
@@ -75,14 +84,19 @@ export default class Header extends Component {
     switch ( this.viewType ) {
       case 'view':
 
-        /*
+        BUTTON.push(
+          <button 
+            onClick={this.handleChangeWritepage.bind(this)}>
+            WRITE
+          </button>
+        );
+
         BUTTON.push(
           <button 
             key='delete' 
             onClick={this.handleDeleteMemo.bind(this)}>DELETE
           </button>
         );
-        */
 
         BUTTON.push(
           <button 
@@ -111,6 +125,13 @@ export default class Header extends Component {
             onClick={this.handleWriteMemo.bind(this)}>SEND
           </button>
         );
+
+        BUTTON.push(
+          <button 
+            key='cancel' 
+            onClick={this.handleWriteCancel.bind(this)}>CANCEL
+          </button>
+        );
         break;
     }
     //BUTTON.push(<button key='login'>LOGIN</button>);
@@ -119,13 +140,9 @@ export default class Header extends Component {
 
     return (
       <header>
-        <div className="left">
-          <button 
-            onClick={this.handleChangeWritepage.bind(this)}>
-            WRITE
-          </button>
-        </div>
+        <div className="left"> JINWOO </div>
         <div className="right">
+
           {BUTTON}
         </div>
       </header>

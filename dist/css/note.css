@@ -22,7 +22,8 @@ header .left {
 header .right {
   right: 10px;
 }
-header button {
+header button,
+#dialog button {
   margin-left: 7px;
   border: 0;
   -webkit-border-radius: 2;
@@ -36,7 +37,8 @@ header button {
   text-decoration: none;
 }
 
-header button:hover {
+header button:hover 
+#dialog button:hover {
   background: #3cb0fd;
   text-decoration: none;
 }
@@ -135,7 +137,70 @@ div.write textarea {
 }
 
 
+.dialog-shadow {
+  position: absolute;
+  z-index: 105;
+  background-color: #232724;
+  display: block;
+  top: -47px;
+  left: 0;
+  right: 0;
+  bottom: -47px;
+  opacity: 0.9;
+}
 
+.dialog-box {
+  position: relative;
+  z-index: 999;
+  width: 38%;
+  max-width: 355px;
+  min-width: 200px;
+  height: 177px;
+  margin: auto;
+  margin-top: 15%;
+  border-radius: 3px;
+  background-color: #fff;
+}
 
+#dialog {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+ 
+#dialog .dialog-box .close{
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 6px;
+  cursor: pointer;
+}
 
+#dialog .dialog-box .button{
+
+  position: absolute;
+  width: 100%;
+  height: 46px;
+  bottom: 0;
+  background-color: oldlace;
+  text-align: right;
+  padding: 10px;
+  
+}
+
+#dialog .dialog-box .message{
+  display: table;
+  width: 100%;
+  height: calc(100% - 47px);
+}
+#dialog .dialog-box .message p{
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  font-weight: bold;
+  padding-top: 22px;
+  font-size: 2em;
+}
 

@@ -14,7 +14,6 @@ export default class List extends Component {
   }
 
   handleChoickList(id) {
-    this.props.dispatch(getOne(id));
     this.props.dispatch(push('/view/'+id));
   }
 

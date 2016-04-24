@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { push } from 'react-router-redux'
 
 /* IMPORT ACTIONS */
-import {writeNote, editNote, deleteNote ,updateForm, togglePreview} from '../actions/jnote'
+import {writeNote, editNote, deleteNote ,updateForm, togglePreview, openDialog} from '../actions/jnote'
 
 export default class Header extends Component {
 
@@ -26,6 +26,11 @@ export default class Header extends Component {
     this.props.dispatch(push('/write/'+this.noteId));
   }
   handleWriteCancel() {
+
+    // Previe 닫음
+    if ( this.props.preview ) {
+      this.props.dispatch(togglePreview());
+    }
 
     if (this.noteId) {
       this.props.dispatch(push('/view/'+this.noteId));
@@ -63,14 +68,20 @@ export default class Header extends Component {
     }
 
     // ACTION
-    this.props.dispatch(deleteNote());
-    this.props.dispatch(push('/'));
+    this.props.dispatch(openDialog('confirm','Really?',{
+      action: 'deleteNote',
+      push: '/'
+    }));
   }
-
 
   handleShowPreview() {
     console.log('handleShowPreview');
     this.props.dispatch(togglePreview());
+  }
+
+  handleOpenDailog() {
+    console.log('dialog');
+    this.props.dispatch(openDialog('confirm','test'));
   }
 
   render() {
@@ -80,16 +91,10 @@ export default class Header extends Component {
     this.viewType = this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/,"$1");
     this.noteId = this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/,"$2");
 
+
     switch ( this.viewType ) {
       case 'view':
 
-        BUTTON.push(
-          <button 
-            key='write'
-            onClick={this.handleChangeWritepage.bind(this)}>
-            WRITE
-          </button>
-        );
 
         BUTTON.push(
           <button 
@@ -102,6 +107,14 @@ export default class Header extends Component {
           <button 
             key='delete' 
             onClick={this.handleDeleteMemo.bind(this)}>DELETE
+          </button>
+        );
+      case '':
+        BUTTON.unshift(
+          <button 
+            key='write'
+            onClick={this.handleChangeWritepage.bind(this)}>
+            WRITE
           </button>
         );
 
@@ -123,7 +136,7 @@ export default class Header extends Component {
         BUTTON.push(
           <button 
             key='send' 
-            onClick={this.handleWriteMemo.bind(this)}>SEND
+            onClick={this.handleWriteMemo.bind(this)}>SAVE
           </button>
         );
 

@@ -19,7 +19,7 @@ export default class View extends Component {
 
 
   componentWillReceiveProps(nextprops) {
-    if (nextprops.routeParams && nextprops.routeParams.id) {
+    if (nextprops.routeParams && (nextprops.routeParams.id != this.props.params.id)) {
       nextprops.dispatch(getOne(nextprops.routeParams.id));
     }
   }

@@ -76,7 +76,7 @@
 
 	var _App2 = _interopRequireDefault(_App);
 
-	var _Empty = __webpack_require__(247);
+	var _Empty = __webpack_require__(248);
 
 	var _Empty2 = _interopRequireDefault(_Empty);
 
@@ -84,7 +84,7 @@
 
 	var _View2 = _interopRequireDefault(_View);
 
-	var _Write = __webpack_require__(248);
+	var _Write = __webpack_require__(249);
 
 	var _Write2 = _interopRequireDefault(_Write);
 
@@ -26409,6 +26409,11 @@
 	  },
 	  preview: {
 	    opened: false
+	  },
+	  dialog: {
+	    opened: false,
+	    type: 'alert',
+	    message: ''
 	  }
 	};
 
@@ -26421,7 +26426,37 @@
 
 	  switch (action.type) {
 
-	    /* 글쓰기 */
+	    /* 다이얼로그 열기 */
+	    case 'OPEN_DIALOG':
+
+	      new_state = Object.assign({}, state, {
+	        dialog: {
+	          opened: true,
+	          type: action.dialogtype,
+	          message: action.message,
+	          successaction: action.successaction,
+	          failAction: action.failaction
+	        }
+	      });
+
+	      return new_state;
+	      break;
+
+	    /* 다이얼로그 닫기 */
+	    case 'CLOSE_DIALOG':
+
+	      new_state = Object.assign({}, state, {
+	        dialog: {
+	          opened: false,
+	          type: ''
+	        }
+	      });
+
+	      return new_state;
+
+	      break;
+
+	    /* 프리뷰모드 체인지 */
 	    case 'TOGGLE_PREVIEW':
 
 	      var opened = true;
@@ -36463,6 +36498,8 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.openDialog = openDialog;
+	exports.closeDialog = closeDialog;
 	exports.togglePreview = togglePreview;
 	exports.writeNote = writeNote;
 	exports.editNote = editNote;
@@ -36471,6 +36508,27 @@
 	exports.getOne = getOne;
 	exports.updateForm = updateForm;
 	//import { INCREASE, DECREASE } from '../constants'
+
+	/**
+	 * TOGGLE_PREVIEW
+	 */
+	function openDialog(dialogtype, message) {
+	  var successaction = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+	  var failaction = arguments.length <= 3 || arguments[3] === undefined ? null : arguments[3];
+
+	  return {
+	    type: 'OPEN_DIALOG',
+	    dialogtype: dialogtype,
+	    message: message,
+	    successaction: successaction,
+	    failaction: failaction
+	  };
+	}
+	function closeDialog() {
+	  return {
+	    type: 'CLOSE_DIALOG'
+	  };
+	}
 
 	/**
 	 * TOGGLE_PREVIEW
@@ -36573,6 +36631,10 @@
 
 	var _View2 = _interopRequireDefault(_View);
 
+	var _Dialog = __webpack_require__(247);
+
+	var _Dialog2 = _interopRequireDefault(_Dialog);
+
 	var _jnote = __webpack_require__(240);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -36670,6 +36732,11 @@
 	        realleft: realleft
 	      });
 
+	      var DIALOG = null;
+	      if (this.props.dialog.opened) {
+	        DIALOG = _react2.default.createElement(_Dialog2.default, this.props);
+	      }
+
 	      return _react2.default.createElement(
 	        'div',
 	        { id: 'app-container' },
@@ -36685,6 +36752,7 @@
 	            onMouseUp: this.handleMouseUp.bind(this, event),
 	            onMouseLeave: this.handleMouseLeave.bind(this)
 	          },
+	          DIALOG,
 	          this.props.preview ? _react2.default.createElement(_View2.default, { viewType: 'preview', realleft: this.state.realleft }) : _react2.default.createElement(_List2.default, _extends({}, this.props, { realleft: this.state.realleft })),
 	          _react2.default.createElement('div', {
 	            onMouseDown: this.handleMouseDown.bind(this),
@@ -36711,7 +36779,8 @@
 	exports.default = (0, _reactRedux.connect)(function (state) {
 	  return {
 	    lists: state.default.lists,
-	    preview: state.default.preview.opened
+	    preview: state.default.preview.opened,
+	    dialog: state.default.dialog
 	  };
 	})(App);
 
@@ -36779,6 +36848,11 @@
 	    key: 'handleWriteCancel',
 	    value: function handleWriteCancel() {
 
+	      // Previe 닫음
+	      if (this.props.preview) {
+	        this.props.dispatch((0, _jnote.togglePreview)());
+	      }
+
 	      if (this.noteId) {
 	        this.props.dispatch((0, _reactRouterRedux.push)('/view/' + this.noteId));
 	      } else {
@@ -36816,14 +36890,22 @@
 	      }
 
 	      // ACTION
-	      this.props.dispatch((0, _jnote.deleteNote)());
-	      this.props.dispatch((0, _reactRouterRedux.push)('/'));
+	      this.props.dispatch((0, _jnote.openDialog)('confirm', 'Really?', {
+	        action: 'deleteNote',
+	        push: '/'
+	      }));
 	    }
 	  }, {
 	    key: 'handleShowPreview',
 	    value: function handleShowPreview() {
 	      console.log('handleShowPreview');
 	      this.props.dispatch((0, _jnote.togglePreview)());
+	    }
+	  }, {
+	    key: 'handleOpenDailog',
+	    value: function handleOpenDailog() {
+	      console.log('dialog');
+	      this.props.dispatch((0, _jnote.openDialog)('confirm', 'test'));
 	    }
 	  }, {
 	    key: 'render',
@@ -36840,14 +36922,6 @@
 	          BUTTON.push(_react2.default.createElement(
 	            'button',
 	            {
-	              key: 'write',
-	              onClick: this.handleChangeWritepage.bind(this) },
-	            'WRITE'
-	          ));
-
-	          BUTTON.push(_react2.default.createElement(
-	            'button',
-	            {
 	              key: 'edit',
 	              onClick: this.handleEditMemo.bind(this) },
 	            'EDIT'
@@ -36859,6 +36933,14 @@
 	              key: 'delete',
 	              onClick: this.handleDeleteMemo.bind(this) },
 	            'DELETE'
+	          ));
+	        case '':
+	          BUTTON.unshift(_react2.default.createElement(
+	            'button',
+	            {
+	              key: 'write',
+	              onClick: this.handleChangeWritepage.bind(this) },
+	            'WRITE'
 	          ));
 
 	          break;
@@ -36882,7 +36964,7 @@
 	            {
 	              key: 'send',
 	              onClick: this.handleWriteMemo.bind(this) },
-	            'SEND'
+	            'SAVE'
 	          ));
 
 	          BUTTON.push(_react2.default.createElement(
@@ -37018,7 +37100,6 @@
 	  }, {
 	    key: 'handleChoickList',
 	    value: function handleChoickList(id) {
-	      this.props.dispatch((0, _jnote.getOne)(id));
 	      this.props.dispatch((0, _reactRouterRedux.push)('/view/' + id));
 	    }
 	  }, {
@@ -37111,7 +37192,7 @@
 	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextprops) {
-	      if (nextprops.routeParams && nextprops.routeParams.id) {
+	      if (nextprops.routeParams && nextprops.routeParams.id != this.props.params.id) {
 	        nextprops.dispatch((0, _jnote.getOne)(nextprops.routeParams.id));
 	      }
 	    }
@@ -38476,6 +38557,117 @@
 /* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouterRedux = __webpack_require__(237);
+
+	var _jnote = __webpack_require__(240);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	/* IMPORT ACTIONS */
+
+
+	var Dialog = function (_Component) {
+	  _inherits(Dialog, _Component);
+
+	  function Dialog(props) {
+	    _classCallCheck(this, Dialog);
+
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Dialog).call(this, props));
+
+	    _this['deleteNote'] = _jnote.deleteNote;
+	    return _this;
+	  }
+
+	  _createClass(Dialog, [{
+	    key: 'handleDialogClose',
+	    value: function handleDialogClose() {
+	      this.props.dispatch((0, _jnote.closeDialog)());
+	    }
+	  }, {
+	    key: 'handleDialogCancel',
+	    value: function handleDialogCancel() {
+	      this.props.dispatch((0, _jnote.closeDialog)());
+	    }
+	  }, {
+	    key: 'handleDialogSuccess',
+	    value: function handleDialogSuccess() {
+	      var successAction = this.props.dialog.successaction.action;
+	      var successPush = this.props.dialog.successaction.push;
+
+	      this.props.dispatch(this[successAction]());
+	      this.props.dispatch((0, _reactRouterRedux.push)(successPush));
+	      this.handleDialogClose();
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { id: 'dialog' },
+	        _react2.default.createElement('div', { className: 'dialog-shadow' }),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'dialog-box' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'close', onClick: this.handleDialogClose.bind(this) },
+	            'X'
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'message' },
+	            _react2.default.createElement(
+	              'p',
+	              null,
+	              this.props.dialog.message
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'button' },
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this.handleDialogSuccess.bind(this) },
+	              'Ok.'
+	            ),
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this.handleDialogCancel.bind(this) },
+	              'Cancel.'
+	            )
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return Dialog;
+	}(_react.Component);
+
+	exports.default = Dialog;
+
+/***/ },
+/* 248 */
+/***/ function(module, exports, __webpack_require__) {
+
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
@@ -38529,7 +38721,7 @@
 	exports.default = Empty;
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

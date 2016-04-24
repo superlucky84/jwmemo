@@ -4,12 +4,29 @@
 /**
  * TOGGLE_PREVIEW
  */
+export function openDialog (dialogtype, message, successaction=null, failaction=null) {
+  return {
+    type: 'OPEN_DIALOG',
+    dialogtype,
+    message,
+    successaction,
+    failaction
+  }
+}
+export function closeDialog () {
+  return {
+    type: 'CLOSE_DIALOG',
+  }
+}
+
+/**
+ * TOGGLE_PREVIEW
+ */
 export function togglePreview () {
   return {
     type: 'TOGGLE_PREVIEW'
   }
 }
-
 
 /**
  * ADD NOTE

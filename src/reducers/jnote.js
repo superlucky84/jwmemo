@@ -15,6 +15,11 @@ const initialStateList = {
   },
   preview: {
     opened: false
+  },
+  dialog: {
+    opened: false,
+    type: 'alert',
+    message: ''
   }
 }
 
@@ -24,7 +29,37 @@ export default function jnotereducer(state = initialStateList, action) {
 
   switch (action.type) {
 
-    /* 글쓰기 */
+    /* 다이얼로그 열기 */
+    case 'OPEN_DIALOG':
+
+      new_state = Object.assign({},state,{
+        dialog: {
+          opened: true,
+          type: action.dialogtype,
+          message: action.message,
+          successaction: action.successaction,
+          failAction: action.failaction
+        }
+      });
+
+      return new_state;
+      break;
+
+    /* 다이얼로그 닫기 */
+    case 'CLOSE_DIALOG':
+
+      new_state = Object.assign({},state,{
+        dialog: {
+          opened: false,
+          type: ''
+        }
+      });
+
+      return new_state;
+
+      break;
+
+    /* 프리뷰모드 체인지 */
     case 'TOGGLE_PREVIEW':
 
       let opened = true;

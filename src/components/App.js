@@ -6,6 +6,7 @@ import Header from './Header'
 import Footer from './Footer'
 import List from './List'
 import View from './View'
+import Dialog from './Dialog'
 
 
 /* IMPORT ACTIONS */
@@ -85,6 +86,11 @@ export default class App extends Component {
       realleft
     });
 
+    let DIALOG = null;
+    if ( this.props.dialog.opened ) {
+      DIALOG = <Dialog {...this.props} />;
+    }
+
     return (
         <div id="app-container">
           <Header 
@@ -97,6 +103,7 @@ export default class App extends Component {
             onMouseUp={this.handleMouseUp.bind(this,event)}
             onMouseLeave={this.handleMouseLeave.bind(this)}
           >
+            {DIALOG}
             {
               ( this.props.preview )
               ? <View viewType="preview" realleft={this.state.realleft} />
@@ -124,6 +131,7 @@ export default class App extends Component {
 export default connect(function (state) {
     return {
       lists: state.default.lists,
-      preview: state.default.preview.opened
+      preview: state.default.preview.opened,
+      dialog: state.default.dialog
     };
 })(App);

@@ -26414,7 +26414,8 @@
 	    opened: false,
 	    type: 'alert',
 	    message: ''
-	  }
+	  },
+	  shortcut: null
 	};
 
 	function jnotereducer() {
@@ -26425,6 +26426,15 @@
 	  var new_state = {};
 
 	  switch (action.type) {
+
+	    /* 쇼트컷 체인지 */
+	    case 'SHORTCUT_CHANGE':
+	      new_state = Object.assign({}, state, {
+	        'shortcut': action.command
+	      });
+
+	      return new_state;
+	      break;
 
 	    /* 다이얼로그 열기 */
 	    case 'OPEN_DIALOG':
@@ -36498,6 +36508,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.shortcutChange = shortcutChange;
 	exports.openDialog = openDialog;
 	exports.closeDialog = closeDialog;
 	exports.togglePreview = togglePreview;
@@ -36510,7 +36521,17 @@
 	//import { INCREASE, DECREASE } from '../constants'
 
 	/**
-	 * TOGGLE_PREVIEW
+	 * SHORTCUT_CHANGE
+	 */
+	function shortcutChange(command) {
+	  return {
+	    type: 'SHORTCUT_CHANGE',
+	    command: command
+	  };
+	}
+
+	/**
+	 * OPEN_DIALOG
 	 */
 	function openDialog(dialogtype, message) {
 	  var successaction = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
@@ -36524,6 +36545,11 @@
 	    failaction: failaction
 	  };
 	}
+
+	/**
+	 * CLOSE_DIALOG
+	 */
+
 	function closeDialog() {
 	  return {
 	    type: 'CLOSE_DIALOG'
@@ -36662,6 +36688,27 @@
 	      realleft: null
 	    };
 
+	    _this.timeoutState = null;
+	    document.querySelector('body').addEventListener('keypress', function (event) {
+	      console.log(String.fromCharCode(event.keyCode));
+
+	      var shortcut = _this.props.shortcut;
+	      if (_this.props.shortcut == null) {
+	        shortcut = "";
+	      }
+	      _this.props.dispatch((0, _jnote.shortcutChange)(shortcut + String.fromCharCode(event.keyCode)));
+
+	      if (String(shortcut + String.fromCharCode(event.keyCode)).match(/show me the money/g)) {
+	        alert('SUCCESS');
+	      }
+
+	      clearTimeout(_this.timeoutState);
+	      _this.timeoutState = setTimeout(function () {
+	        _this.props.dispatch((0, _jnote.shortcutChange)(''));
+	        _this.timeoutState = null;
+	      }, 2000);
+	    });
+
 	    return _this;
 	  }
 
@@ -36711,6 +36758,11 @@
 	      });
 	    }
 	  }, {
+	    key: 'handleKeyUp',
+	    value: function handleKeyUp(event) {
+	      console.log('KEYUPEVENT:', event);
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 
@@ -36737,6 +36789,7 @@
 	        DIALOG = _react2.default.createElement(_Dialog2.default, this.props);
 	      }
 
+	      //onKeyUp={this.handleKeyUp.bind(this,event)}
 	      return _react2.default.createElement(
 	        'div',
 	        { id: 'app-container' },
@@ -36762,7 +36815,7 @@
 	          SPLITSHADOW,
 	          CHILDREN
 	        ),
-	        _react2.default.createElement(_Footer2.default, null)
+	        _react2.default.createElement(_Footer2.default, { shortcut: this.props.shortcut })
 	      );
 	    }
 	  }]);
@@ -36780,7 +36833,8 @@
 	  return {
 	    lists: state.default.lists,
 	    preview: state.default.preview.opened,
-	    dialog: state.default.dialog
+	    dialog: state.default.dialog,
+	    shortcut: state.default.shortcut
 	  };
 	})(App);
 
@@ -37005,7 +37059,7 @@
 /* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -37028,22 +37082,30 @@
 	var Footer = function (_Component) {
 	  _inherits(Footer, _Component);
 
-	  function Footer(props, children) {
+	  function Footer(props) {
 	    _classCallCheck(this, Footer);
 
 	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Footer).call(this, props));
 	  }
 
 	  _createClass(Footer, [{
-	    key: "render",
+	    key: 'render',
 	    value: function render() {
+
+	      console.log('SHORTCUT: ', this.props.shortcut);
+
 	      return _react2.default.createElement(
-	        "footer",
+	        'footer',
 	        null,
+	        this.props.shortcut ? _react2.default.createElement(
+	          'div',
+	          { className: 'left' },
+	          this.props.shortcut
+	        ) : null,
 	        _react2.default.createElement(
-	          "div",
-	          { className: "right" },
-	          "©2016 SUPERLUCKY inc"
+	          'div',
+	          { className: 'right' },
+	          '©2016 SUPERLUCKY inc'
 	        )
 	      );
 	    }

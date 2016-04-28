@@ -10,7 +10,7 @@ import Dialog from './Dialog'
 
 
 /* IMPORT ACTIONS */
-import {getList} from '../actions/jnote'
+import {getList, shortcutChange} from '../actions/jnote'
 
 
 export default class App extends Component {
@@ -23,6 +23,28 @@ export default class App extends Component {
       shodowleft: null,
       realleft: null
     }
+
+    this.timeoutState = null;
+    document.querySelector('body').addEventListener('keypress', (event) => {
+      console.log(String.fromCharCode(event.keyCode));
+
+      let shortcut = this.props.shortcut;
+      if (this.props.shortcut == null){
+        shortcut = "";
+      }
+      this.props.dispatch(shortcutChange(shortcut+String.fromCharCode(event.keyCode)));
+
+      if (String(shortcut+String.fromCharCode(event.keyCode)).match(/show me the money/g)) {
+        alert('SUCCESS');
+      }
+
+      clearTimeout(this.timeoutState);
+      this.timeoutState = setTimeout(() => {
+          this.props.dispatch(shortcutChange(''));
+          this.timeoutState = null;
+      },2000);
+
+    });
 
   }
 
@@ -64,6 +86,9 @@ export default class App extends Component {
       realleft
     });
   }
+  handleKeyUp(event) {
+    console.log('KEYUPEVENT:',event);
+  }
 
   render() {
 
@@ -91,6 +116,7 @@ export default class App extends Component {
       DIALOG = <Dialog {...this.props} />;
     }
 
+     //onKeyUp={this.handleKeyUp.bind(this,event)}
     return (
         <div id="app-container">
           <Header 
@@ -118,7 +144,7 @@ export default class App extends Component {
             {SPLITSHADOW}
             {CHILDREN}
           </div>
-          <Footer />
+          <Footer shortcut={this.props.shortcut} />
         </div>
     );
 
@@ -132,6 +158,7 @@ export default connect(function (state) {
     return {
       lists: state.default.lists,
       preview: state.default.preview.opened,
-      dialog: state.default.dialog
+      dialog: state.default.dialog,
+      shortcut: state.default.shortcut
     };
 })(App);

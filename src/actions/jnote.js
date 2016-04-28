@@ -2,7 +2,17 @@
 
 
 /**
- * TOGGLE_PREVIEW
+ * SHORTCUT_CHANGE
+ */
+export function shortcutChange (command) {
+  return {
+    type: 'SHORTCUT_CHANGE',
+    command
+  }
+}
+
+/**
+ * OPEN_DIALOG
  */
 export function openDialog (dialogtype, message, successaction=null, failaction=null) {
   return {
@@ -13,6 +23,11 @@ export function openDialog (dialogtype, message, successaction=null, failaction=
     failaction
   }
 }
+
+/**
+ * CLOSE_DIALOG
+ */
+
 export function closeDialog () {
   return {
     type: 'CLOSE_DIALOG',

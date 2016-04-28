@@ -20,7 +20,8 @@ const initialStateList = {
     opened: false,
     type: 'alert',
     message: ''
-  }
+  },
+  shortcut: null
 }
 
 export default function jnotereducer(state = initialStateList, action) {
@@ -28,6 +29,15 @@ export default function jnotereducer(state = initialStateList, action) {
   let new_state = {};
 
   switch (action.type) {
+
+    /* 쇼트컷 체인지 */
+    case 'SHORTCUT_CHANGE':
+      new_state = Object.assign({},state,{
+        'shortcut': action.command
+      });
+
+      return new_state;
+      break;
 
     /* 다이얼로그 열기 */
     case 'OPEN_DIALOG':

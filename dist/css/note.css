@@ -64,11 +64,10 @@ footer .right {
 footer .left {
 
   float: left;
-  border: 1px solid #aaaaaa;
+  border: 1px solid #3498db;
   height: 17px;
   line-height: 1;
   margin-top: 13px;
-
 }
 
 

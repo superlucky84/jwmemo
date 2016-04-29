@@ -14,7 +14,7 @@ export default class Footer extends Component {
       <footer>
         {
           ( this.props.shortcut )
-          ? <div className="left">{this.props.shortcut}</div>
+          ? <div className="left">{this.props.shortcut.replace(//g,'^W')}</div>
           : null
         }
         <div className="right">

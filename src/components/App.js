@@ -24,25 +24,41 @@ export default class App extends Component {
       realleft: null
     }
 
+    // SHORTCUT EVENT
     this.timeoutState = null;
     document.querySelector('body').addEventListener('keypress', (event) => {
-      console.log(String.fromCharCode(event.keyCode));
+
+      if( ['TEXTAREA','INPUT'].indexOf(event.target.tagName) > -1 ) { return; }
 
       let shortcut = this.props.shortcut;
       if (this.props.shortcut == null){
         shortcut = "";
       }
-      this.props.dispatch(shortcutChange(shortcut+String.fromCharCode(event.keyCode)));
 
-      if (String(shortcut+String.fromCharCode(event.keyCode)).match(/show me the money/g)) {
+      console.log(event.keyCode);
+
+      this.props.dispatch(shortcutChange(shortcut+String.fromCharCode(event.keyCode)));
+      let matchString = String(shortcut+String.fromCharCode(event.keyCode));
+
+
+      if ( matchString.match(/=/g) ) {
+        this.changeShadowLeft(50);
+      }
+      else if ( matchString.match(/^:show me the money/g) ) {
         alert('SUCCESS');
       }
 
       clearTimeout(this.timeoutState);
       this.timeoutState = setTimeout(() => {
-          this.props.dispatch(shortcutChange(''));
-          this.timeoutState = null;
-      },2000);
+
+        if ( matchString.match(/[0-9]+$/g) ) {
+          let match = /([0-9]+)$/g.exec(matchString);
+          this.changeShadowLeft(parseInt(match[1]));
+        }
+
+        this.props.dispatch(shortcutChange(''));
+        this.timeoutState = null;
+      },777);
 
     });
 
@@ -79,7 +95,6 @@ export default class App extends Component {
       });
     }
   }
-
   changeShadowLeft(realleft) {
     this.setState({ 
       downstate: false,

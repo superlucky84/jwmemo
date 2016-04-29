@@ -36688,25 +36688,41 @@
 	      realleft: null
 	    };
 
+	    // SHORTCUT EVENT
 	    _this.timeoutState = null;
 	    document.querySelector('body').addEventListener('keypress', function (event) {
-	      console.log(String.fromCharCode(event.keyCode));
+
+	      if (['TEXTAREA', 'INPUT'].indexOf(event.target.tagName) > -1) {
+	        return;
+	      }
 
 	      var shortcut = _this.props.shortcut;
 	      if (_this.props.shortcut == null) {
 	        shortcut = "";
 	      }
-	      _this.props.dispatch((0, _jnote.shortcutChange)(shortcut + String.fromCharCode(event.keyCode)));
 
-	      if (String(shortcut + String.fromCharCode(event.keyCode)).match(/show me the money/g)) {
+	      console.log(event.keyCode);
+
+	      _this.props.dispatch((0, _jnote.shortcutChange)(shortcut + String.fromCharCode(event.keyCode)));
+	      var matchString = String(shortcut + String.fromCharCode(event.keyCode));
+
+	      if (matchString.match(/=/g)) {
+	        _this.changeShadowLeft(50);
+	      } else if (matchString.match(/^:show me the money/g)) {
 	        alert('SUCCESS');
 	      }
 
 	      clearTimeout(_this.timeoutState);
 	      _this.timeoutState = setTimeout(function () {
+
+	        if (matchString.match(/[0-9]+$/g)) {
+	          var match = /([0-9]+)$/g.exec(matchString);
+	          _this.changeShadowLeft(parseInt(match[1]));
+	        }
+
 	        _this.props.dispatch((0, _jnote.shortcutChange)(''));
 	        _this.timeoutState = null;
-	      }, 2000);
+	      }, 777);
 	    });
 
 	    return _this;
@@ -37100,7 +37116,7 @@
 	        this.props.shortcut ? _react2.default.createElement(
 	          'div',
 	          { className: 'left' },
-	          this.props.shortcut
+	          this.props.shortcut.replace(//g, '^W')
 	        ) : null,
 	        _react2.default.createElement(
 	          'div',

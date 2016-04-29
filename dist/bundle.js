@@ -37127,11 +37127,10 @@
 
 	      console.log('SHORTCUT: ', this.props.shortcut);
 	      var shortcut = String(this.props.shortcut).replace(//g, '^W');
-	      var jj = /(.*)\?(.*)/g.exec(shortcut);
-	      if (jj) {
-	        shortcut = jj[1] + '?' + jj[2].replace(/./g, "*");
+	      var privateChar = /(.*)\?(.*)/g.exec(shortcut);
+	      if (privateChar) {
+	        shortcut = privateChar[1] + '?' + privateChar[2].replace(/./g, "*");
 	      }
-	      console.log(jj);
 
 	      return _react2.default.createElement(
 	        'footer',

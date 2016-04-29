@@ -9,12 +9,19 @@ export default class Footer extends Component {
   render() {
 
     console.log('SHORTCUT: ',this.props.shortcut);
+    let shortcut = String(this.props.shortcut).replace(//g,'^W');
+    let jj = /(.*)\?(.*)/g.exec(shortcut);
+    if (jj) {
+      shortcut = `${jj[1]}?${jj[2].replace(/./g,"*")}`;
+    }
+    console.log(jj);
+
 
     return (
       <footer>
         {
           ( this.props.shortcut )
-          ? <div className="left">{this.props.shortcut.replace(//g,'^W')}</div>
+          ? <div className="left">{shortcut}</div>
           : null
         }
         <div className="right">

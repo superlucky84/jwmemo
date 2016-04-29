@@ -21,7 +21,7 @@ export default class App extends Component {
     this.state = {
       downstate: false,
       shodowleft: null,
-      realleft: null
+      realleft: 30
     }
 
     // SHORTCUT EVENT
@@ -37,16 +37,32 @@ export default class App extends Component {
 
       console.log(event.keyCode);
 
-      this.props.dispatch(shortcutChange(shortcut+String.fromCharCode(event.keyCode)));
       let matchString = String(shortcut+String.fromCharCode(event.keyCode));
-
+      this.props.dispatch(shortcutChange(matchString));
 
       if ( matchString.match(/=/g) ) {
         this.changeShadowLeft(50);
       }
-      else if ( matchString.match(/^:show me the money/g) ) {
+      else if ( matchString.match(/([0-9]+)([<>])$/g) ) {
+        let match = /([0-9]+)([<>])$/g.exec(matchString);
+
+        let changeLeft = this.state.realleft;
+        if (match[2] == ">") {
+          changeLeft = this.state.realleft + parseInt(match[1]);
+        }
+        else if (match[2] == "<") {
+          changeLeft = this.state.realleft - parseInt(match[1]);
+        }
+
+        if (changeLeft <= 0) { changeLeft = 1; }
+        else if (changeLeft >= 100) { changeLeft = 99; }
+
+        this.changeShadowLeft(changeLeft);
+      }
+      else if ( matchString.match(/\?show me the money/g) ) {
         alert('SUCCESS');
       }
+
 
       clearTimeout(this.timeoutState);
       this.timeoutState = setTimeout(() => {

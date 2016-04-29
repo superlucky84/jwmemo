@@ -36685,7 +36685,7 @@
 	    _this.state = {
 	      downstate: false,
 	      shodowleft: null,
-	      realleft: null
+	      realleft: 30
 	    };
 
 	    // SHORTCUT EVENT
@@ -36703,12 +36703,29 @@
 
 	      console.log(event.keyCode);
 
-	      _this.props.dispatch((0, _jnote.shortcutChange)(shortcut + String.fromCharCode(event.keyCode)));
 	      var matchString = String(shortcut + String.fromCharCode(event.keyCode));
+	      _this.props.dispatch((0, _jnote.shortcutChange)(matchString));
 
 	      if (matchString.match(/=/g)) {
 	        _this.changeShadowLeft(50);
-	      } else if (matchString.match(/^:show me the money/g)) {
+	      } else if (matchString.match(/([0-9]+)([<>])$/g)) {
+	        var match = /([0-9]+)([<>])$/g.exec(matchString);
+
+	        var changeLeft = _this.state.realleft;
+	        if (match[2] == ">") {
+	          changeLeft = _this.state.realleft + parseInt(match[1]);
+	        } else if (match[2] == "<") {
+	          changeLeft = _this.state.realleft - parseInt(match[1]);
+	        }
+
+	        if (changeLeft <= 0) {
+	          changeLeft = 1;
+	        } else if (changeLeft >= 100) {
+	          changeLeft = 99;
+	        }
+
+	        _this.changeShadowLeft(changeLeft);
+	      } else if (matchString.match(/\?show me the money/g)) {
 	        alert('SUCCESS');
 	      }
 
@@ -37109,6 +37126,12 @@
 	    value: function render() {
 
 	      console.log('SHORTCUT: ', this.props.shortcut);
+	      var shortcut = String(this.props.shortcut).replace(//g, '^W');
+	      var jj = /(.*)\?(.*)/g.exec(shortcut);
+	      if (jj) {
+	        shortcut = jj[1] + '?' + jj[2].replace(/./g, "*");
+	      }
+	      console.log(jj);
 
 	      return _react2.default.createElement(
 	        'footer',
@@ -37116,7 +37139,7 @@
 	        this.props.shortcut ? _react2.default.createElement(
 	          'div',
 	          { className: 'left' },
-	          this.props.shortcut.replace(//g, '^W')
+	          shortcut
 	        ) : null,
 	        _react2.default.createElement(
 	          'div',

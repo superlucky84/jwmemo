@@ -14,9 +14,6 @@ export default class Dialog extends Component {
   handleDialogClose() {
     this.props.dispatch(closeDialog());
   }
-  handleDialogCancel() {
-    this.props.dispatch(closeDialog());
-  }
 
   handleDialogSuccess() {
     let successAction = this.props.dialog.successaction.action;
@@ -25,6 +22,10 @@ export default class Dialog extends Component {
     this.props.dispatch(this[successAction]());
     this.props.dispatch(push(successPush));
     this.handleDialogClose();
+  }
+
+  componentDidUpdate() {
+    document.querySelector('.cancel').focus();
   }
 
   render() {
@@ -37,8 +38,12 @@ export default class Dialog extends Component {
             <p>{this.props.dialog.message}</p>
           </div>
           <div className="button">
-            <button onClick={this.handleDialogSuccess.bind(this)}>Ok.</button>
-            <button onClick={this.handleDialogCancel.bind(this)}>Cancel.</button>
+            {
+              ( this.props.dialog.type == 'confirm' )
+              ? <button onClick={this.handleDialogSuccess.bind(this)}>Ok.</button>
+              : null
+            }
+            <button className='cancel' onClick={this.handleDialogClose.bind(this)}>Cancel.</button>
           </div>
         </div>
       </div>

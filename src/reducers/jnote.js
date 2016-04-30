@@ -21,7 +21,10 @@ const initialStateList = {
     type: 'alert',
     message: ''
   },
-  shortcut: null
+  shortcut: {
+    buffer: null,
+    admin: false
+  }
 }
 
 export default function jnotereducer(state = initialStateList, action) {
@@ -29,12 +32,21 @@ export default function jnotereducer(state = initialStateList, action) {
   let new_state = {};
 
   switch (action.type) {
+    /* 쇼트컷 체인지 */
+    case 'ADMIN_CHANGE':
+
+      new_state = Object.assign({},state);
+      new_state.shortcut.admin = action.bool;
+
+      return new_state;
+
+      break;
 
     /* 쇼트컷 체인지 */
     case 'SHORTCUT_CHANGE':
-      new_state = Object.assign({},state,{
-        'shortcut': action.command
-      });
+
+      new_state = Object.assign({},state);
+      new_state.shortcut.buffer = action.command;
 
       return new_state;
       break;

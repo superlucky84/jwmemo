@@ -12,6 +12,16 @@ export function shortcutChange (command) {
 }
 
 /**
+ * ADMIN_CHANGE
+ */
+export function adminChange (bool) {
+  return {
+    type: 'ADMIN_CHANGE',
+    bool
+  }
+}
+
+/**
  * OPEN_DIALOG
  */
 export function openDialog (dialogtype, message, successaction=null, failaction=null) {

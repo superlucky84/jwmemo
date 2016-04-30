@@ -33,8 +33,12 @@ export default class List extends Component {
         <ul>
           {
           this.props.lists.map((item,idx)=>(
-            <li key={idx} onClick={this.handleChoickList.bind(this,item._id)} >
-              {item.title}
+            <li 
+              key={idx} 
+              data-idx={idx} 
+              onClick={this.handleChoickList.bind(this,item._id)} 
+            >
+              {idx}. {item.title}
             </li>
           ))
           }

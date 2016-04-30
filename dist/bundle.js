@@ -26415,7 +26415,10 @@
 	    type: 'alert',
 	    message: ''
 	  },
-	  shortcut: null
+	  shortcut: {
+	    buffer: null,
+	    admin: false
+	  }
 	};
 
 	function jnotereducer() {
@@ -26426,12 +26429,21 @@
 	  var new_state = {};
 
 	  switch (action.type) {
+	    /* 쇼트컷 체인지 */
+	    case 'ADMIN_CHANGE':
+
+	      new_state = Object.assign({}, state);
+	      new_state.shortcut.admin = action.bool;
+
+	      return new_state;
+
+	      break;
 
 	    /* 쇼트컷 체인지 */
 	    case 'SHORTCUT_CHANGE':
-	      new_state = Object.assign({}, state, {
-	        'shortcut': action.command
-	      });
+
+	      new_state = Object.assign({}, state);
+	      new_state.shortcut.buffer = action.command;
 
 	      return new_state;
 	      break;
@@ -36509,6 +36521,7 @@
 	  value: true
 	});
 	exports.shortcutChange = shortcutChange;
+	exports.adminChange = adminChange;
 	exports.openDialog = openDialog;
 	exports.closeDialog = closeDialog;
 	exports.togglePreview = togglePreview;
@@ -36527,6 +36540,16 @@
 	  return {
 	    type: 'SHORTCUT_CHANGE',
 	    command: command
+	  };
+	}
+
+	/**
+	 * ADMIN_CHANGE
+	 */
+	function adminChange(bool) {
+	  return {
+	    type: 'ADMIN_CHANGE',
+	    bool: bool
 	  };
 	}
 
@@ -36637,6 +36660,8 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _reactRouterRedux = __webpack_require__(237);
+
 	var _reactRedux = __webpack_require__(169);
 
 	var _reactRouter = __webpack_require__(180);
@@ -36690,62 +36715,161 @@
 
 	    // SHORTCUT EVENT
 	    _this.timeoutState = null;
+
+	    document.querySelector('body').addEventListener('keyup', function (event) {
+	      if (event.keyCode == 27 && ['TEXTAREA', 'INPUT'].indexOf(event.target.tagName) > -1) {
+	        document.querySelector(event.target.tagName).blur();
+	      }
+	    });
+
 	    document.querySelector('body').addEventListener('keypress', function (event) {
 
 	      if (['TEXTAREA', 'INPUT'].indexOf(event.target.tagName) > -1) {
 	        return;
 	      }
 
-	      var shortcut = _this.props.shortcut;
-	      if (_this.props.shortcut == null) {
+	      var shortcut = _this.props.shortcutBuffer;
+	      if (_this.props.shortcutBuffer == null) {
 	        shortcut = "";
 	      }
-
-	      console.log(event.keyCode);
 
 	      var matchString = String(shortcut + String.fromCharCode(event.keyCode));
 	      _this.props.dispatch((0, _jnote.shortcutChange)(matchString));
 
-	      if (matchString.match(/=/g)) {
-	        _this.changeShadowLeft(50);
-	      } else if (matchString.match(/([0-9]+)([<>])$/g)) {
-	        var match = /([0-9]+)([<>])$/g.exec(matchString);
-
-	        var changeLeft = _this.state.realleft;
-	        if (match[2] == ">") {
-	          changeLeft = _this.state.realleft + parseInt(match[1]);
-	        } else if (match[2] == "<") {
-	          changeLeft = _this.state.realleft - parseInt(match[1]);
-	        }
-
-	        if (changeLeft <= 0) {
-	          changeLeft = 1;
-	        } else if (changeLeft >= 100) {
-	          changeLeft = 99;
-	        }
-
-	        _this.changeShadowLeft(changeLeft);
-	      } else if (matchString.match(/\?show me the money/g)) {
-	        alert('SUCCESS');
+	      var match = null;
+	      /* 행 찾아가기 */
+	      if (match = /([0-9]*)gg$/g.exec(matchString)) {
+	        var target = match[1];
+	        if (target == '') target = 0;
+	        _this.viewTargetTrigger(target);
 	      }
+	      /* 행 찾아가기2 */
+	      else if (event.keyCode == 13 && /^:([0-9]+)\s/g.exec(matchString)) {
+	          match = /^:([0-9]+)\s/g.exec(matchString);
+	          _this.viewTargetTrigger(match[1]);
+	        }
+
+	        /* 수정하기 */
+	        else if (event.keyCode == 13 && matchString.match(/:e[ ]?([0-9]*)\s/g)) {
+	            match = /:e[ ]?([0-9]*)/g.exec(matchString);
+	            var target = document.querySelector('.list li[data-idx=\'' + match[1] + '\']');
+
+	            if (!_this.props.adminMode) {
+	              _this.props.dispatch((0, _jnote.openDialog)('alert', 'Not AdminMode'));
+	            } else if (match[1] == '') {
+	              _this.props.dispatch((0, _jnote.updateForm)('sync'));
+	              _this.props.dispatch((0, _reactRouterRedux.push)('/write/' + _this.props.params.id));
+	              document.querySelector('textarea').focus();
+	            } else if (!target) {
+	              _this.props.dispatch((0, _jnote.openDialog)('alert', 'Not Found Idx'));
+	            } else {
+	              target.click();
+	              _this.props.dispatch((0, _jnote.updateForm)('sync'));
+	              _this.props.dispatch((0, _reactRouterRedux.push)('/write/' + _this.props.params.id));
+	              document.querySelector('textarea').focus();
+	            }
+	          }
+
+	          /* 저장하기 */
+	          else if (event.keyCode == 13 && matchString.match(/^:w\s/g)) {
+
+	              var noteId = _this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/, "$2");
+	              if ('write' == _this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/, "$1")) {
+
+	                if (!_this.props.adminMode) {
+	                  _this.props.dispatch((0, _jnote.openDialog)('alert', 'Not AdminMode'));
+	                } else {
+	                  if (_this.props.preview) {
+	                    _this.props.dispatch((0, _jnote.togglePreview)());
+	                  }
+
+	                  // 수정
+	                  if (noteId) {
+	                    console.log('EDIT', _this.noteId);
+	                    _this.props.dispatch((0, _jnote.editNote)(noteId));
+	                    _this.props.dispatch((0, _reactRouterRedux.push)('/view/' + noteId));
+	                  }
+	                  // 생성
+	                  else {
+	                      _this.props.dispatch((0, _jnote.writeNote)());
+	                    }
+	                }
+	              }
+	            }
+	            /* 화면분할 균등 */
+	            else if (matchString.match(/=/g)) {
+	                _this.changeShadowLeft(50);
+	              } else if (match = /([0-9]+)([<>])$/g.exec(matchString)) {
+
+	                var changeLeft = _this.state.realleft;
+	                if (match[2] == ">") {
+	                  changeLeft = _this.state.realleft + parseInt(match[1]);
+	                } else if (match[2] == "<") {
+	                  changeLeft = _this.state.realleft - parseInt(match[1]);
+	                }
+
+	                if (changeLeft <= 0) {
+	                  changeLeft = 1;
+	                } else if (changeLeft >= 100) {
+	                  changeLeft = 99;
+	                }
+
+	                _this.changeShadowLeft(changeLeft);
+	              }
+	              /* 관리자 권한으로 실행 */
+	              else if (match = /^\?dufma (on|off|write|edit)/g.exec(matchString)) {
+
+	                  switch (match[1]) {
+	                    case 'on':
+	                    case 'off':
+	                      _this.props.dispatch((0, _jnote.adminChange)(match[1] == 'on' ? true : false));
+	                      break;
+	                    case 'write':
+	                      _this.props.dispatch((0, _jnote.updateForm)('title', ''));
+	                      _this.props.dispatch((0, _jnote.updateForm)('note', ''));
+	                      _this.props.dispatch((0, _reactRouterRedux.push)('/write'));
+	                      document.querySelector('input').focus();
+	                      break;
+	                    case 'edit':
+	                      if (!_this.props.params.id) {
+	                        _this.props.dispatch((0, _jnote.openDialog)('alert', 'Please specify the target first.'));
+	                        return;
+	                      }
+	                      _this.props.dispatch((0, _jnote.updateForm)('sync'));
+	                      _this.props.dispatch((0, _reactRouterRedux.push)('/write/' + _this.props.params.id));
+	                      document.querySelector('textarea').focus();
+
+	                      break;
+	                  }
+	                }
 
 	      clearTimeout(_this.timeoutState);
 	      _this.timeoutState = setTimeout(function () {
 
-	        if (matchString.match(/[0-9]+$/g)) {
-	          var match = /([0-9]+)$/g.exec(matchString);
+	        var match = null;
+	        if (match = /([0-9]+)$/g.exec(matchString)) {
 	          _this.changeShadowLeft(parseInt(match[1]));
 	        }
 
 	        _this.props.dispatch((0, _jnote.shortcutChange)(''));
 	        _this.timeoutState = null;
-	      }, 777);
+	      }, 900);
 	    });
 
 	    return _this;
 	  }
 
 	  _createClass(App, [{
+	    key: 'viewTargetTrigger',
+	    value: function viewTargetTrigger(idx) {
+	      var target = document.querySelector('.list li[data-idx=\'' + idx + '\']');
+	      if (!target) {
+	        this.props.dispatch((0, _jnote.openDialog)('alert', 'Not Found Idx'));
+	      } else {
+	        target.click();
+	      }
+	    }
+	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 	      /** * 리스트를 가져온다 */
@@ -36829,7 +36953,8 @@
 	        _react2.default.createElement(_Header2.default, {
 	          dispatch: this.props.dispatch,
 	          location: this.props.location,
-	          preview: this.props.preview
+	          preview: this.props.preview,
+	          adminMode: this.props.adminMode
 	        }),
 	        _react2.default.createElement(
 	          'div',
@@ -36848,7 +36973,7 @@
 	          SPLITSHADOW,
 	          CHILDREN
 	        ),
-	        _react2.default.createElement(_Footer2.default, { shortcut: this.props.shortcut })
+	        _react2.default.createElement(_Footer2.default, { shortcut: this.props.shortcutBuffer })
 	      );
 	    }
 	  }]);
@@ -36867,7 +36992,8 @@
 	    lists: state.default.lists,
 	    preview: state.default.preview.opened,
 	    dialog: state.default.dialog,
-	    shortcut: state.default.shortcut
+	    shortcutBuffer: state.default.shortcut.buffer,
+	    adminMode: state.default.shortcut.admin
 	  };
 	})(App);
 
@@ -36963,7 +37089,6 @@
 	      }
 	      // 생성
 	      else {
-	          console.log('CREATER');
 	          this.props.dispatch((0, _jnote.writeNote)());
 	        }
 	    }
@@ -37065,6 +37190,10 @@
 	      }
 	      //BUTTON.push(<button key='login'>LOGIN</button>);
 	      //BUTTON.push(<button key='signin'>SIGNIN</button>);
+
+	      if (!this.props.adminMode) {
+	        BUTTON = [];
+	      }
 
 	      return _react2.default.createElement(
 	        'header',
@@ -37224,7 +37353,13 @@
 	          this.props.lists.map(function (item, idx) {
 	            return _react2.default.createElement(
 	              'li',
-	              { key: idx, onClick: _this2.handleChoickList.bind(_this2, item._id) },
+	              {
+	                key: idx,
+	                'data-idx': idx,
+	                onClick: _this2.handleChoickList.bind(_this2, item._id)
+	              },
+	              idx,
+	              '. ',
 	              item.title
 	            );
 	          })
@@ -38702,11 +38837,6 @@
 	      this.props.dispatch((0, _jnote.closeDialog)());
 	    }
 	  }, {
-	    key: 'handleDialogCancel',
-	    value: function handleDialogCancel() {
-	      this.props.dispatch((0, _jnote.closeDialog)());
-	    }
-	  }, {
 	    key: 'handleDialogSuccess',
 	    value: function handleDialogSuccess() {
 	      var successAction = this.props.dialog.successaction.action;
@@ -38715,6 +38845,11 @@
 	      this.props.dispatch(this[successAction]());
 	      this.props.dispatch((0, _reactRouterRedux.push)(successPush));
 	      this.handleDialogClose();
+	    }
+	  }, {
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate() {
+	      document.querySelector('.cancel').focus();
 	    }
 	  }, {
 	    key: 'render',
@@ -38743,14 +38878,14 @@
 	          _react2.default.createElement(
 	            'div',
 	            { className: 'button' },
-	            _react2.default.createElement(
+	            this.props.dialog.type == 'confirm' ? _react2.default.createElement(
 	              'button',
 	              { onClick: this.handleDialogSuccess.bind(this) },
 	              'Ok.'
-	            ),
+	            ) : null,
 	            _react2.default.createElement(
 	              'button',
-	              { onClick: this.handleDialogCancel.bind(this) },
+	              { className: 'cancel', onClick: this.handleDialogClose.bind(this) },
 	              'Cancel.'
 	            )
 	          )

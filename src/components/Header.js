@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { push } from 'react-router-redux'
+import { push } from 'react-router-redux';
 
 /* IMPORT ACTIONS */
 import {writeNote, editNote, deleteNote ,updateForm, togglePreview, openDialog} from '../actions/jnote'
@@ -55,7 +55,6 @@ export default class Header extends Component {
     }
     // 생성
     else {
-      console.log('CREATER');
       this.props.dispatch(writeNote());
     }
   }
@@ -151,6 +150,9 @@ export default class Header extends Component {
     //BUTTON.push(<button key='login'>LOGIN</button>);
     //BUTTON.push(<button key='signin'>SIGNIN</button>);
     
+    if ( !this.props.adminMode ) {
+      BUTTON = [];
+    }
 
     return (
       <header>

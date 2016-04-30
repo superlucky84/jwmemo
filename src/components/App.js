@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
 import { Link, browserHistory } from 'react-router'
 
@@ -10,13 +11,14 @@ import Dialog from './Dialog'
 
 
 /* IMPORT ACTIONS */
-import {getList, shortcutChange} from '../actions/jnote'
+import {getList, shortcutChange, adminChange, updateForm, openDialog, editNote, writeNote, togglePreview} from '../actions/jnote'
 
 
 export default class App extends Component {
 
   constructor(props,children) {
     super(props);
+
 
     this.state = {
       downstate: false,
@@ -26,25 +28,98 @@ export default class App extends Component {
 
     // SHORTCUT EVENT
     this.timeoutState = null;
+
+
+    document.querySelector('body').addEventListener('keyup', (event) => {
+      if( event.keyCode==27 && ['TEXTAREA','INPUT'].indexOf(event.target.tagName) > -1 ) {
+        document.querySelector(event.target.tagName).blur();
+      }
+    });
+
     document.querySelector('body').addEventListener('keypress', (event) => {
 
-      if( ['TEXTAREA','INPUT'].indexOf(event.target.tagName) > -1 ) { return; }
-
-      let shortcut = this.props.shortcut;
-      if (this.props.shortcut == null){
-        shortcut = "";
+      if( ['TEXTAREA','INPUT'].indexOf(event.target.tagName) > -1 ) {
+        return;
       }
 
-      console.log(event.keyCode);
+      let shortcut = this.props.shortcutBuffer;
+      if (this.props.shortcutBuffer == null){
+        shortcut = "";
+      }
 
       let matchString = String(shortcut+String.fromCharCode(event.keyCode));
       this.props.dispatch(shortcutChange(matchString));
 
-      if ( matchString.match(/=/g) ) {
+      let match = null;
+      /* 행 찾아가기 */
+      if ( match = /([0-9]*)gg$/g.exec(matchString) ) {
+        let target = match[1];
+        if ( target == '' ) target = 0;
+        this.viewTargetTrigger(target);
+      }
+      /* 행 찾아가기2 */
+      else if ( event.keyCode == 13 &&  /^:([0-9]+)\s/g.exec(matchString) ) {
+        match = /^:([0-9]+)\s/g.exec(matchString)
+        this.viewTargetTrigger(match[1]);
+      }
+
+      /* 수정하기 */
+      else if (event.keyCode == 13 && matchString.match(/:e[ ]?([0-9]*)\s/g) ) {
+        match = /:e[ ]?([0-9]*)/g.exec(matchString);
+        let target = document.querySelector(`.list li[data-idx='${match[1]}']`);
+
+        if ( !this.props.adminMode ) {
+          this.props.dispatch(openDialog('alert','Not AdminMode'));
+        }
+        else if (match[1] == '') {
+          this.props.dispatch(updateForm('sync'));
+          this.props.dispatch(push('/write/'+this.props.params.id));
+          document.querySelector('textarea').focus();
+        }
+        else if (!target) {
+          this.props.dispatch(openDialog('alert','Not Found Idx'));
+        }
+        else {
+          target.click();
+          this.props.dispatch(updateForm('sync'));
+          this.props.dispatch(push('/write/'+this.props.params.id));
+          document.querySelector('textarea').focus();
+        }
+      }
+
+      /* 저장하기 */
+      else if (event.keyCode == 13 && matchString.match(/^:w\s/g) ) {
+
+
+        let noteId = this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/,"$2");
+        if ('write' == this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/,"$1")) {
+
+          if ( !this.props.adminMode ) {
+            this.props.dispatch(openDialog('alert','Not AdminMode'));
+          }
+          else {
+              if ( this.props.preview ) {
+                this.props.dispatch(togglePreview());
+              }
+
+              // 수정
+              if (noteId) {
+                console.log('EDIT',this.noteId);
+                this.props.dispatch(editNote(noteId));
+                this.props.dispatch(push('/view/'+noteId));
+              }
+              // 생성
+              else {
+                this.props.dispatch(writeNote());
+              }
+          }
+        }
+      }
+      /* 화면분할 균등 */
+      else if ( matchString.match(/=/g) ) {
         this.changeShadowLeft(50);
       }
-      else if ( matchString.match(/([0-9]+)([<>])$/g) ) {
-        let match = /([0-9]+)([<>])$/g.exec(matchString);
+      else if ( match = /([0-9]+)([<>])$/g.exec(matchString) ) {
 
         let changeLeft = this.state.realleft;
         if (match[2] == ">") {
@@ -59,25 +134,58 @@ export default class App extends Component {
 
         this.changeShadowLeft(changeLeft);
       }
-      else if ( matchString.match(/\?show me the money/g) ) {
-        alert('SUCCESS');
+      /* 관리자 권한으로 실행 */
+      else if ( match = /^\?dufma (on|off|write|edit)/g.exec(matchString) ) {
+
+        switch(match[1]) {
+          case 'on':
+          case 'off':
+            this.props.dispatch(adminChange((match[1]=='on')?true:false));
+            break;
+          case 'write':
+            this.props.dispatch(updateForm('title',''));
+            this.props.dispatch(updateForm('note',''));
+            this.props.dispatch(push('/write'));
+            document.querySelector('input').focus();
+            break;
+          case 'edit':
+            if (!this.props.params.id) {
+              this.props.dispatch(openDialog('alert','Please specify the target first.'));
+              return;
+            }
+            this.props.dispatch(updateForm('sync'));
+            this.props.dispatch(push('/write/'+this.props.params.id));
+            document.querySelector('textarea').focus();
+
+            break;
+        }
       }
 
 
       clearTimeout(this.timeoutState);
       this.timeoutState = setTimeout(() => {
 
-        if ( matchString.match(/[0-9]+$/g) ) {
-          let match = /([0-9]+)$/g.exec(matchString);
+        let match = null;
+        if ( match = /([0-9]+)$/g.exec(matchString) ) {
           this.changeShadowLeft(parseInt(match[1]));
         }
 
         this.props.dispatch(shortcutChange(''));
         this.timeoutState = null;
-      },777);
+      },900);
 
     });
 
+  }
+
+  viewTargetTrigger(idx) {
+    let target = document.querySelector(`.list li[data-idx='${idx}']`);
+    if (!target) {
+      this.props.dispatch(openDialog('alert','Not Found Idx'));
+    }
+    else {
+      target.click();
+    }
   }
 
   componentDidMount() {
@@ -154,6 +262,7 @@ export default class App extends Component {
             dispatch={this.props.dispatch} 
             location={this.props.location} 
             preview={this.props.preview}
+            adminMode={this.props.adminMode}
           />
           <div id="container"
             onMouseMove={this.handleMouseMove.bind(this,event)}
@@ -175,7 +284,7 @@ export default class App extends Component {
             {SPLITSHADOW}
             {CHILDREN}
           </div>
-          <Footer shortcut={this.props.shortcut} />
+          <Footer shortcut={this.props.shortcutBuffer} />
         </div>
     );
 
@@ -190,6 +299,7 @@ export default connect(function (state) {
       lists: state.default.lists,
       preview: state.default.preview.opened,
       dialog: state.default.dialog,
-      shortcut: state.default.shortcut
+      shortcutBuffer: state.default.shortcut.buffer,
+      adminMode: state.default.shortcut.admin
     };
 })(App);

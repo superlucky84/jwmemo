@@ -164,11 +164,12 @@ div.write textarea {
 }
 
 .dialog-box {
+  display: table;
   position: relative;
   z-index: 999;
-  width: 38%;
-  max-width: 355px;
-  min-width: 200px;
+  width: auto;
+  /*max-width: 355px;*/
+  min-width: 270px;
   height: 177px;
   margin: auto;
   margin-top: 15%;
@@ -208,6 +209,7 @@ div.write textarea {
   display: table;
   width: 100%;
   height: calc(100% - 47px);
+  padding: 17px;
 }
 #dialog .dialog-box .message p{
   display: table-cell;

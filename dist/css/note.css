@@ -110,6 +110,7 @@ div.list li {
   border-bottom: 1px solid #aaa;
   padding: 10px;
   cursor: default;
+  font-weight: bold;
 }
 
 div.split , div.split-shadow {

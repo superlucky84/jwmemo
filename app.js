@@ -21,21 +21,12 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-
+app.use(favicon(__dirname + '/dist/img/jinw-memo.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-//app.use(express.static(path.join(__dirname, 'public')));
-//
 app.use('/dist', express.static(__dirname + '/dist'));
-app.use(favicon(__dirname + '/dist/img/jinw-memo.ico'));
-
-
-//app.use(express.static('dist'));
-
-console.log('kk');
-console.log(path.join(__dirname, 'dist'));
 
 app.use('/', indexcontrol);
 app.use('/jnote', jnotecontrol);

@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { push } from 'react-router-redux';
+import { hashHistory } from 'react-router'
 import { connect } from 'react-redux';
 import { Link, browserHistory } from 'react-router'
 
@@ -73,7 +73,7 @@ export default class App extends Component {
         }
         else if (match[1] == '') {
           this.props.dispatch(updateForm('sync'));
-          this.props.dispatch(push('/write/'+this.props.params.id));
+          hashHistory.push('/write/'+this.props.params.id);
           document.querySelector('textarea').focus();
         }
         else if (!target) {
@@ -82,7 +82,7 @@ export default class App extends Component {
         else {
           target.click();
           this.props.dispatch(updateForm('sync'));
-          this.props.dispatch(push('/write/'+this.props.params.id));
+          hashHistory.push('/write/'+this.props.params.id);
           document.querySelector('textarea').focus();
         }
       }
@@ -105,7 +105,7 @@ export default class App extends Component {
               // 수정
               if (noteId) {
                 this.props.dispatch(editNote(noteId));
-                this.props.dispatch(push('/view/'+noteId));
+                hashHistory.push('/view/'+noteId);
               }
               // 생성
               else {
@@ -144,7 +144,7 @@ export default class App extends Component {
           case 'write':
             this.props.dispatch(updateForm('title',''));
             this.props.dispatch(updateForm('note',''));
-            this.props.dispatch(push('/write'));
+            hashHistory.push('/write');
             document.querySelector('input').focus();
             break;
           case 'edit':
@@ -153,7 +153,7 @@ export default class App extends Component {
               return;
             }
             this.props.dispatch(updateForm('sync'));
-            this.props.dispatch(push('/write/'+this.props.params.id));
+            hashHistory.push('/write/'+this.props.params.id);
             document.querySelector('textarea').focus();
 
             break;

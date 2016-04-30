@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom'
 import { applyMiddleware, compose, createStore, combineReducers } from 'redux'
 import { Provider } from 'react-redux'
 import { Router, Route, IndexRoute, browserHistory, hashHistory  } from 'react-router'
-import { syncHistory, routeReducer } from 'react-router-redux'
+import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
+
 
 import * as reducers from './reducers/jnote'
 import {writeNote, getList} from './actions/jnote'
@@ -14,28 +15,21 @@ import Empty from './components/Empty';
 import View from './components/View';
 import Write from './components/Write';
 
-const middleware = syncHistory(hashHistory)
+
 const reducer = combineReducers({
   ...reducers,
-  routing: routeReducer
+  routing: routerReducer
 })
 
-const finalCreateStore = compose(
-  applyMiddleware(middleware),
+const store = createStore(
+  reducer,
   //DevTools.instrument()
-)(createStore);
-
-const store = finalCreateStore(reducer);
-
-store.subscribe(function(data){
-  //console.log('SUBSCIBE_DATA',store.getState());
-});
-
-middleware.listenForReplays(store)
+)
+const history = syncHistoryWithStore(hashHistory, store)
 
 ReactDOM.render(
   <Provider store={store}>
-      <Router history={hashHistory}>
+      <Router history={history}>
         <Route path="/"  component={App}>
           <IndexRoute component={Empty}/>
           <Route path="view/:id"  component={View}/>

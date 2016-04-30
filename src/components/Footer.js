@@ -8,7 +8,6 @@ export default class Footer extends Component {
 
   render() {
 
-    console.log('SHORTCUT: ',this.props.shortcut);
     let shortcut = String(this.props.shortcut).replace(//g,'^W');
     let privateChar = /(.*)\?(.*)/g.exec(shortcut);
     if (privateChar) {

@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { push } from 'react-router-redux'
+import {  hashHistory } from 'react-router'
 
 /* IMPORT ACTIONS */
 import {getOne} from '../actions/jnote'
@@ -14,7 +14,7 @@ export default class List extends Component {
   }
 
   handleChoickList(id) {
-    this.props.dispatch(push('/view/'+id));
+    hashHistory.push('/view/'+id);
   }
 
   render() {

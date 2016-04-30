@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { push } from 'react-router-redux'
+import { hashHistory } from 'react-router'
 
 /* IMPORT ACTIONS */
 import {closeDialog, deleteNote} from '../actions/jnote'
@@ -20,7 +20,7 @@ export default class Dialog extends Component {
     let successPush = this.props.dialog.successaction.push;
 
     this.props.dispatch(this[successAction]());
-    this.props.dispatch(push(successPush));
+    hashHistory.push(successPush);
     this.handleDialogClose();
   }
 

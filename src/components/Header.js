@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { push } from 'react-router-redux';
+import { hashHistory } from 'react-router'
 
 /* IMPORT ACTIONS */
 import {writeNote, editNote, deleteNote ,updateForm, togglePreview, openDialog} from '../actions/jnote'
@@ -8,7 +8,6 @@ export default class Header extends Component {
 
   constructor(props) {
     super(props);
-    console.log('header_props');
     this.noteId = null;
   }
 
@@ -16,14 +15,13 @@ export default class Header extends Component {
 
     this.props.dispatch(updateForm('title',''));
     this.props.dispatch(updateForm('note',''));
-    this.props.dispatch(push('/write'));
+    hashHistory.push('/write');
   }
 
   handleEditMemo() {
-    console.log("this.props.routeParams");
 
     this.props.dispatch(updateForm('sync'));
-    this.props.dispatch(push('/write/'+this.noteId));
+    hashHistory.push('/write/'+this.noteId);
   }
   handleWriteCancel() {
 
@@ -33,10 +31,10 @@ export default class Header extends Component {
     }
 
     if (this.noteId) {
-      this.props.dispatch(push('/view/'+this.noteId));
+      hashHistory.push('/view/'+this.noteId);
     }
     else {
-      this.props.dispatch(push('/'));
+      hashHistory.push('/');
     }
   }
 
@@ -49,9 +47,8 @@ export default class Header extends Component {
 
     // 수정
     if (this.noteId) {
-      console.log('EDIT',this.noteId);
       this.props.dispatch(editNote(this.noteId));
-      this.props.dispatch(push('/view/'+this.noteId));
+      hashHistory.push('/view/'+this.noteId);
     }
     // 생성
     else {
@@ -74,12 +71,10 @@ export default class Header extends Component {
   }
 
   handleShowPreview() {
-    console.log('handleShowPreview');
     this.props.dispatch(togglePreview());
   }
 
   handleOpenDailog() {
-    console.log('dialog');
     this.props.dispatch(openDialog('confirm','test'));
   }
 

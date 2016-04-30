@@ -36776,24 +36776,25 @@
 	              var noteId = _this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/, "$2");
 	              if ('write' == _this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/, "$1")) {
 
-	                if (!_this.props.adminMode) {
-	                  _this.props.dispatch((0, _jnote.openDialog)('alert', 'Not AdminMode'));
-	                } else {
-	                  if (_this.props.preview) {
-	                    _this.props.dispatch((0, _jnote.togglePreview)());
-	                  }
-
-	                  // 수정
-	                  if (noteId) {
-	                    console.log('EDIT', _this.noteId);
-	                    _this.props.dispatch((0, _jnote.editNote)(noteId));
-	                    _this.props.dispatch((0, _reactRouterRedux.push)('/view/' + noteId));
-	                  }
-	                  // 생성
-	                  else {
-	                      _this.props.dispatch((0, _jnote.writeNote)());
-	                    }
+	                //if ( !this.props.adminMode ) {
+	                //this.props.dispatch(openDialog('alert','Not AdminMode'));
+	                //}
+	                //else {
+	                if (_this.props.preview) {
+	                  _this.props.dispatch((0, _jnote.togglePreview)());
 	                }
+
+	                // 수정
+	                if (noteId) {
+	                  console.log('EDIT', _this.noteId);
+	                  _this.props.dispatch((0, _jnote.editNote)(noteId));
+	                  _this.props.dispatch((0, _reactRouterRedux.push)('/view/' + noteId));
+	                }
+	                // 생성
+	                else {
+	                    _this.props.dispatch((0, _jnote.writeNote)());
+	                  }
+	                //}
 	              }
 	            }
 	            /* 화면분할 균등 */

@@ -94,10 +94,10 @@ export default class App extends Component {
         let noteId = this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/,"$2");
         if ('write' == this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/,"$1")) {
 
-          if ( !this.props.adminMode ) {
-            this.props.dispatch(openDialog('alert','Not AdminMode'));
-          }
-          else {
+          //if ( !this.props.adminMode ) {
+            //this.props.dispatch(openDialog('alert','Not AdminMode'));
+          //}
+          //else {
               if ( this.props.preview ) {
                 this.props.dispatch(togglePreview());
               }
@@ -112,7 +112,7 @@ export default class App extends Component {
               else {
                 this.props.dispatch(writeNote());
               }
-          }
+          //}
         }
       }
       /* 화면분할 균등 */

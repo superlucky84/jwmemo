@@ -29,6 +29,7 @@ app.use(cookieParser());
 //app.use(express.static(path.join(__dirname, 'public')));
 //
 app.use('/dist', express.static(__dirname + '/dist'));
+app.use(favicon(__dirname + '/dist/img/jinw-memo.ico'));
 
 
 //app.use(express.static('dist'));

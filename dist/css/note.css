@@ -92,7 +92,7 @@ div.list, div.view, div.preview, div.write, div.split, div.split-shadow  {
 
 div.list, div.preview {
   left: 0;
-  right: calc(70% + 2px);
+  right: calc(70% + 7px);
   /*border: 1px solid green;*/
 }
 
@@ -115,9 +115,10 @@ div.list li {
 div.split , div.split-shadow {
   border-left: 1px solid #aaa;
   border-right: 1px solid #aaa;
-  left: calc(30% - 2px);
-  width: 4px;
+  left: 30%;
+  width: 7px;
   cursor: col-resize;
+  background-color: #fff;
 }
 div.split-shadow {
   border-color: black;
@@ -125,7 +126,7 @@ div.split-shadow {
 }
 
 div.view, div.write {
-  left: calc(30% + 2px);
+  left: calc(30% + 7px);
   right: 0;
 }
 
@@ -134,7 +135,6 @@ div.view, div.write, div.preview {
 }
 
 div.view, div.preview {
-  /*border: 1px solid blue;*/
   overflow-y: auto;
 }
 

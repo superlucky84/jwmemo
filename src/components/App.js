@@ -104,7 +104,6 @@ export default class App extends Component {
 
               // 수정
               if (noteId) {
-                console.log('EDIT',this.noteId);
                 this.props.dispatch(editNote(noteId));
                 this.props.dispatch(push('/view/'+noteId));
               }
@@ -194,7 +193,6 @@ export default class App extends Component {
   }
 
   handleMouseDown() {
-    console.log('down');
     this.setState({ downstate: true });
   }
 
@@ -207,13 +205,11 @@ export default class App extends Component {
   }
 
   handleMouseLeave() {
-    console.log('leave');
     this.setState({ downstate: false });
   }
 
   handleMouseMove(e) {
     if (this.state.downstate) {
-      console.log('move');
       this.setState({
         shadowleft: { left: e.pageX }
       });
@@ -224,9 +220,6 @@ export default class App extends Component {
       downstate: false,
       realleft
     });
-  }
-  handleKeyUp(event) {
-    console.log('KEYUPEVENT:',event);
   }
 
   render() {
@@ -255,7 +248,6 @@ export default class App extends Component {
       DIALOG = <Dialog {...this.props} />;
     }
 
-     //onKeyUp={this.handleKeyUp.bind(this,event)}
     return (
         <div id="app-container">
           <Header 

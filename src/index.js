@@ -6,16 +6,7 @@ import { Router, Route, IndexRoute, browserHistory, hashHistory  } from 'react-r
 import { syncHistory, routeReducer } from 'react-router-redux'
 
 import * as reducers from './reducers/jnote'
-
-
-console.log('reducers');
-console.log(...reducers);
-
-
-
 import {writeNote, getList} from './actions/jnote'
-
-//console.log(actions);
 
 
 import App from './components/App';
@@ -36,11 +27,8 @@ const finalCreateStore = compose(
 
 const store = finalCreateStore(reducer);
 
-
-//store.dispatch(writeNote('testtest11zzz','notenote11zzz'));
-//store.dispatch(getList());
 store.subscribe(function(data){
-  console.log('SUBSCIBE_DATA',store.getState());
+  //console.log('SUBSCIBE_DATA',store.getState());
 });
 
 middleware.listenForReplays(store)

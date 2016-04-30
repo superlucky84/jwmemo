@@ -61,7 +61,7 @@ export default class View extends Component {
 
       if (this.props.realleft) {
         splitStyle = {
-          left: "calc("+this.props.realleft+"% + 2px)"
+          left: "calc("+this.props.realleft+"% + 7px)"
         }
       }
     }

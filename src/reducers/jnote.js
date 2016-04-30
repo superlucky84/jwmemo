@@ -88,7 +88,6 @@ export default function jnotereducer(state = initialStateList, action) {
       if (state.preview.opened) {
         opened = false;
       }
-      console.log('TOGGLE_PREVIEW!!!', opened);
 
       new_state = Object.assign({},state);
       new_state.preview.opened = opened;
@@ -145,14 +144,8 @@ export default function jnotereducer(state = initialStateList, action) {
             }
           });
 
-          console.log('choiceTarget',choiceTarget);
-
-
           new_state = Object.assign({},state);
-
           new_state.lists[choiceTarget] = data;
-
-          console.log('jjLIST',data,new_state.lists);
 
         }
       });
@@ -210,8 +203,6 @@ export default function jnotereducer(state = initialStateList, action) {
         },
         success: function(data) {
 
-          console.log('REMOVERESULT',data);
-
           let choiceTarget = null;
           state.lists.forEach(function(item,idx){
             if(item._id == state.view.noteId){
@@ -234,8 +225,6 @@ export default function jnotereducer(state = initialStateList, action) {
         async: false,
         url: '/jnote/read/' + action.id,
         success: function(data) {
-          console.log('GETONE');
-          console.log(data);
           new_state = Object.assign({},state,{
             view: {
               note: data.note,

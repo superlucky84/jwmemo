@@ -48,8 +48,6 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var _console;
-
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -92,13 +90,6 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-	console.log('reducers');
-	(_console = console).log.apply(_console, _toConsumableArray(reducers));
-
-	//console.log(actions);
-
 	var middleware = (0, _reactRouterRedux.syncHistory)(_reactRouter.hashHistory);
 	var reducer = (0, _redux.combineReducers)(_extends({}, reducers, {
 	  routing: _reactRouterRedux.routeReducer
@@ -110,10 +101,8 @@
 
 	var store = finalCreateStore(reducer);
 
-	//store.dispatch(writeNote('testtest11zzz','notenote11zzz'));
-	//store.dispatch(getList());
 	store.subscribe(function (data) {
-	  console.log('SUBSCIBE_DATA', store.getState());
+	  //console.log('SUBSCIBE_DATA',store.getState());
 	});
 
 	middleware.listenForReplays(store);
@@ -26485,7 +26474,6 @@
 	      if (state.preview.opened) {
 	        opened = false;
 	      }
-	      console.log('TOGGLE_PREVIEW!!!', opened);
 
 	      new_state = Object.assign({}, state);
 	      new_state.preview.opened = opened;
@@ -26540,13 +26528,8 @@
 	            }
 	          });
 
-	          console.log('choiceTarget', choiceTarget);
-
 	          new_state = Object.assign({}, state);
-
 	          new_state.lists[choiceTarget] = data;
-
-	          console.log('jjLIST', data, new_state.lists);
 	        }
 	      });
 
@@ -26601,8 +26584,6 @@
 	        },
 	        success: function success(data) {
 
-	          console.log('REMOVERESULT', data);
-
 	          var choiceTarget = null;
 	          state.lists.forEach(function (item, idx) {
 	            if (item._id == state.view.noteId) {
@@ -26625,8 +26606,6 @@
 	        async: false,
 	        url: '/jnote/read/' + action.id,
 	        success: function success(data) {
-	          console.log('GETONE');
-	          console.log(data);
 	          new_state = Object.assign({}, state, {
 	            view: {
 	              note: data.note,
@@ -36786,7 +36765,6 @@
 
 	                // 수정
 	                if (noteId) {
-	                  console.log('EDIT', _this.noteId);
 	                  _this.props.dispatch((0, _jnote.editNote)(noteId));
 	                  _this.props.dispatch((0, _reactRouterRedux.push)('/view/' + noteId));
 	                }
@@ -36879,7 +36857,6 @@
 	  }, {
 	    key: 'handleMouseDown',
 	    value: function handleMouseDown() {
-	      console.log('down');
 	      this.setState({ downstate: true });
 	    }
 	  }, {
@@ -36894,14 +36871,12 @@
 	  }, {
 	    key: 'handleMouseLeave',
 	    value: function handleMouseLeave() {
-	      console.log('leave');
 	      this.setState({ downstate: false });
 	    }
 	  }, {
 	    key: 'handleMouseMove',
 	    value: function handleMouseMove(e) {
 	      if (this.state.downstate) {
-	        console.log('move');
 	        this.setState({
 	          shadowleft: { left: e.pageX }
 	        });
@@ -36914,11 +36889,6 @@
 	        downstate: false,
 	        realleft: realleft
 	      });
-	    }
-	  }, {
-	    key: 'handleKeyUp',
-	    value: function handleKeyUp(event) {
-	      console.log('KEYUPEVENT:', event);
 	    }
 	  }, {
 	    key: 'render',
@@ -36947,7 +36917,6 @@
 	        DIALOG = _react2.default.createElement(_Dialog2.default, this.props);
 	      }
 
-	      //onKeyUp={this.handleKeyUp.bind(this,event)}
 	      return _react2.default.createElement(
 	        'div',
 	        { id: 'app-container' },
@@ -37469,7 +37438,7 @@
 
 	        if (this.props.realleft) {
 	          splitStyle = {
-	            left: "calc(" + this.props.realleft + "% + 2px)"
+	            left: "calc(" + this.props.realleft + "% + 7px)"
 	          };
 	        }
 	      }

@@ -40132,11 +40132,6 @@
 	          { className: 'dialog-box' },
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'close', onClick: this.handleDialogClose.bind(this) },
-	            'X'
-	          ),
-	          _react2.default.createElement(
-	            'div',
 	            { className: 'message' },
 	            _react2.default.createElement(
 	              'p',

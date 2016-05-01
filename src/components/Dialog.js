@@ -33,7 +33,6 @@ export default class Dialog extends Component {
       <div id="dialog">
         <div className="dialog-shadow"></div>
         <div className="dialog-box">
-          <div className="close" onClick={this.handleDialogClose.bind(this)}>X</div>
           <div className="message">
             <p>{this.props.dialog.message}</p>
           </div>

@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { hashHistory } from 'react-router'
 
 /* IMPORT ACTIONS */
@@ -91,6 +92,7 @@ export default class Header extends Component {
   render() {
 
     let BUTTON = [];
+    let title = "";
 
     this.viewType = this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/,"$1");
     this.noteId = this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/,"$2");
@@ -99,6 +101,7 @@ export default class Header extends Component {
     switch ( this.viewType ) {
       case 'view':
 
+        title = this.props.viewTitle;
 
         BUTTON.push(
           <button 
@@ -124,6 +127,7 @@ export default class Header extends Component {
 
         break;
       case 'write':
+        title = 'write';
 
         let previewToggle = "PREVIEW";
         if ( this.props.preview ) {
@@ -161,14 +165,27 @@ export default class Header extends Component {
 
     return (
       <header>
-        <div className="left"> JINWOO </div>
+        <div className="left"> 
+          {
+            this.props.viewTitle 
+            ? " - " + title + " - "
+            : "JINW-MEMO"
+          }
+        </div>
         <div className="right">
 
           {BUTTON}
         </div>
       </header>
     );
-
   }
 }
+/**
+ *  REDUX STATE 주입
+ */
+export default connect(function (state) {
+    return {
+      viewTitle: state.default.view.title
+    };
+})(Header);
 

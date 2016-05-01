@@ -38263,6 +38263,8 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _reactRedux = __webpack_require__(181);
+
 	var _reactRouter = __webpack_require__(194);
 
 	var _jnote = __webpack_require__(260);
@@ -38379,12 +38381,15 @@
 	    value: function render() {
 
 	      var BUTTON = [];
+	      var title = "";
 
 	      this.viewType = this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/, "$1");
 	      this.noteId = this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/, "$2");
 
 	      switch (this.viewType) {
 	        case 'view':
+
+	          title = this.props.viewTitle;
 
 	          BUTTON.push(_react2.default.createElement(
 	            'button',
@@ -38412,6 +38417,7 @@
 
 	          break;
 	        case 'write':
+	          title = 'write';
 
 	          var previewToggle = "PREVIEW";
 	          if (this.props.preview) {
@@ -38456,7 +38462,7 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'left' },
-	          ' JINWOO '
+	          this.props.viewTitle ? " - " + title + " - " : "JINW-MEMO"
 	        ),
 	        _react2.default.createElement(
 	          'div',
@@ -38469,8 +38475,17 @@
 
 	  return Header;
 	}(_react.Component);
+	/**
+	 *  REDUX STATE 주입
+	 */
+
 
 	exports.default = Header;
+	exports.default = (0, _reactRedux.connect)(function (state) {
+	  return {
+	    viewTitle: state.default.view.title
+	  };
+	})(Header);
 
 /***/ },
 /* 263 */

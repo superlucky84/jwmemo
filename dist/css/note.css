@@ -18,6 +18,8 @@ header .left, header .right {
 }
 header .left {
   left: 10px;
+  font-style: italic;
+  font-weight: bold;
 }
 header .right {
   right: 10px;

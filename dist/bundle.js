@@ -27636,16 +27636,21 @@
 	global.$ = _jquery2.default;
 
 	var initialStateList = {
+	  search: {
+	    tags: []
+	  },
 	  lists: [],
 	  view: {
 	    noteId: 0,
 	    title: '',
-	    note: ''
+	    note: '',
+	    tags: []
 	  },
 	  write: {
 	    noteId: 0,
 	    title: '',
-	    note: ''
+	    note: '',
+	    tags: []
 	  },
 	  preview: {
 	    opened: false
@@ -27740,7 +27745,8 @@
 	        url: '/jnote/create',
 	        data: {
 	          title: state.write.title,
-	          note: state.write.note
+	          note: state.write.note,
+	          category: state.write.tags
 	        },
 	        success: function success(data) {
 	          var newArray = [data].concat(state.lists);
@@ -27748,7 +27754,8 @@
 	            lists: newArray,
 	            write: {
 	              title: '',
-	              note: ''
+	              note: '',
+	              tags: []
 	            }
 	          });
 	        }
@@ -27767,7 +27774,8 @@
 	        data: {
 	          id: state.write.noteId,
 	          title: state.write.title,
-	          note: state.write.note
+	          note: state.write.note,
+	          category: state.write.tags
 	        },
 	        success: function success(data) {
 
@@ -27793,7 +27801,8 @@
 	        write: {
 	          noteId: state.view.noteId,
 	          title: state.view.title,
-	          note: state.view.note
+	          note: state.view.note,
+	          tags: state.view.tags
 	        }
 	      });
 	      return new_state;
@@ -27801,25 +27810,25 @@
 
 	    /* 타이틀 폼수정 */
 	    case 'UPDATEFORM_TITLE':
-	      new_state = Object.assign({}, state, {
-	        write: {
-	          noteId: state.write.noteId,
-	          title: action.text,
-	          note: state.write.note
-	        }
-	      });
+	      new_state = Object.assign({}, state);
+	      new_state.write.title = action.text;
+
 	      return new_state;
 	      break;
 
 	    /* 컨텐츠 폼수정 */
 	    case 'UPDATEFORM_NOTE':
-	      new_state = Object.assign({}, state, {
-	        write: {
-	          noteId: state.write.noteId,
-	          title: state.write.title,
-	          note: action.text
-	        }
-	      });
+	      new_state = Object.assign({}, state);
+	      new_state.write.note = action.text;
+
+	      return new_state;
+	      break;
+
+	    /* 컨텐츠 폼수정 */
+	    case 'UPDATEFORM_TAGS':
+	      new_state = Object.assign({}, state);
+	      new_state.write.tags = action.text;
+
 	      return new_state;
 	      break;
 
@@ -27861,6 +27870,7 @@
 	            view: {
 	              note: data.note,
 	              title: data.title,
+	              tags: data.category,
 	              noteId: action.id
 	            }
 	          });
@@ -37946,7 +37956,7 @@
 
 	    document.querySelector('body').addEventListener('keyup', function (event) {
 	      if (event.keyCode == 27 && ['TEXTAREA', 'INPUT'].indexOf(event.target.tagName) > -1) {
-	        document.querySelector(event.target.tagName).blur();
+	        event.target.blur();
 	      }
 	    });
 
@@ -37988,6 +37998,11 @@
 	              _this.props.dispatch((0, _jnote.updateForm)('sync'));
 	              _reactRouter.hashHistory.push('/write/' + _this.props.params.id);
 	              document.querySelector('textarea').focus();
+
+	              // Previe 열기
+	              if (!_this.props.preview) {
+	                _this.props.dispatch((0, _jnote.togglePreview)());
+	              }
 	            } else if (!_target) {
 	              _this.props.dispatch((0, _jnote.openDialog)('alert', 'Not Found Idx'));
 	            } else {
@@ -37995,6 +38010,11 @@
 	              _this.props.dispatch((0, _jnote.updateForm)('sync'));
 	              _reactRouter.hashHistory.push('/write/' + _this.props.params.id);
 	              document.querySelector('textarea').focus();
+
+	              // Previe 열기
+	              if (!_this.props.preview) {
+	                _this.props.dispatch((0, _jnote.togglePreview)());
+	              }
 	            }
 	          }
 
@@ -38057,6 +38077,12 @@
 	                      _this.props.dispatch((0, _jnote.updateForm)('note', ''));
 	                      _reactRouter.hashHistory.push('/write');
 	                      document.querySelector('input').focus();
+
+	                      // Previe 열기
+	                      if (!_this.props.preview) {
+	                        _this.props.dispatch((0, _jnote.togglePreview)());
+	                      }
+
 	                      break;
 	                    case 'edit':
 	                      if (!_this.props.params.id) {
@@ -38066,6 +38092,11 @@
 	                      _this.props.dispatch((0, _jnote.updateForm)('sync'));
 	                      _reactRouter.hashHistory.push('/write/' + _this.props.params.id);
 	                      document.querySelector('textarea').focus();
+
+	                      // Previe 열기
+	                      if (!_this.props.preview) {
+	                        _this.props.dispatch((0, _jnote.togglePreview)());
+	                      }
 
 	                      break;
 	                  }
@@ -38266,6 +38297,11 @@
 	      this.props.dispatch((0, _jnote.updateForm)('title', ''));
 	      this.props.dispatch((0, _jnote.updateForm)('note', ''));
 	      _reactRouter.hashHistory.push('/write');
+
+	      // Previe 열기
+	      if (!this.props.preview) {
+	        this.props.dispatch((0, _jnote.togglePreview)());
+	      }
 	    }
 	  }, {
 	    key: 'handleEditMemo',
@@ -38273,6 +38309,11 @@
 
 	      this.props.dispatch((0, _jnote.updateForm)('sync'));
 	      _reactRouter.hashHistory.push('/write/' + this.noteId);
+
+	      // Previe 열기
+	      if (!this.props.preview) {
+	        this.props.dispatch((0, _jnote.togglePreview)());
+	      }
 	    }
 	  }, {
 	    key: 'handleWriteCancel',
@@ -40219,6 +40260,27 @@
 	      this.props.dispatch((0, _jnote.updateForm)('note', event.target.value));
 	    }
 	  }, {
+	    key: 'changeTag',
+	    value: function changeTag(event) {
+
+	      var tagsString = event.target.value.replace(/[^a-z0-9,;:]*/g, "").replace(/[,;:]/g, ",").replace(/,+/g, ",").replace(/^,/g, "");
+
+	      var tags = tagsString.split(",");
+	      if (tagsString.match(/,$/)) {
+	        (function () {
+	          var newTag = [];
+	          tags.forEach(function (tag) {
+	            if (newTag.indexOf(tag) == -1) {
+	              newTag.push(tag);
+	            }
+	          });
+	          tags = newTag;
+	        })();
+	      }
+
+	      this.props.dispatch((0, _jnote.updateForm)('tags', tags));
+	    }
+	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 	      if (this.props.routeParams.id) {
@@ -40229,6 +40291,9 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
+
+	      // TAG 세팅
+	      var writeTags = this.props.writeTags.join(", ").replace(/[ ]*$/, "");
 
 	      var splitStyle = null;
 	      if (this.props.realleft) {
@@ -40244,6 +40309,11 @@
 	          placeholder: 'Title',
 	          onChange: this.changeTitle.bind(this),
 	          value: this.props.writeTitle
+	        }),
+	        _react2.default.createElement('input', { type: 'text',
+	          placeholder: 'Tag',
+	          onChange: this.changeTag.bind(this),
+	          value: writeTags
 	        }),
 	        _react2.default.createElement('textarea', {
 	          placeholder: 'Memo',
@@ -40266,7 +40336,8 @@
 	exports.default = (0, _reactRedux.connect)(function (state) {
 	  return {
 	    writeTitle: state.default.write.title,
-	    writeNote: state.default.write.note
+	    writeNote: state.default.write.note,
+	    writeTags: state.default.write.tags
 	  };
 	})(Write);
 

@@ -32,7 +32,7 @@ export default class App extends Component {
 
     document.querySelector('body').addEventListener('keyup', (event) => {
       if( event.keyCode==27 && ['TEXTAREA','INPUT'].indexOf(event.target.tagName) > -1 ) {
-        document.querySelector(event.target.tagName).blur();
+        event.target.blur();
       }
     });
 
@@ -75,6 +75,12 @@ export default class App extends Component {
           this.props.dispatch(updateForm('sync'));
           hashHistory.push('/write/'+this.props.params.id);
           document.querySelector('textarea').focus();
+
+          // Previe 열기
+          if ( !this.props.preview ) {
+            this.props.dispatch(togglePreview());
+          }
+
         }
         else if (!target) {
           this.props.dispatch(openDialog('alert','Not Found Idx'));
@@ -84,6 +90,12 @@ export default class App extends Component {
           this.props.dispatch(updateForm('sync'));
           hashHistory.push('/write/'+this.props.params.id);
           document.querySelector('textarea').focus();
+
+          // Previe 열기
+          if ( !this.props.preview ) {
+            this.props.dispatch(togglePreview());
+          }
+
         }
       }
 
@@ -146,6 +158,12 @@ export default class App extends Component {
             this.props.dispatch(updateForm('note',''));
             hashHistory.push('/write');
             document.querySelector('input').focus();
+
+            // Previe 열기
+            if ( !this.props.preview ) {
+              this.props.dispatch(togglePreview());
+            }
+
             break;
           case 'edit':
             if (!this.props.params.id) {
@@ -155,6 +173,11 @@ export default class App extends Component {
             this.props.dispatch(updateForm('sync'));
             hashHistory.push('/write/'+this.props.params.id);
             document.querySelector('textarea').focus();
+
+            // Previe 열기
+            if ( !this.props.preview ) {
+              this.props.dispatch(togglePreview());
+            }
 
             break;
         }

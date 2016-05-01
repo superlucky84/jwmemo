@@ -2,16 +2,21 @@ import jQuery from 'jquery';
 global.$ = jQuery;
 
 const initialStateList = {
+  search: {
+    tags: []
+  },
   lists: [],
   view: {
     noteId: 0,
     title: '',
-    note: ''
+    note: '',
+    tags: []
   },
   write: {
     noteId: 0,
     title: '',
-    note: ''
+    note: '',
+    tags: []
   },
   preview: {
     opened: false
@@ -104,7 +109,8 @@ export default function jnotereducer(state = initialStateList, action) {
         url: '/jnote/create',
         data: {
           title: state.write.title,
-          note: state.write.note
+          note: state.write.note,
+          category: state.write.tags
         },
         success: function(data) {
           let newArray = [data].concat(state.lists);
@@ -112,12 +118,12 @@ export default function jnotereducer(state = initialStateList, action) {
             lists: newArray,
             write: {
               title: '',
-              note: ''
+              note: '',
+              tags: []
             }
           });
         }
       });
-
 
       return new_state;
       break;
@@ -132,7 +138,8 @@ export default function jnotereducer(state = initialStateList, action) {
         data: {
           id: state.write.noteId,
           title: state.write.title,
-          note: state.write.note
+          note: state.write.note,
+          category: state.write.tags
         },
         success: function(data) {
 
@@ -159,7 +166,8 @@ export default function jnotereducer(state = initialStateList, action) {
         write: {
           noteId: state.view.noteId,
           title: state.view.title,
-          note: state.view.note
+          note: state.view.note,
+          tags: state.view.tags
         }
       });
       return new_state;
@@ -167,25 +175,25 @@ export default function jnotereducer(state = initialStateList, action) {
 
     /* 타이틀 폼수정 */
     case 'UPDATEFORM_TITLE':
-      new_state = Object.assign({},state,{
-        write: {
-          noteId: state.write.noteId,
-          title: action.text,
-          note: state.write.note
-        }
-      });
+      new_state = Object.assign({},state);
+      new_state.write.title = action.text;
+
       return new_state;
       break;
 
     /* 컨텐츠 폼수정 */
     case 'UPDATEFORM_NOTE':
-      new_state = Object.assign({},state,{
-        write: {
-          noteId: state.write.noteId,
-          title: state.write.title,
-          note: action.text
-        }
-      });
+      new_state = Object.assign({},state);
+      new_state.write.note = action.text;
+
+      return new_state;
+      break;
+
+    /* 컨텐츠 폼수정 */
+    case 'UPDATEFORM_TAGS':
+      new_state = Object.assign({},state);
+      new_state.write.tags = action.text;
+
       return new_state;
       break;
 
@@ -229,6 +237,7 @@ export default function jnotereducer(state = initialStateList, action) {
             view: {
               note: data.note,
               title: data.title,
+              tags: data.category,
               noteId: action.id
             }
           });

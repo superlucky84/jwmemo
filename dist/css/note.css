@@ -1,4 +1,4 @@
-header,footer,div,main,section {
+header,footer,div,main,section,input,textarea {
   box-sizing: border-box;
 }
 
@@ -140,15 +140,16 @@ div.view, div.preview {
 }
 
 div.write input[type=text] {
-  box-sizing: border-box;
   width: 100%;
+  margin-bottom: 10px;
+  height: 37px;
+  padding-left: 10px;
 }
 
 div.write textarea {
-  box-sizing: border-box;
   width: 100%;
-  margin-top: 10px;
-  height: calc(100% - 40px);
+  height: calc(100% - 95px);
+  padding: 10px;
 }
 
 

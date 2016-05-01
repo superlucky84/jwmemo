@@ -19,6 +19,28 @@ export default class Write extends Component {
     this.props.dispatch(updateForm('note',event.target.value));
   }
 
+  changeTag(event) {
+
+    let tagsString = event.target.value
+                      .replace(/[^a-z0-9,;:]*/g,"")
+                      .replace(/[,;:]/g,",")
+                      .replace(/,+/g,",")
+                      .replace(/^,/g,"");
+
+    let tags = tagsString.split(",");
+    if (tagsString.match(/,$/) ) {
+      let newTag = [];
+      tags.forEach((tag)=>{
+        if ( newTag.indexOf(tag) == -1 ) {
+          newTag.push(tag);
+        }
+      });
+      tags = newTag;
+    }
+
+    this.props.dispatch(updateForm('tags',tags));
+  }
+
   componentDidMount() {
     if (this.props.routeParams.id) {
       this.props.dispatch(getOne(this.props.routeParams.id));
@@ -27,6 +49,9 @@ export default class Write extends Component {
   }
 
   render() {
+
+    // TAG 세팅
+    let writeTags = this.props.writeTags.join(", ").replace(/[ ]*$/,"");
 
     let splitStyle = null;
     if (this.props.realleft) {
@@ -41,6 +66,11 @@ export default class Write extends Component {
           placeholder="Title" 
           onChange={this.changeTitle.bind(this)} 
           value={this.props.writeTitle}
+        />
+        <input type="text" 
+          placeholder="Tag"
+          onChange={this.changeTag.bind(this)}
+          value={writeTags}
         />
         <textarea 
           placeholder="Memo" 
@@ -58,6 +88,7 @@ export default class Write extends Component {
 export default connect(function (state) {
     return {
       writeTitle: state.default.write.title,
-      writeNote: state.default.write.note
+      writeNote: state.default.write.note,
+      writeTags: state.default.write.tags
     };
 })(Write);

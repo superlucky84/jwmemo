@@ -16,12 +16,22 @@ export default class Header extends Component {
     this.props.dispatch(updateForm('title',''));
     this.props.dispatch(updateForm('note',''));
     hashHistory.push('/write');
+
+    // Previe 열기
+    if ( !this.props.preview ) {
+      this.props.dispatch(togglePreview());
+    }
   }
 
   handleEditMemo() {
 
     this.props.dispatch(updateForm('sync'));
     hashHistory.push('/write/'+this.noteId);
+
+    // Previe 열기
+    if ( !this.props.preview ) {
+      this.props.dispatch(togglePreview());
+    }
   }
   handleWriteCancel() {
 

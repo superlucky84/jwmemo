@@ -27650,6 +27650,7 @@
 	    noteId: 0,
 	    title: '',
 	    note: '',
+	    scroll: 0,
 	    tags: []
 	  },
 	  preview: {
@@ -27674,6 +27675,16 @@
 	  var new_state = {};
 
 	  switch (action.type) {
+
+	    /* scroll 체인지 */
+	    case 'SCROLL_CHANGE':
+	      //new_state = Object.assign({},state);
+	      new_state = JSON.parse(JSON.stringify(state));
+	      new_state.write.scroll = action.scroll;
+	      return new_state;
+
+	      break;
+
 	    /* 쇼트컷 체인지 */
 	    case 'ADMIN_CHANGE':
 
@@ -37760,6 +37771,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.scrollChange = scrollChange;
 	exports.shortcutChange = shortcutChange;
 	exports.adminChange = adminChange;
 	exports.openDialog = openDialog;
@@ -37772,6 +37784,16 @@
 	exports.getOne = getOne;
 	exports.updateForm = updateForm;
 	//import { INCREASE, DECREASE } from '../constants'
+
+	/**
+	 * SCROLL_CHANGE
+	 */
+	function scrollChange(scroll) {
+	  return {
+	    type: 'SCROLL_CHANGE',
+	    scroll: scroll
+	  };
+	}
 
 	/**
 	 * SHORTCUT_CHANGE
@@ -38658,6 +38680,10 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _reactDom = __webpack_require__(33);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
 	var _reactRedux = __webpack_require__(181);
 
 	var _marked = __webpack_require__(266);
@@ -38699,6 +38725,21 @@
 	      if (nextprops.routeParams && nextprops.routeParams.id != this.props.params.id) {
 	        nextprops.dispatch((0, _jnote.getOne)(nextprops.routeParams.id));
 	      }
+
+	      if (nextprops.previewScroll != this.props.previewScroll) {
+	        var $this = _reactDom2.default.findDOMNode(this);
+	        var result = ($this.scrollHeight - $this.clientHeight) * nextprops.previewScroll / 100;
+	        _reactDom2.default.findDOMNode(this).scrollTop = result;
+	      }
+	    }
+	  }, {
+	    key: 'changeScroll',
+	    value: function changeScroll(event) {
+
+	      var percent = event.target.scrollTop / (event.target.scrollHeight - event.target.clientHeight) * 100;
+	      percent = Math.round(percent);
+
+	      this.props.dispatch((0, _jnote.scrollChange)(percent));
 	    }
 	  }, {
 	    key: 'render',
@@ -38718,6 +38759,7 @@
 	      var note = "";
 	      var classname = '';
 	      var splitStyle = null;
+	      var scroll = 0;
 
 	      if (this.props.viewType == 'preview') {
 
@@ -38745,6 +38787,7 @@
 	      return _react2.default.createElement('div', {
 	        style: splitStyle,
 	        className: classname,
+	        onScroll: this.changeScroll.bind(this),
 	        dangerouslySetInnerHTML: { __html: note } });
 	    }
 	  }]);
@@ -38761,7 +38804,8 @@
 	exports.default = (0, _reactRedux.connect)(function (state) {
 	  return {
 	    note: state.default.view.note,
-	    previewNote: state.default.write.note
+	    previewNote: state.default.write.note,
+	    previewScroll: state.default.write.scroll
 	  };
 	})(View);
 
@@ -40235,6 +40279,10 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _reactDom = __webpack_require__(33);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
 	var _reactRedux = __webpack_require__(181);
 
 	var _jnote = __webpack_require__(260);
@@ -40260,6 +40308,15 @@
 	  }
 
 	  _createClass(Write, [{
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps(nextprops) {
+	      if (nextprops.writeScroll != this.props.writeScroll) {
+	        var $this = _reactDom2.default.findDOMNode(this.refs.textarea);
+	        var result = ($this.scrollHeight - $this.clientHeight) * nextprops.writeScroll / 100;
+	        $this.scrollTop = result;
+	      }
+	    }
+	  }, {
 	    key: 'changeTitle',
 	    value: function changeTitle(event) {
 	      this.props.dispatch((0, _jnote.updateForm)('title', event.target.value));
@@ -40267,7 +40324,16 @@
 	  }, {
 	    key: 'changeNote',
 	    value: function changeNote(event) {
+
 	      this.props.dispatch((0, _jnote.updateForm)('note', event.target.value));
+	    }
+	  }, {
+	    key: 'changeScroll',
+	    value: function changeScroll(event) {
+
+	      var percent = event.target.scrollTop / (event.target.scrollHeight - event.target.clientHeight) * 100;
+	      percent = Math.round(percent);
+	      this.props.dispatch((0, _jnote.scrollChange)(percent));
 	    }
 	  }, {
 	    key: 'changeTag',
@@ -40326,8 +40392,10 @@
 	          value: writeTags
 	        }),
 	        _react2.default.createElement('textarea', {
+	          ref: 'textarea',
 	          placeholder: 'Memo',
 	          onChange: this.changeNote.bind(this),
+	          onScroll: this.changeScroll.bind(this),
 	          value: this.props.writeNote
 	        })
 	      );
@@ -40347,7 +40415,8 @@
 	  return {
 	    writeTitle: state.default.write.title,
 	    writeNote: state.default.write.note,
-	    writeTags: state.default.write.tags
+	    writeTags: state.default.write.tags,
+	    writeScroll: state.default.write.scroll
 	  };
 	})(Write);
 

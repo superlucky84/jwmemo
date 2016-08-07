@@ -2,6 +2,16 @@
 
 
 /**
+ * SCROLL_CHANGE
+ */
+export function scrollChange (scroll) {
+  return {
+    type: 'SCROLL_CHANGE',
+    scroll
+  }
+}
+
+/**
  * SHORTCUT_CHANGE
  */
 export function shortcutChange (command) {

@@ -16,6 +16,7 @@ const initialStateList = {
     noteId: 0,
     title: '',
     note: '',
+    scroll: 0,
     tags: []
   },
   preview: {
@@ -37,6 +38,16 @@ export default function jnotereducer(state = initialStateList, action) {
   let new_state = {};
 
   switch (action.type) {
+
+    /* scroll 체인지 */
+    case 'SCROLL_CHANGE':
+      //new_state = Object.assign({},state);
+      new_state = JSON.parse(JSON.stringify(state));
+      new_state.write.scroll = action.scroll;
+      return new_state;
+
+      break;
+
     /* 쇼트컷 체인지 */
     case 'ADMIN_CHANGE':
 

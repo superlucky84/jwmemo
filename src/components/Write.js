@@ -1,8 +1,9 @@
 import React, { Component, PropTypes } from 'react';
+import ReactDOM from 'react-dom'
 import { connect } from 'react-redux';
 
 /* IMPORT ACTIONS */
-import {updateForm, getOne} from '../actions/jnote'
+import {updateForm, getOne, scrollChange} from '../actions/jnote'
 
 
 export default class Write extends Component {
@@ -11,12 +12,27 @@ export default class Write extends Component {
     super(props);
   }
 
+  componentWillReceiveProps(nextprops) {
+    if (nextprops.writeScroll != this.props.writeScroll) {
+      let $this = ReactDOM.findDOMNode(this.refs.textarea);
+      let result = (($this.scrollHeight - $this.clientHeight) * nextprops.writeScroll) / 100;
+      $this.scrollTop = result;
+    }
+  }
+
   changeTitle(event) {
     this.props.dispatch(updateForm('title',event.target.value));
   }
 
   changeNote(event) {
+
     this.props.dispatch(updateForm('note',event.target.value));
+  }
+  changeScroll(event) {
+
+    let percent =  (event.target.scrollTop / (event.target.scrollHeight - event.target.clientHeight)) * 100;
+    percent = Math.round(percent);
+    this.props.dispatch(scrollChange(percent));
   }
 
   changeTag(event) {
@@ -73,8 +89,10 @@ export default class Write extends Component {
           value={writeTags}
         />
         <textarea 
+          ref="textarea"
           placeholder="Memo" 
           onChange={this.changeNote.bind(this)} 
+          onScroll={this.changeScroll.bind(this)}
           value={this.props.writeNote}
         />
       </div>
@@ -89,6 +107,7 @@ export default connect(function (state) {
     return {
       writeTitle: state.default.write.title,
       writeNote: state.default.write.note,
-      writeTags: state.default.write.tags
+      writeTags: state.default.write.tags,
+      writeScroll: state.default.write.scroll
     };
 })(Write);

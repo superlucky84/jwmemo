@@ -37976,10 +37976,14 @@
 	    // SHORTCUT EVENT
 	    _this.timeoutState = null;
 
-	    document.querySelector('body').addEventListener('keyup', function (event) {
-	      if (event.keyCode == 27 && ['TEXTAREA', 'INPUT'].indexOf(event.target.tagName) > -1) {
+	    document.querySelector('body').addEventListener('keydown', function (event) {
+
+	      if (event.shiftKey == true && (event.keyCode == 186 || event.keyCode == 191) && vim.m_mode == 'COMMAND' && ['TEXTAREA', 'INPUT'].indexOf(event.target.tagName) > -1) {
 	        event.target.blur();
 	      }
+	      /* if( event.keyCode==27 && ['TEXTAREA','INPUT'].indexOf(event.target.tagName) > -1 ) {
+	        event.target.blur();
+	      } */
 	    });
 
 	    document.querySelector('body').addEventListener('keypress', function (event) {
@@ -38040,89 +38044,104 @@
 	            }
 	          }
 
-	          /* 저장하기 */
-	          else if (event.keyCode == 13 && matchString.match(/^:w\s/g)) {
+	          /* 캔슬 */
+	          else if (event.keyCode == 13 && matchString.match(/^:q\s/g)) {
+	              // Previe 닫음
+	              if (_this.props.preview) {
+	                _this.props.dispatch((0, _jnote.togglePreview)());
+	              }
 
 	              var noteId = _this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/, "$2");
-	              if ('write' == _this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/, "$1")) {
-
-	                //if ( !this.props.adminMode ) {
-	                //this.props.dispatch(openDialog('alert','Not AdminMode'));
-	                //}
-	                //else {
-	                if (_this.props.preview) {
-	                  _this.props.dispatch((0, _jnote.togglePreview)());
-	                }
-
-	                // 수정
-	                if (noteId) {
-	                  _this.props.dispatch((0, _jnote.editNote)(noteId));
-	                  _reactRouter.hashHistory.push('/view/' + noteId);
-	                }
-	                // 생성
-	                else {
-	                    _this.props.dispatch((0, _jnote.writeNote)());
-	                  }
-	                //}
+	              if (noteId) {
+	                _reactRouter.hashHistory.push('/view/' + noteId);
+	              } else {
+	                _reactRouter.hashHistory.push('/');
 	              }
 	            }
-	            /* 화면분할 균등 */
-	            else if (matchString.match(/=/g)) {
-	                _this.changeShadowLeft(50);
-	              } else if (match = /([0-9]+)([<>])$/g.exec(matchString)) {
 
-	                var changeLeft = _this.state.realleft;
-	                if (match[2] == ">") {
-	                  changeLeft = _this.state.realleft + parseInt(match[1]);
-	                } else if (match[2] == "<") {
-	                  changeLeft = _this.state.realleft - parseInt(match[1]);
-	                }
+	            /* 저장하기 */
+	            else if (event.keyCode == 13 && matchString.match(/^:w\s/g)) {
 
-	                if (changeLeft <= 0) {
-	                  changeLeft = 1;
-	                } else if (changeLeft >= 100) {
-	                  changeLeft = 99;
-	                }
+	                var _noteId = _this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/, "$2");
+	                if ('write' == _this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/, "$1")) {
 
-	                _this.changeShadowLeft(changeLeft);
-	              }
-	              /* 관리자 권한으로 실행 */
-	              else if (match = /^\?dufma (on|off|write|edit)/g.exec(matchString)) {
-
-	                  switch (match[1]) {
-	                    case 'on':
-	                    case 'off':
-	                      _this.props.dispatch((0, _jnote.adminChange)(match[1] == 'on' ? true : false));
-	                      break;
-	                    case 'write':
-	                      _this.props.dispatch((0, _jnote.updateForm)('title', ''));
-	                      _this.props.dispatch((0, _jnote.updateForm)('note', ''));
-	                      _reactRouter.hashHistory.push('/write');
-	                      document.querySelector('input').focus();
-
-	                      // Previe 열기
-	                      if (!_this.props.preview) {
-	                        _this.props.dispatch((0, _jnote.togglePreview)());
-	                      }
-
-	                      break;
-	                    case 'edit':
-	                      if (!_this.props.params.id) {
-	                        _this.props.dispatch((0, _jnote.openDialog)('alert', 'Please specify the target first.'));
-	                        return;
-	                      }
-	                      _this.props.dispatch((0, _jnote.updateForm)('sync'));
-	                      _reactRouter.hashHistory.push('/write/' + _this.props.params.id);
-	                      document.querySelector('textarea').focus();
-
-	                      // Previe 열기
-	                      if (!_this.props.preview) {
-	                        _this.props.dispatch((0, _jnote.togglePreview)());
-	                      }
-
-	                      break;
+	                  //if ( !this.props.adminMode ) {
+	                  //this.props.dispatch(openDialog('alert','Not AdminMode'));
+	                  //}
+	                  //else {
+	                  if (_this.props.preview) {
+	                    _this.props.dispatch((0, _jnote.togglePreview)());
 	                  }
+
+	                  // 수정
+	                  if (_noteId) {
+	                    _this.props.dispatch((0, _jnote.editNote)(_noteId));
+	                    _reactRouter.hashHistory.push('/view/' + _noteId);
+	                  }
+	                  // 생성
+	                  else {
+	                      _this.props.dispatch((0, _jnote.writeNote)());
+	                    }
+	                  //}
 	                }
+	              }
+	              /* 화면분할 균등 */
+	              else if (matchString.match(/=/g)) {
+	                  _this.changeShadowLeft(50);
+	                } else if (match = /([0-9]+)([<>])$/g.exec(matchString)) {
+
+	                  var changeLeft = _this.state.realleft;
+	                  if (match[2] == ">") {
+	                    changeLeft = _this.state.realleft + parseInt(match[1]);
+	                  } else if (match[2] == "<") {
+	                    changeLeft = _this.state.realleft - parseInt(match[1]);
+	                  }
+
+	                  if (changeLeft <= 0) {
+	                    changeLeft = 1;
+	                  } else if (changeLeft >= 100) {
+	                    changeLeft = 99;
+	                  }
+
+	                  _this.changeShadowLeft(changeLeft);
+	                }
+	                /* 관리자 권한으로 실행 */
+	                else if (match = /^\?dufma (on|off|write|edit)/g.exec(matchString)) {
+
+	                    switch (match[1]) {
+	                      case 'on':
+	                      case 'off':
+	                        _this.props.dispatch((0, _jnote.adminChange)(match[1] == 'on' ? true : false));
+	                        break;
+	                      case 'write':
+	                        _this.props.dispatch((0, _jnote.updateForm)('title', ''));
+	                        _this.props.dispatch((0, _jnote.updateForm)('note', ''));
+	                        _reactRouter.hashHistory.push('/write');
+	                        document.querySelector('input').focus();
+
+	                        // Previe 열기
+	                        if (!_this.props.preview) {
+	                          _this.props.dispatch((0, _jnote.togglePreview)());
+	                        }
+
+	                        break;
+	                      case 'edit':
+	                        if (!_this.props.params.id) {
+	                          _this.props.dispatch((0, _jnote.openDialog)('alert', 'Please specify the target first.'));
+	                          return;
+	                        }
+	                        _this.props.dispatch((0, _jnote.updateForm)('sync'));
+	                        _reactRouter.hashHistory.push('/write/' + _this.props.params.id);
+	                        document.querySelector('textarea').focus();
+
+	                        // Previe 열기
+	                        if (!_this.props.preview) {
+	                          _this.props.dispatch((0, _jnote.togglePreview)());
+	                        }
+
+	                        break;
+	                    }
+	                  }
 
 	      clearTimeout(_this.timeoutState);
 	      _this.timeoutState = setTimeout(function () {
@@ -38134,6 +38153,9 @@
 
 	        _this.props.dispatch((0, _jnote.shortcutChange)(''));
 	        _this.timeoutState = null;
+	        if (document.querySelector('textarea')) {
+	          document.querySelector('textarea').focus();
+	        }
 	      }, 900);
 	    });
 
@@ -40324,7 +40346,6 @@
 	  }, {
 	    key: 'changeNote',
 	    value: function changeNote(event) {
-
 	      this.props.dispatch((0, _jnote.updateForm)('note', event.target.value));
 	    }
 	  }, {
@@ -40362,6 +40383,24 @@
 	      if (this.props.routeParams.id) {
 	        this.props.dispatch((0, _jnote.getOne)(this.props.routeParams.id));
 	        this.props.dispatch((0, _jnote.updateForm)('sync'));
+	      }
+
+	      var target = _reactDom2.default.findDOMNode(this.refs.textarea);
+
+	      vim.on_log = function (log) {
+	        if (log == 'delete range') {
+	          this.props.dispatch((0, _jnote.updateForm)('note', event.target.value));
+	        }
+	        if (log == 'set_mode INSERT') {
+	          target.className = "insert";
+	        } else if (log == 'set_mode COMMAND') {
+	          target.className = "";
+	        }
+	      }.bind(this);
+
+	      if (target !== null) {
+	        vim.attach_to(target);
+	        target.focus();
 	      }
 	    }
 	  }, {

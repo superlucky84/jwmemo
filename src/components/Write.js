@@ -25,7 +25,6 @@ export default class Write extends Component {
   }
 
   changeNote(event) {
-
     this.props.dispatch(updateForm('note',event.target.value));
   }
   changeScroll(event) {
@@ -61,6 +60,25 @@ export default class Write extends Component {
     if (this.props.routeParams.id) {
       this.props.dispatch(getOne(this.props.routeParams.id));
       this.props.dispatch(updateForm('sync'));
+    }
+
+    let target = ReactDOM.findDOMNode(this.refs.textarea);
+
+    vim.on_log = function(log) {
+      if (log == 'delete range') {
+        this.props.dispatch(updateForm('note',event.target.value));
+      }
+      if (log == 'set_mode INSERT') {
+        target.className = "insert";
+      }
+      else if (log == 'set_mode COMMAND') {
+        target.className = "";
+      }
+    }.bind(this);
+
+    if (target !== null) {
+      vim.attach_to( target );
+      target.focus();
     }
   }
 

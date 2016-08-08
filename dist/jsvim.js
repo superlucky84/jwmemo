@@ -919,11 +919,11 @@ var act_zero = function(vim, cdata) {
 }
 
 var act_delete_range = function(vim, cdata) {
-  vim.log('delete range')
   var t = __yank(vim, cdata)
   vim.set_text( t.text )
   vim.set_pos( t.from )
   vim.set_mode( cdata.mode ) 
+  vim.log('delete range')
 }
 
 var act_yank_range = function(vim, cdata) {

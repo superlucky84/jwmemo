@@ -30,10 +30,14 @@ export default class App extends Component {
     this.timeoutState = null;
 
 
-    document.querySelector('body').addEventListener('keyup', (event) => {
-      if( event.keyCode==27 && ['TEXTAREA','INPUT'].indexOf(event.target.tagName) > -1 ) {
+    document.querySelector('body').addEventListener('keydown', (event) => {
+
+      if (event.shiftKey == true && (event.keyCode == 186 || event.keyCode == 191) && vim.m_mode == 'COMMAND' && ['TEXTAREA','INPUT'].indexOf(event.target.tagName) > -1 ) {
         event.target.blur();
       }
+      /* if( event.keyCode==27 && ['TEXTAREA','INPUT'].indexOf(event.target.tagName) > -1 ) {
+        event.target.blur();
+      } */
     });
 
     document.querySelector('body').addEventListener('keypress', (event) => {
@@ -96,6 +100,22 @@ export default class App extends Component {
             this.props.dispatch(togglePreview());
           }
 
+        }
+      }
+
+      /* 캔슬 */
+      else if (event.keyCode == 13 && matchString.match(/^:q\s/g) ) {
+        // Previe 닫음
+        if ( this.props.preview ) {
+          this.props.dispatch(togglePreview());
+        }
+
+        let noteId = this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/,"$2");
+        if (noteId) {
+          hashHistory.push('/view/'+noteId);
+        }
+        else {
+          hashHistory.push('/');
         }
       }
 
@@ -194,6 +214,9 @@ export default class App extends Component {
 
         this.props.dispatch(shortcutChange(''));
         this.timeoutState = null;
+        if (document.querySelector('textarea')) {
+          document.querySelector('textarea').focus();
+        }
       },900);
 
     });

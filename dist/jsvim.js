@@ -123,7 +123,8 @@ function VIM(ctrees) {
     var p = this.on_key( m, event )
     return p
   }
-  
+  this.startpos = 0;
+
   this.on_key = function(c, event) {
     this.log('"' + c + '"')
     var pass_keys
@@ -131,6 +132,12 @@ function VIM(ctrees) {
       this.reset()
       pass_keys = false
     }
+    else if ( this.is_mode(VISUAL) ) {
+      this.accept_key( c );
+      this.m_selector.setSelectionRange(this.startpos,this.get_pos());
+      pass_keys = false;
+    }
+
     else if ( this.is_mode(INSERT) ) {
       if (c === '<Enter>') {
         this.enter_auto_indent()
@@ -175,6 +182,9 @@ function VIM(ctrees) {
       if (xs[0] < this.get_pos()) {
         this.set_pos(this.get_pos() - 1);
       }
+    }
+    if (mode === VISUAL) {
+      this.startpos = this.get_pos();
     }
 
     

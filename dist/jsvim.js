@@ -168,6 +168,16 @@ function VIM(ctrees) {
 
   this.set_mode = function(mode) {
     this.log("set_mode " + mode)
+    if (this.m_mode === INSERT && mode === COMMAND) {
+      var text = this.get_text()
+      var pos = this.get_pos()
+      var xs = select_line(text, pos)
+      if (xs[0] < this.get_pos()) {
+        this.set_pos(this.get_pos() - 1);
+      }
+    }
+
+    
     if (this.m_mode === COMMAND && mode === VISUAL) {
       // do not change when comming from PENDING - would affect 'viw'
       this.m_selection_from = this.get_pos()

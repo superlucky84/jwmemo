@@ -346,7 +346,10 @@ function VIM(ctrees) {
 
 // http://stackoverflow.com/questions/263743/how-to-get-caret-position-in-textarea
 function getCaret(el) { 
-  if (el.selectionStart) { 
+  if (el.selectionEnd) {
+    return el.selectionEnd; 
+  }
+  else if (el.selectionStart) { 
     return el.selectionStart; 
   } else if (document.selection) { 
     el.focus(); 

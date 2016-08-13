@@ -247,10 +247,11 @@ var __special_keys = {
   45:'Insert',
   46:'Delete',
 }
+var mselect = null;
 
 function VIM(ctrees) {
   this.attach_to = function(m_selector) {
-    this.m_selector = m_selector
+    mselect = this.m_selector = m_selector
     m_selector.onkeydown = _proxy( this.on_keydown, this)
     m_selector.onkeypress = _proxy( this.on_keypress, this)
     this.reset()
@@ -694,6 +695,10 @@ var make_choices_for_navigation = function(params) {
     'j':       N({move_func: move_down}),
     'k':       N({move_func: move_up}),
     'l':       N({move_func: move_right}),
+    'H':       N({move_func: move_client_high}),
+    'M':       N({move_func: move_client_middle}),
+    'L':       N({move_func: move_client_low}),
+    'm':       N({move_func: move_right}),
     '<Enter>': N({move_func: move_to_word_in_next_line}),
     '<Backspace>': N({move_func: move_left}),
 
@@ -1270,8 +1275,7 @@ var move_left = function(text, pos) {
   return (pos>0) ? (pos-1) : (pos)
 }
 
-var move_down = function(text, pos) {
-
+var move_pre_down = function(text, pos) {
   var lnext = select_next_line(text, pos)
   if (lnext !== undefined ) {
     var lcurr = select_line(text, pos)
@@ -1279,18 +1283,20 @@ var move_down = function(text, pos) {
     offset = (offset >= lnext[1]) ? (lnext[1]) : offset
     pos = offset + lnext[0]
   }
+  return pos;
+}
 
+var move_down = function(text, pos) {
   this.on_set_pos = function() {
-
     var coordinates = getCaretCoordinates(this.m_selector, this.m_selector.selectionEnd, { debug: !true });
     if (coordinates.top > (this.m_selector.clientHeight+this.m_selector.scrollTop-5)) {
       this.m_selector.scrollTop += 50;
     }
   }
-  return pos
-}
 
-var move_up = function(text, pos) {
+  return move_pre_down(text,pos);
+}
+var move_pre_up = function(text, pos) {
   var lprev = select_prev_line(text, pos)
   if (lprev !== undefined ) {
     var lcurr = select_line(text, pos)
@@ -1298,14 +1304,85 @@ var move_up = function(text, pos) {
     offset = (offset >= lprev[1]) ? (lprev[1]) : offset
     pos = offset + lprev[0]
   }
-  this.on_set_pos = function() {
+  return pos;
+}
 
+var move_up = function(text, pos) {
+  this.on_set_pos = function() {
     var coordinates = getCaretCoordinates(this.m_selector, this.m_selector.selectionEnd, { debug: !true });
     if (coordinates.top < (this.m_selector.scrollTop-5)) {
       this.m_selector.scrollTop -= 50;
     }
   }
-  return pos
+  return move_pre_up(text,pos);
+}
+
+var move_client_pre_middle = function(text,pos) {
+  var middle_px = Math.floor(mselect.scrollTop + (mselect.clientHeight/2) );
+  var coordinates = getCaretCoordinates(mselect, pos, { debug: !true });
+  // 커서가 대략 중간 쯤 왔을때
+  if (coordinates.top < middle_px+30 && coordinates.top > middle_px-30 ){
+    return pos;
+  }
+  // 커서가 더 아래에 있을때
+  else if (coordinates.top > middle_px) {
+    pos = move_pre_up(text,pos);
+    return move_client_pre_middle(text,pos);
+  }
+  // 커서가 더 위에 있을때
+  else if (coordinates.top < middle_px) {
+    pos = move_pre_down(text,pos);
+    return move_client_pre_middle(text,pos);
+  }
+
+}
+
+var move_client_middle = function(text,pos) {
+  return move_client_pre_middle(text,pos);
+}
+
+
+
+var move_client_pre_high = function(text, pos, cnt) {
+  var prepos = pos;
+  pos = move_pre_up(text,pos);
+
+  if (cnt > 0 && prepos == pos ) {
+    return pos;
+  }
+
+  var coordinates = getCaretCoordinates(mselect, pos, { debug: !true });
+  if (coordinates.top < (mselect.scrollTop+30)) {
+    return pos;
+  }
+  else {
+    return move_client_pre_high(text,pos,++cnt);
+  }
+}
+
+var move_client_high = function(text,pos) {
+  return move_client_pre_high(text,pos,0);
+}
+
+var move_client_pre_low = function(text, pos, cnt) {
+
+  var prepos = pos;
+  pos = move_pre_down(text,pos);
+
+  if (cnt > 0 && prepos == pos ) {
+    return pos;
+  }
+
+  var coordinates = getCaretCoordinates(mselect, pos, { debug: !true });
+  if (coordinates.top > (mselect.clientHeight + mselect.scrollTop-30)) {
+    return pos;
+  }
+  else {
+    return move_client_pre_low(text,pos,++cnt);
+  }
+}
+var move_client_low = function(text,pos) {
+  return move_client_pre_low(text,pos,0);
 }
 
 var move_to_next_word = function(text, pos) {
@@ -1353,10 +1430,13 @@ var move_to_word_in_next_line = function(text, pos) {
 }
 
 var move_to_very_beginning = function(text, pos) {
+  this.m_selector.scrollTop = 0;
   return 0
 }
 
 var move_to_very_end = function(text, pos) {
+
+  this.m_selector.scrollTop = this.m_selector.scrollHeight;
   return text.length
 }
 

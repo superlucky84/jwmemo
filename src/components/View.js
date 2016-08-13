@@ -31,13 +31,13 @@ export default class View extends Component {
     }
   }
 
+  /*
   changeScroll(event) {
-
     let percent =  (event.target.scrollTop / (event.target.scrollHeight - event.target.clientHeight)) * 100;
     percent = Math.round(percent);
-
     this.props.dispatch(scrollChange(percent));
   }
+  */
 
 
   render() {
@@ -86,7 +86,7 @@ export default class View extends Component {
       <div 
         style={splitStyle}
         className={classname} 
-        onScroll={this.changeScroll.bind(this)}
+        //onScroll={this.changeScroll.bind(this)}
         dangerouslySetInnerHTML={{__html: note}} />
     );
   }

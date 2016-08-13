@@ -34,14 +34,16 @@ server.on('error', onError);
 server.on('listening', onListening);
 
 
-var httpsOption = { 
-  key: fs.readFileSync(__dirname+'/../jssl.key'),
-  cert: fs.readFileSync(__dirname+'/../1_superlucky.co.kr_bundle.crt')
-}
+if (port == '80') {
+  var httpsOption = { 
+    key: fs.readFileSync(__dirname+'/../jssl.key'),
+    cert: fs.readFileSync(__dirname+'/../1_superlucky.co.kr_bundle.crt')
+  }
 
-https.createServer(httpsOption, app).listen(443, function(){
-  console.log("Https server listening on port " + 443);
-});
+  https.createServer(httpsOption, app).listen(443, function(){
+    console.log("Https server listening on port " + 443);
+  });
+}
 
 /**
  * Normalize a port into a number, string, or false.

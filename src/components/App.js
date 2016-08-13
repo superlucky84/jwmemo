@@ -32,18 +32,25 @@ export default class App extends Component {
 
     document.querySelector('body').addEventListener('keydown', (event) => {
 
-      if (event.shiftKey == true && (event.keyCode == 186 || event.keyCode == 191) && vim.m_mode == 'COMMAND' && ['TEXTAREA','INPUT'].indexOf(event.target.tagName) > -1 ) {
+      if (event.shiftKey == true && (event.keyCode == 186 || event.keyCode == 191) && vim.m_mode == 'COMMAND' && ['TEXTAREA'].indexOf(event.target.tagName) > -1 ) {
+        event.target.blur();
+        setTimeout(() => {
+          event.target.focus();
+        },900);
+      }
+      if( event.keyCode==27 && ['INPUT'].indexOf(event.target.tagName) > -1 ) {
         event.target.blur();
       }
-      /* if( event.keyCode==27 && ['TEXTAREA','INPUT'].indexOf(event.target.tagName) > -1 ) {
-        event.target.blur();
-      } */
     });
 
     document.querySelector('body').addEventListener('keypress', (event) => {
 
+
       if( ['TEXTAREA','INPUT'].indexOf(event.target.tagName) > -1 ) {
         return;
+      }
+      else {
+        event.preventDefault();
       }
 
       let shortcut = this.props.shortcutBuffer;
@@ -118,10 +125,10 @@ export default class App extends Component {
           hashHistory.push('/');
         }
       }
-
-      /* 저장하기 */
-      else if (event.keyCode == 13 && matchString.match(/^:w\s/g) ) {
-
+      /* 저장하기 나가기 */
+      else if (event.keyCode == 13 && matchString.match(/^:w(q?)\s/g) ) {
+      //else if (event.keyCode == 13 && match = /^:w(q?)\s/g.exec(matchString) ) {
+        match = /^:w(q?)\s/g.exec(matchString);
 
         let noteId = this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/,"$2");
         if ('write' == this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/,"$1")) {
@@ -130,18 +137,36 @@ export default class App extends Component {
             //this.props.dispatch(openDialog('alert','Not AdminMode'));
           //}
           //else {
-              if ( this.props.preview ) {
-                this.props.dispatch(togglePreview());
-              }
 
               // 수정
               if (noteId) {
                 this.props.dispatch(editNote(noteId));
-                hashHistory.push('/view/'+noteId);
+                if (match[1] == 'q') {
+
+                  if ( this.props.preview ) {
+                    this.props.dispatch(togglePreview());
+                  }
+
+                  hashHistory.push('/view/'+noteId);
+                }
               }
               // 생성
               else {
                 this.props.dispatch(writeNote());
+                setTimeout(() => {
+
+                  if ( this.props.preview ) {
+                    this.props.dispatch(togglePreview());
+                  }
+                  this.viewTargetTrigger(0);
+                  if (match[1] != 'q') {
+                    this.props.dispatch(updateForm('sync'));
+                    //let noteId = this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/,"$2");
+                    hashHistory.push('/write/'+this.props.params.id);
+                    document.querySelector('textarea').focus();
+                    this.props.dispatch(togglePreview());
+                  }
+                },1000);
               }
           //}
         }
@@ -214,9 +239,11 @@ export default class App extends Component {
 
         this.props.dispatch(shortcutChange(''));
         this.timeoutState = null;
+        /*
         if (document.querySelector('textarea')) {
           document.querySelector('textarea').focus();
         }
+        */
       },900);
 
     });

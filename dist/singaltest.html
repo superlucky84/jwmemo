@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>
+	WEBRTC-TEST
+</title>
+<script src="./socket.io.js"></script>
+</head>
+<body>
+
+
+<video id="gum-local" autoplay></video>
+<div id="video-area">
+</div>
+<div id="errorMsg"></div>
+<script>
+
+var localStream = null;
+var videos = {};
+
+var offerOptions = {
+  offerToReceiveAudio: 1,
+  offerToReceiveVideo: 1
+};
+
+//var ws = null;
+var ws = io.connect('http://localhost:8888');
+console.log("WS",ws);
+var peers = { };
+var selfSocketId =  ws.id;
+
+var getPeerConnection = (function(){
+		var PeerConnection = window.PeerConnection || 
+			window.webkitPeerConnection00 || 
+			window.webkitRTCPeerConnection || 
+			window.mozRTCPeerConnection || 
+			window.RTCPeerConnection;
+ 
+		return function(){
+			return PeerConnection;
+		};
+	})();
+ 
+var getNativeRTCSessionDescription = (function(){
+		var nativeRTCSessionDescription = window.mozRTCSessionDescription || 
+			window.RTCSessionDescription;
+ 
+		return function(){
+			return nativeRTCSessionDescription;
+		}
+	})();
+ 
+var getNativeRTCIceCandidate = (function(){
+		var nativeRTCIceCandidate = window.mozRTCIceCandidate || 
+			window.RTCIceCandidate;
+ 
+		return function(){
+			return nativeRTCIceCandidate;
+		}
+	})();
+
+
+var getUserMedia = (function (){
+		var getUserMedia = navigator.getUserMedia || 
+			navigator.webkitGetUserMedia || 
+			navigator.mozGetUserMedia || 
+			navigator.msGetUserMedia;
+ 
+		return function(){
+			return getUserMedia;
+		};
+	})();
+ 
+ 
+var userMedia = getUserMedia();
+userMedia.call(navigator, {
+	"video": true,
+	"audio": true
+}, function(stream){
+        //start 함수를 호출한다. 이때 반드시 stream 객체를 인자로 전달한다.
+	start(stream);
+}, function(){ //error 
+});
+
+function start(stream) {
+  localStream = stream;
+
+  ws.emit('create','testroom',wsOnMessage);
+
+}
+
+
+function wsOnMessage(result,result2){
+  console.log(ws,selfSocketId);
+
+  // candidate 를 보낸다
+  ws.on('getpeer', function(peer_item) {
+    console.log('kk');
+    console.log(peer_item);
+    console.log()
+
+    var PeerConnection = getPeerConnection();
+
+    peer_item.forEach(function (peer) {
+
+      console.log("INDEXOFAAA",Object.keys(peers).indexOf(peer));
+
+      if (Object.keys(peers).indexOf(peer) >= 0){ 
+        return;
+      }
+
+      var pc = peers[peer] = new webkitRTCPeerConnection(null);
+      setEvent(pc,peer);
+
+      peers[peer].addStream(localStream);
+
+      pc.createOffer(
+        offerOptions
+      ).then(
+        function(peer,pc,desc) {
+
+          console.log('OFFERDESC----------',desc);
+
+          pc.setLocalDescription(desc).then(
+            function() {
+              console.log('setlocaldescription success');
+            },
+            function() {
+              console.log('setlocaldescription fail');
+            } 
+          );
+
+          console.log('SETLOCALDESCRIPTION',peer,desc);
+
+          console.log('signaloffer');
+          ws.emit('signal','offer',peer,desc);
+
+        }.bind(this,peer,pc),
+        function(error) {
+          console.log('Failed to create session description: ' + error.toString());
+        } 
+      );
+
+    })
+
+  });
+
+
+  function createOffers() {
+
+    var attr = null, pc = null;
+    console.log("peers",peers);
+    for(attr in peers){
+      pc = peers[attr];
+
+
+    }
+  }
+
+  ws.on('receiveOffer',function(otherPeerId,sdp) {
+          console.log('receiveoffer');
+
+    var nativeRTCSessionDescription = getNativeRTCSessionDescription();
+    var pc = peers[otherPeerId];
+
+    console.log('RECEIVESDP',otherPeerId,pc, new nativeRTCSessionDescription(sdp));
+ 
+    pc.setRemoteDescription(new nativeRTCSessionDescription(sdp)).then(
+    //pc.setRemoteDescription(sdp).then(
+    function(){
+      console.log('SETREMOTEDESCRITION SUCCESS');
+    },
+    function(e){
+      console.log('SETREMOTEDESCRITION FAIL'+e);
+    }
+    );
+        console.log('ANSWER');
+    pc.createAnswer().then(
+      function(pc,sessionDesc) {
+        console.log('ANSWER SUCCESS');
+        pc.setLocalDescription(sessionDesc).then(
+          function(){
+            console.log("ANSWER SETLOCAL SUCCESS");
+          },
+          function(){
+            console.log("ANSWER SETLOCAL FAIL");
+          }
+        );
+        ws.emit('signal','answer',otherPeerId,sessionDesc);
+      }.bind(this,pc),
+      function(e){
+        console.log('CREATEANSWER ERROR:'+e);
+      }
+    );
+
+  });
+  ws.on('receiveAnswer',function(otherPeerId,sdp) {
+    console.log("RECEIVEANSWER");
+    var nativeRTCSessionDescription = getNativeRTCSessionDescription();
+    var pc = peers[otherPeerId];
+    console.log("PC",peers,otherPeerId,pc);
+ 
+    pc.setRemoteDescription(new nativeRTCSessionDescription(sdp)).then(
+    //pc.setRemoteDescription(sdp).then(
+    function(){},
+    function(){}
+    );
+/*
+    pc.createAnswer().then(
+      function(pc,sessionDesc) {
+        pc.setLocalDescription(sessionDesc);
+        ws.emit('signal','answer',otherPeerId,desc);
+      }.bind(this,pc),
+      function(e){
+      }
+    );
+*/
+  });
+
+
+  // 이벤트 할당
+  function setEvent(pc,peer) {
+    pc.onicecandidate = function (e) {
+      if (e.candidate) {
+        console.log("ECANDIDATE",e.candidate);
+        ws.emit('candidate',peer, e.candidate);
+      }
+    }
+
+    var node = document.createElement("video");
+    node.setAttribute('autoplay',true);
+    node.setAttribute('data-peer',peer);
+    videos[peer] = node;
+
+    document.getElementById('video-area').appendChild(node);
+
+    if (peer == ws.id) {
+      console.log("as111",pc,peer,ws.id);
+
+      //localVideo.srcObject = localStream;
+      videos[peer].srcObject = localStream;
+      //pc.addStream(localStream);
+
+    }else {
+
+
+    console.log('EVENTBINDADDSTREAM');
+
+
+      pc.onaddstream = function (videos,peer, e) {
+
+        console.log('ONADDSTREAM',e);
+
+        videos[peer].srcObject = e.stream;
+        console.log('pc2 received remote stream',peer,videos[peer]);
+
+      }.bind(this,videos,peer);
+    }
+
+
+  }
+  ws.on('receivecandidate',function(otherPeerId,candidate) {
+    console.log('OTHERPEERID: ',otherPeerId,candidate);
+    var pc = peers[otherPeerId];
+
+    pc.addIceCandidate(new RTCIceCandidate(candidate)).then(
+      function() {
+        console.log('icecandidate success');
+      },
+      function(error) {
+        console.log('icecandidate fail: '+error);
+      }
+    );
+  });
+}
+
+
+</script>
+</body>
+</html>

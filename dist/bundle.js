@@ -41748,6 +41748,21 @@
 	      }
 	    }
 	  }, {
+	    key: 'dragEnter',
+	    value: function dragEnter(event) {
+	      event.preventDefault();
+	    }
+	  }, {
+	    key: 'onDrop',
+	    value: function onDrop(event) {
+
+	      var file = event.dataTransfer.files[0];
+	      console.log("FILE", file);
+
+	      event.stopPropagation();
+	      event.preventDefault();
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 
@@ -41777,6 +41792,9 @@
 	        _react2.default.createElement('textarea', {
 	          ref: 'textarea',
 	          placeholder: 'Memo',
+	          onDragEnter: this.dragEnter.bind(this),
+	          onDragOver: this.dragEnter.bind(this),
+	          onDrop: this.onDrop.bind(this),
 	          onChange: this.changeNote.bind(this),
 	          onScroll: this.changeScroll.bind(this),
 	          value: this.props.writeNote

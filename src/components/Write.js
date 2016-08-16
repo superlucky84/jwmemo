@@ -82,6 +82,19 @@ export default class Write extends Component {
     }
   }
 
+  dragEnter(event) {
+    event.preventDefault();                    
+  }
+  onDrop(event) {
+
+    let file = event.dataTransfer.files[0];      
+    console.log("FILE",file);
+    
+
+    event.stopPropagation();
+    event.preventDefault(); 
+  }
+
   render() {
 
     // TAG 세팅
@@ -109,6 +122,9 @@ export default class Write extends Component {
         <textarea 
           ref="textarea"
           placeholder="Memo" 
+          onDragEnter={this.dragEnter.bind(this)}
+          onDragOver={this.dragEnter.bind(this)}
+          onDrop={this.onDrop.bind(this)}
           onChange={this.changeNote.bind(this)} 
           onScroll={this.changeScroll.bind(this)}
           value={this.props.writeNote}

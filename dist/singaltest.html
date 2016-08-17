@@ -20,13 +20,16 @@ var videos = {};
 
 var offerOptions = {
   offerToReceiveAudio: 1,
-  offerToReceiveVideo: 1
+  offerToReceiveVideo: 1,
+  iceRestart: true
 };
 
 //var ws = null;
-var ws = io.connect('http://localhost:8888');
+var ws = io.connect('https://superlucky.co.kr:8888');
 console.log("WS",ws);
-var peers = { };
+var peers = {};
+var mypeers = {};
+window.peers = peers;
 var selfSocketId =  ws.id;
 
 var getPeerConnection = (function(){
@@ -91,77 +94,77 @@ function start(stream) {
 
 
 function wsOnMessage(result,result2){
-  console.log(ws,selfSocketId);
 
   // candidate 를 보낸다
   ws.on('getpeer', function(peer_item) {
-    console.log('kk');
-    console.log(peer_item);
-    console.log()
 
     var PeerConnection = getPeerConnection();
 
     peer_item.forEach(function (peer) {
 
-      console.log("INDEXOFAAA",Object.keys(peers).indexOf(peer));
 
       if (Object.keys(peers).indexOf(peer) >= 0){ 
         return;
       }
+	  else {
+		console.log('NEW PEER'+peer);
+	  }
 
-      var pc = peers[peer] = new webkitRTCPeerConnection(null);
+	  var pc = null;
+
+	  mypeers[peer] = new webkitRTCPeerConnection({"iceServers": [{ "url": "stun:stun.l.google.com:19302" }]});
+	  pc = peers[peer] = new webkitRTCPeerConnection({"iceServers": [{ "url": "stun:stun.l.google.com:19302" }]});
+
       setEvent(pc,peer);
 
-      peers[peer].addStream(localStream);
 
-      pc.createOffer(
-        offerOptions
-      ).then(
-        function(peer,pc,desc) {
+	  if (peer != ws.id) {
+		  peers[peer].addStream(localStream);
+		  pc.createOffer(
+			offerOptions
+		  ).then(
+			function(peer,pc,desc) {
 
-          console.log('OFFERDESC----------',desc);
 
-          pc.setLocalDescription(desc).then(
-            function() {
-              console.log('setlocaldescription success');
-            },
-            function() {
-              console.log('setlocaldescription fail');
-            } 
-          );
+			  pc.setLocalDescription(desc).then(
+				function() {
+				  console.log('setlocaldescription success');
+				},
+				function() {
+				  console.log('setlocaldescription fail');
+				} 
+			  );
 
-          console.log('SETLOCALDESCRIPTION',peer,desc);
+			  console.log('SETLOCALDESCRIPTION',peer,desc);
 
-          console.log('signaloffer');
-          ws.emit('signal','offer',peer,desc);
+			  console.log('signaloffer');
+			  ws.emit('signal','offer',peer,desc);
 
-        }.bind(this,peer,pc),
-        function(error) {
-          console.log('Failed to create session description: ' + error.toString());
-        } 
-      );
+			}.bind(this,peer,pc),
+			function(error) {
+			  console.log('Failed to create session description: ' + error.toString());
+			} 
+		  );
+	  }
+
 
     })
-
   });
 
 
-  function createOffers() {
-
-    var attr = null, pc = null;
-    console.log("peers",peers);
-    for(attr in peers){
-      pc = peers[attr];
-
-
-    }
-  }
-
   ws.on('receiveOffer',function(otherPeerId,sdp) {
-          console.log('receiveoffer');
+    console.log('receiveoffer');
 
     var nativeRTCSessionDescription = getNativeRTCSessionDescription();
-    var pc = peers[otherPeerId];
+    //var pc = peers[ws.id][otherPeerId];
+    var pc = mypeers[otherPeerId];
+ 
+    //var pc = peers[ws.id][otherPeerId] = new webkitRTCPeerConnection({"iceServers": [{ "url": "stun:stun.l.google.com:19302" }]});
+
+
+
+    pc.addStream(localStream);
+
 
     console.log('RECEIVESDP',otherPeerId,pc, new nativeRTCSessionDescription(sdp));
  
@@ -220,12 +223,7 @@ function wsOnMessage(result,result2){
 
   // 이벤트 할당
   function setEvent(pc,peer) {
-    pc.onicecandidate = function (e) {
-      if (e.candidate) {
-        console.log("ECANDIDATE",e.candidate);
-        ws.emit('candidate',peer, e.candidate);
-      }
-    }
+
 
     var node = document.createElement("video");
     node.setAttribute('autoplay',true);
@@ -243,25 +241,28 @@ function wsOnMessage(result,result2){
 
     }else {
 
+		console.log(peer,pc);
+	  pc.onicecandidate = function (e) {
+	    if (e.candidate) {
+		  console.log("ECANDIDATE",e.candidate);
+		  ws.emit('candidate',peer, e.candidate);
+	    }
+	  }
 
-    console.log('EVENTBINDADDSTREAM');
 
-
+	  console.log('EVENTBINDADDSTREAM');
       pc.onaddstream = function (videos,peer, e) {
-
-        console.log('ONADDSTREAM',e);
-
         videos[peer].srcObject = e.stream;
         console.log('pc2 received remote stream',peer,videos[peer]);
-
       }.bind(this,videos,peer);
     }
 
 
   }
   ws.on('receivecandidate',function(otherPeerId,candidate) {
-    console.log('OTHERPEERID: ',otherPeerId,candidate);
+
     var pc = peers[otherPeerId];
+    var pc = mypeers[otherPeerId];
 
     pc.addIceCandidate(new RTCIceCandidate(candidate)).then(
       function() {

@@ -95,6 +95,13 @@ export default class Write extends Component {
 
     let file = event.dataTransfer.files[0];      
     console.log("FILE",file);
+
+    let formdata = new FormData();
+    formdata.append("pict", file);
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "/jnote/upload");  
+    xhr.send(formdata);
+
     
 
     event.stopPropagation();

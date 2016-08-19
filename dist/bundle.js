@@ -41767,6 +41767,12 @@
 	      var file = event.dataTransfer.files[0];
 	      console.log("FILE", file);
 
+	      var formdata = new FormData();
+	      formdata.append("pict", file);
+	      var xhr = new XMLHttpRequest();
+	      xhr.open("POST", "/jnote/upload");
+	      xhr.send(formdata);
+
 	      event.stopPropagation();
 	      event.preventDefault();
 	    }

@@ -10,6 +10,7 @@ export default class Write extends Component {
 
   constructor(props) {
     super(props);
+    this.scrollPercent = 0;
   }
 
   componentWillReceiveProps(nextprops) {
@@ -26,11 +27,16 @@ export default class Write extends Component {
 
   changeNote(event) {
     this.props.dispatch(updateForm('note',event.target.value));
+
+    if (this.scrollPercent > 97) {
+      this.props.dispatch(scrollChange(1));
+    }
   }
   changeScroll(event) {
 
     let percent =  (event.target.scrollTop / (event.target.scrollHeight - event.target.clientHeight)) * 100;
     percent = Math.round(percent);
+    this.scrollPercent = percent;
     this.props.dispatch(scrollChange(percent));
   }
 

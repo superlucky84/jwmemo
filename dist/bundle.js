@@ -41670,7 +41670,10 @@
 	  function Write(props) {
 	    _classCallCheck(this, Write);
 
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Write).call(this, props));
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Write).call(this, props));
+
+	    _this.scrollPercent = 0;
+	    return _this;
 	  }
 
 	  _createClass(Write, [{
@@ -41691,6 +41694,10 @@
 	    key: 'changeNote',
 	    value: function changeNote(event) {
 	      this.props.dispatch((0, _jnote.updateForm)('note', event.target.value));
+
+	      if (this.scrollPercent > 97) {
+	        this.props.dispatch((0, _jnote.scrollChange)(1));
+	      }
 	    }
 	  }, {
 	    key: 'changeScroll',
@@ -41698,6 +41705,7 @@
 
 	      var percent = event.target.scrollTop / (event.target.scrollHeight - event.target.clientHeight) * 100;
 	      percent = Math.round(percent);
+	      this.scrollPercent = percent;
 	      this.props.dispatch((0, _jnote.scrollChange)(percent));
 	    }
 	  }, {

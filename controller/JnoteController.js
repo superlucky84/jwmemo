@@ -36,7 +36,10 @@ function getImgSave(note) {
       var imagefulldest = imagefullfile.replace('uploads','images');
 
       fstools.move(imagefullfile, imagefulldest, function(err){
-        if(err){ err.status(500); next(err); }
+        if(err){ 
+          //err.status(500); next(err); 
+          console.log(err);
+        }
         else{
           console.log('moveSUCCESS');
         }
@@ -45,6 +48,44 @@ function getImgSave(note) {
     });
   }
   return note;
+}
+
+function getDiffDel(originNote, note, callback) {
+
+  var diffArray = [];
+
+  var matchall = originNote.match(/![^\\]]*\(images\/[^\)]*\)/g);
+  if (matchall) {
+    matchall.forEach(function(item) {
+      var imageFile = item.replace(/.*\((.*)\)/,"$1");
+      var imagefullfile = __dirname + '/../'+imageFile;
+      diffArray.push(imagefullfile);
+    });
+  }
+
+  matchall = note.match(/![^\\]]*\(images\/[^\)]*\)/g);
+  if (matchall) {
+    matchall.forEach(function(item) {
+      var imageFile = item.replace(/.*\((.*)\)/,"$1");
+      var imagefullfile = __dirname + '/../'+imageFile;
+      // 
+      console.log('IMAGEFULLFILE',diffArray, imagefullfile);
+      if (diffArray.indexOf(imagefullfile) >= 0) {
+        diffArray.splice(diffArray.indexOf(imagefullfile),1);
+      }
+    });
+  }
+  diffArray.forEach(function(item) {
+    try {
+       fstools.removeSync(item);
+    }
+    catch(e) {
+      console.log('FILEREMOVEERROR:'+e);
+    }
+  });
+
+
+  callback();
 
 }
 
@@ -107,15 +148,22 @@ router.post('/update', function (req, res, next) {
     if (err) { 
       return handleError(err);
     }
-    var note = getImgSave(req.body.note);
 
-    jmemomodel.title = req.body.title;
-    jmemomodel.note = note;
-    jmemomodel.category = req.body['category[]'];
-    jmemomodel.save(function (err) {
-      if (err) return handleError(err);
-      res.json(jmemomodel);
+
+    var note = getImgSave(req.body.note);
+    getDiffDel(jmemomodel.note,note, function() {
+
+      jmemomodel.title = req.body.title;
+      jmemomodel.note = note;
+      jmemomodel.category = req.body['category[]'];
+      jmemomodel.save(function (err) {
+        if (err) return handleError(err);
+        res.json(jmemomodel);
+      }.bind(this));
+
     });
+
+
   });
 
 
@@ -127,11 +175,23 @@ router.post('/update', function (req, res, next) {
  * Delete
  */
 router.post('/delete', function (req, res, next) {
-    JmemoModel.remove({_id: req.body.id}, function() {
-      res.json({
-        result: true
-      });
+    var self = this;
+
+    JmemoModel.findById(req.body.id, function (err, jmemomodel) {
+      if (err) { 
+        return handleError(err);
+      }
+      getDiffDel(jmemomodel.note,'', function() {
+
+        JmemoModel.remove({_id: req.body.id}, function() {
+          res.json({
+            result: true
+          });
+        });
+
+      }.bind(self));
     });
+
 });
 
 /**

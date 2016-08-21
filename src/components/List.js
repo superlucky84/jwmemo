@@ -1,5 +1,7 @@
 import React, { Component, PropTypes } from 'react';
-import {  hashHistory } from 'react-router'
+import {  hashHistory } from 'react-router';
+
+import ListItem from './ListItem';
 
 /* IMPORT ACTIONS */
 import {getOne} from '../actions/jnote'
@@ -33,19 +35,17 @@ export default class List extends Component {
         <ul>
           {
           this.props.lists.map((item,idx)=>(
-            <li 
+            <ListItem 
               key={idx} 
-              data-idx={idx} 
-              onClick={this.handleChoickList.bind(this,item._id)} 
-            >
-              {idx}. {item.title}
-            </li>
+              idx={idx}
+              id={item._id}
+              title={item.title}
+            />
           ))
           }
         </ul>
       </div>
     );
-
   }
 }
 

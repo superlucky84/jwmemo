@@ -41763,15 +41763,25 @@
 	  }, {
 	    key: 'onDrop',
 	    value: function onDrop(event) {
-
+	      var self = this;
+	      var value_target = event.target;
 	      var file = event.dataTransfer.files[0];
-	      console.log("FILE", file);
-
 	      var formdata = new FormData();
 	      formdata.append("pict", file);
 	      var xhr = new XMLHttpRequest();
+
 	      xhr.open("POST", "/jnote/upload");
 	      xhr.send(formdata);
+	      xhr.onreadystatechange = function () {
+	        if (xhr.readyState == 4) {
+	          if (xhr.status >= 200 && xhr.status < 300) {
+	            var result = JSON.parse(xhr.responseText);
+	            var img = "\n![](" + String(result.filepath) + ")\n";
+	            value_target.value = value_target.value + img;
+	            self.props.dispatch((0, _jnote.updateForm)('note', value_target.value));
+	          }
+	        }
+	      };
 
 	      event.stopPropagation();
 	      event.preventDefault();

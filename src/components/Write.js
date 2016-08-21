@@ -92,17 +92,25 @@ export default class Write extends Component {
     event.preventDefault();                    
   }
   onDrop(event) {
-
+    let self = this;
+    let value_target = event.target;
     let file = event.dataTransfer.files[0];      
-    console.log("FILE",file);
-
     let formdata = new FormData();
     formdata.append("pict", file);
     let xhr = new XMLHttpRequest();
+
     xhr.open("POST", "/jnote/upload");  
     xhr.send(formdata);
-
-    
+    xhr.onreadystatechange = function(){    
+      if(xhr.readyState == 4){      
+         if(xhr.status >= 200 && xhr.status < 300){
+           var result = JSON.parse(xhr.responseText);
+           var img = "\n![]("+String(result.filepath)+")\n";
+           value_target.value = value_target.value+img;
+           self.props.dispatch(updateForm('note',value_target.value));
+         }
+      } 
+    }
 
     event.stopPropagation();
     event.preventDefault(); 

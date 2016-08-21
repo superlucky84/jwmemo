@@ -10,6 +10,7 @@ export default class Write extends Component {
 
   constructor(props) {
     super(props);
+    this.scrollPercent = 0;
   }
 
   componentWillReceiveProps(nextprops) {
@@ -26,11 +27,16 @@ export default class Write extends Component {
 
   changeNote(event) {
     this.props.dispatch(updateForm('note',event.target.value));
+
+    if (this.scrollPercent > 97) {
+      this.props.dispatch(scrollChange(1));
+    }
   }
   changeScroll(event) {
 
     let percent =  (event.target.scrollTop / (event.target.scrollHeight - event.target.clientHeight)) * 100;
     percent = Math.round(percent);
+    this.scrollPercent = percent;
     this.props.dispatch(scrollChange(percent));
   }
 
@@ -86,10 +92,25 @@ export default class Write extends Component {
     event.preventDefault();                    
   }
   onDrop(event) {
-
+    let self = this;
+    let value_target = event.target;
     let file = event.dataTransfer.files[0];      
-    console.log("FILE",file);
-    
+    let formdata = new FormData();
+    formdata.append("pict", file);
+    let xhr = new XMLHttpRequest();
+
+    xhr.open("POST", "/jnote/upload");  
+    xhr.send(formdata);
+    xhr.onreadystatechange = function(){    
+      if(xhr.readyState == 4){      
+         if(xhr.status >= 200 && xhr.status < 300){
+           var result = JSON.parse(xhr.responseText);
+           var img = "\n![]("+String(result.filepath)+")\n";
+           value_target.value = value_target.value+img;
+           self.props.dispatch(updateForm('note',value_target.value));
+         }
+      } 
+    }
 
     event.stopPropagation();
     event.preventDefault(); 

@@ -1,5 +1,10 @@
 var express = require('express');
 var router = express.Router();
+var formidable = require('formidable');
+var path = require('path');
+var fstools = require('fs-tools');
+
+var baseImageDir = __dirname + '/../images/';
 
 /**
  * CONNECT MONGODB
@@ -15,15 +20,45 @@ db.once('open', function() {
 
 var JmemoModel = require('../model/JmemoModel.js');
 
+// get image save
+function getImgSave(note) {
+  var matchall = note.match(/![^\\]]*\(uploads\/[^\)]*\)/g);
+  if (matchall) {
+    matchall.forEach(function(item) {
+      var imageFile = item.replace(/.*\((.*)\)/,"$1");
+      note = note.replace(imageFile, imageFile.replace('uploads','images'));
+
+      //uploads/20160821/upload_2e80f50892a47cbeeb24006a84299447.jpeg
+
+      fstools.mkdirSync(imageFile.replace(/\/[^\/]*$/,""),'0777');
+
+      var imagefullfile = __dirname + '/../'+imageFile;
+      var imagefulldest = imagefullfile.replace('uploads','images');
+
+      fstools.move(imagefullfile, imagefulldest, function(err){
+        if(err){ err.status(500); next(err); }
+        else{
+          console.log('moveSUCCESS');
+        }
+      })
+
+    });
+  }
+  return note;
+
+}
+
 
 /**
  * CREATE
  */
 router.post('/create', function (req, res, next) {
 
+    var note = getImgSave(req.body.note);
+
     var JmemoInstance = new JmemoModel({
       title: req.body.title,
-      note: req.body.note,
+      note: note,
       favorite: false,
       category: req.body['category[]']
       //category: ['v','j']
@@ -72,9 +107,10 @@ router.post('/update', function (req, res, next) {
     if (err) { 
       return handleError(err);
     }
+    var note = getImgSave(req.body.note);
 
     jmemomodel.title = req.body.title;
-    jmemomodel.note = req.body.note;
+    jmemomodel.note = note;
     jmemomodel.category = req.body['category[]'];
     jmemomodel.save(function (err) {
       if (err) return handleError(err);
@@ -96,6 +132,40 @@ router.post('/delete', function (req, res, next) {
         result: true
       });
     });
+});
+
+/**
+ * Upload
+ */
+router.post('/upload', function (req, res) {
+
+
+  var form = new formidable.IncomingForm();
+  var now = new Date();
+
+  var year = String(now.getFullYear());
+  var month = String(now.getMonth()+1);
+  month = (month.length == 1)?"0"+month:month; 
+  var day = String(now.getDate());
+  var dirpath = year+month+day;
+
+  var pathString = __dirname+"/../uploads/"+dirpath;
+  fstools.mkdirSync(pathString,'0777');
+
+  form.uploadDir = path.normalize(__dirname+"/../uploads/"+dirpath);   // 업로드 디렉토리
+  form.keepExtensions = true;                                 // 파일 확장자 유지
+  form.multiples = true;                                      // multiple upload
+  form.parse(req,function(err,fields,files){
+
+      var filePathString = files.pict.path.replace(/.*(uploads.*$)/,"$1");
+      res.status(200);
+      res.json({'filepath': filePathString});
+
+  });
+  form.on('progress', function(receivedBytes, expectedBytes){
+    console.log(((receivedBytes/expectedBytes)*100).toFixed(1)+'% received');
+  });
+
 });
 
 module.exports = router;

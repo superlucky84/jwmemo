@@ -41670,7 +41670,10 @@
 	  function Write(props) {
 	    _classCallCheck(this, Write);
 
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Write).call(this, props));
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Write).call(this, props));
+
+	    _this.scrollPercent = 0;
+	    return _this;
 	  }
 
 	  _createClass(Write, [{
@@ -41691,6 +41694,10 @@
 	    key: 'changeNote',
 	    value: function changeNote(event) {
 	      this.props.dispatch((0, _jnote.updateForm)('note', event.target.value));
+
+	      if (this.scrollPercent > 97) {
+	        this.props.dispatch((0, _jnote.scrollChange)(1));
+	      }
 	    }
 	  }, {
 	    key: 'changeScroll',
@@ -41698,6 +41705,7 @@
 
 	      var percent = event.target.scrollTop / (event.target.scrollHeight - event.target.clientHeight) * 100;
 	      percent = Math.round(percent);
+	      this.scrollPercent = percent;
 	      this.props.dispatch((0, _jnote.scrollChange)(percent));
 	    }
 	  }, {
@@ -41755,9 +41763,25 @@
 	  }, {
 	    key: 'onDrop',
 	    value: function onDrop(event) {
-
+	      var self = this;
+	      var value_target = event.target;
 	      var file = event.dataTransfer.files[0];
-	      console.log("FILE", file);
+	      var formdata = new FormData();
+	      formdata.append("pict", file);
+	      var xhr = new XMLHttpRequest();
+
+	      xhr.open("POST", "/jnote/upload");
+	      xhr.send(formdata);
+	      xhr.onreadystatechange = function () {
+	        if (xhr.readyState == 4) {
+	          if (xhr.status >= 200 && xhr.status < 300) {
+	            var result = JSON.parse(xhr.responseText);
+	            var img = "\n![](" + String(result.filepath) + ")\n";
+	            value_target.value = value_target.value + img;
+	            self.props.dispatch((0, _jnote.updateForm)('note', value_target.value));
+	          }
+	        }
+	      };
 
 	      event.stopPropagation();
 	      event.preventDefault();

@@ -119,7 +119,7 @@ var getUserMedia = (function (){
 var userMedia = getUserMedia();
 userMedia.call(navigator, {
 	"video": true,
-	"audio": false
+	"audio": true
 }, function(stream){
         //start 함수를 호출한다. 이때 반드시 stream 객체를 인자로 전달한다.
 	start(stream);

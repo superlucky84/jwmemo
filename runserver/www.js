@@ -4,11 +4,13 @@
  * Module dependencies.
  */
 
+var express = require('express');
 var app = require('../app');
 var debug = require('debug')('record:server');
 var http = require('http');
 var https = require('https');
 var fs = require('fs');
+var httpApp = express();
 
 /**
  * Get port from environment and store in Express.
@@ -23,15 +25,6 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
-
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
 
 
 if (port == '80') {
@@ -43,6 +36,25 @@ if (port == '80') {
   https.createServer(httpsOption, app).listen(443, function(){
     console.log("Https server listening on port " + 443);
   });
+
+  httpApp.get("*", function (req, res, next) {
+        res.redirect("https://" + req.headers.host + "" + req.path);
+  });
+  httpApp.set('port', 80);
+
+  var server = http.createServer(httpApp).listen(80);
+  server.on('error', onError);
+  server.on('listening', onListening);
+
+
+
+}
+else {
+  var server = http.createServer(app);
+
+  server.listen(port);
+  server.on('error', onError);
+  server.on('listening', onListening);
 }
 
 /**

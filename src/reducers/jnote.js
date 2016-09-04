@@ -260,10 +260,16 @@ export default function jnotereducer(state = initialStateList, action) {
     /* 글 리스트 */
     case 'GETLIST':
 
+      let data = {};
+      if (action.searchString) {
+        data.searchString = action.searchString;
+      }
+
       $.ajax({
         type: 'GET',
         async: false,
         url: '/jnote/read',
+        data: data,
         success: function(data) {
           new_state = Object.assign({},state,{
             lists: data

@@ -7,7 +7,6 @@ import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
 
 
 import * as reducers from './reducers/jnote'
-import {writeNote, getList} from './actions/jnote'
 
 
 import App from './components/App';

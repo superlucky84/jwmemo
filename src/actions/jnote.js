@@ -94,9 +94,10 @@ export function deleteNote () {
 /**
  * GET LIST
  */
-export function getList () {
+export function getList (searchString) {
   return {
-    type: 'GETLIST'
+    type: 'GETLIST',
+    searchString
   }
 }
 

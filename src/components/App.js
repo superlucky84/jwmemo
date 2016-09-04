@@ -73,7 +73,12 @@ export default class App extends Component {
         match = /^:([0-9]+)\s/g.exec(matchString)
         this.viewTargetTrigger(match[1]);
       }
-
+      /* 리스트에서 검색하기 */
+      else if ( event.keyCode == 13 &&  /^\/(.*)\s/g.exec(matchString) ) {
+        match = /^\/(.*)\s/g.exec(matchString);
+        console.log(match[1]);
+        this.props.dispatch(getList(match[1]));
+      }
       /* 수정하기 */
       else if (event.keyCode == 13 && matchString.match(/:e[ ]?([0-9]*)\s/g) ) {
         match = /:e[ ]?([0-9]*)/g.exec(matchString);

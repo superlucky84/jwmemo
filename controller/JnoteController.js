@@ -115,7 +115,14 @@ router.post('/create', function (req, res, next) {
  * READ LIST
  */
 router.get('/read', function (req, res, next) {
-  JmemoModel.find({}).sort({regdate: -1}).exec(function (error, lists) {
+
+  var searchObj = {};
+  if (req.query.searchString) {
+    searchObj.title = new RegExp(req.query.searchString, 'gi');
+
+  }
+
+  JmemoModel.find(searchObj).sort({regdate: -1}).exec(function (error, lists) {
     var result = [];
     lists.forEach(function (list) {
       result.push(list);

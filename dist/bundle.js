@@ -39195,10 +39195,12 @@
 	          _this.viewTargetTrigger(match[1]);
 	        }
 	        /* 리스트에서 검색하기 */
-	        else if (event.keyCode == 13 && /^\/(.*)\s/g.exec(matchString)) {
-	            match = /^\/(.*)\s/g.exec(matchString);
-	            console.log(match[1]);
-	            _this.props.dispatch((0, _jnote.getList)(match[1]));
+	        else if (event.keyCode == 13 && /^[:](s|search|list)\s/g.exec(matchString)) {
+	            // ACTION
+	            _this.props.dispatch((0, _jnote.openDialog)('search', 'searchList', {
+	              action: 'getList',
+	              push: '/'
+	            }));
 	          }
 	          /* 수정하기 */
 	          else if (event.keyCode == 13 && matchString.match(/:e[ ]?([0-9]*)\s/g)) {
@@ -39476,7 +39478,9 @@
 	          SPLITSHADOW,
 	          CHILDREN
 	        ),
-	        _react2.default.createElement(_Footer2.default, { shortcut: this.props.shortcutBuffer })
+	        _react2.default.createElement(_Footer2.default, {
+	          shortcut: this.props.shortcutBuffer
+	        })
 	      );
 	    }
 	  }]);
@@ -41585,6 +41589,7 @@
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Dialog).call(this, props));
 
 	    _this['deleteNote'] = _jnote.deleteNote;
+	    _this['getList'] = _jnote.getList;
 	    return _this;
 	  }
 
@@ -41599,14 +41604,33 @@
 	      var successAction = this.props.dialog.successaction.action;
 	      var successPush = this.props.dialog.successaction.push;
 
-	      this.props.dispatch(this[successAction]());
+	      var param = "";
+	      if (document.querySelector('.message input')) {
+	        param = document.querySelector('.message input').value;
+	      }
+
+	      this.props.dispatch(this[successAction](param));
 	      _reactRouter.hashHistory.push(successPush);
 	      this.handleDialogClose();
 	    }
 	  }, {
+	    key: 'handleInputAction',
+	    value: function handleInputAction(event) {
+	      console.log(event.keyCode);
+	      if (event.keyCode == 27) {
+	        this.handleDialogClose();
+	      } else if (event.keyCode == 13) {
+	        this.handleDialogSuccess();
+	      }
+	    }
+	  }, {
 	    key: 'componentDidUpdate',
 	    value: function componentDidUpdate() {
-	      document.querySelector('.cancel').focus();
+	      if (document.querySelector('.message input')) {
+	        document.querySelector('.message input').focus();
+	      } else {
+	        document.querySelector('.cancel').focus();
+	      }
 	    }
 	  }, {
 	    key: 'render',
@@ -41624,15 +41648,17 @@
 	            _react2.default.createElement(
 	              'p',
 	              null,
-	              this.props.dialog.message
+	              this.props.dialog.message,
+	              _react2.default.createElement('br', null),
+	              this.props.dialog.type == 'search' ? _react2.default.createElement('input', { type: 'text', onKeyDown: this.handleInputAction.bind(this), id: 'searchString' }) : null
 	            )
 	          ),
 	          _react2.default.createElement(
 	            'div',
 	            { className: 'button' },
-	            this.props.dialog.type == 'confirm' ? _react2.default.createElement(
+	            this.props.dialog.type == 'confirm' || this.props.dialog.type == 'search' ? _react2.default.createElement(
 	              'button',
-	              { onClick: this.handleDialogSuccess.bind(this) },
+	              { onClick: this.handleDialogSuccess.bind(this, event) },
 	              'Ok.'
 	            ) : null,
 	            _react2.default.createElement(

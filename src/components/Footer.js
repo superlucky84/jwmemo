@@ -22,6 +22,7 @@ export default class Footer extends Component {
           ? <div className="left">{shortcut}</div>
           : null
         }
+
         <div className="right">
           &copy;2016 SUPERLUCKY inc
         </div>

@@ -74,10 +74,13 @@ export default class App extends Component {
         this.viewTargetTrigger(match[1]);
       }
       /* 리스트에서 검색하기 */
-      else if ( event.keyCode == 13 &&  /^\/(.*)\s/g.exec(matchString) ) {
-        match = /^\/(.*)\s/g.exec(matchString);
-        console.log(match[1]);
-        this.props.dispatch(getList(match[1]));
+      else if ( event.keyCode == 13 && /^[:](s|search|list)\s/g.exec(matchString) ) {
+        // ACTION
+        this.props.dispatch(openDialog('search','searchList',{
+          action: 'getList',
+          push: '/'
+        }));
+
       }
       /* 수정하기 */
       else if (event.keyCode == 13 && matchString.match(/:e[ ]?([0-9]*)\s/g) ) {
@@ -354,7 +357,9 @@ export default class App extends Component {
             {SPLITSHADOW}
             {CHILDREN}
           </div>
-          <Footer shortcut={this.props.shortcutBuffer} />
+          <Footer 
+            shortcut={this.props.shortcutBuffer} 
+          />
         </div>
     );
 

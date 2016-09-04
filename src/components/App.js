@@ -28,6 +28,7 @@ export default class App extends Component {
 
     // SHORTCUT EVENT
     this.timeoutState = null;
+    this.preKeyCode = null;
 
 
     document.querySelector('body').addEventListener('keydown', (event) => {
@@ -40,6 +41,19 @@ export default class App extends Component {
       }
       if( event.keyCode==27 && ['INPUT'].indexOf(event.target.tagName) > -1 ) {
         event.target.blur();
+      }
+      if (this.preKeyCode == event.keyCode) {
+        this.preKeyCode = null;
+
+        // ACTION
+        this.props.dispatch(openDialog('search','searchList',{
+          action: 'getList',
+          push: '/'
+        }));
+
+      }
+      else {
+        this.preKeyCode = event.keyCode;
       }
     });
 

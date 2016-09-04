@@ -30,7 +30,6 @@ export default class Dialog extends Component {
     this.handleDialogClose();
   }
   handleInputAction(event) {
-    console.log(event.keyCode);
     if (event.keyCode == 27) {
       this.handleDialogClose();
     }

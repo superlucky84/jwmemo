@@ -39152,6 +39152,7 @@
 
 	    // SHORTCUT EVENT
 	    _this.timeoutState = null;
+	    _this.preKeyCode = null;
 
 	    document.querySelector('body').addEventListener('keydown', function (event) {
 
@@ -39163,6 +39164,17 @@
 	      }
 	      if (event.keyCode == 27 && ['INPUT'].indexOf(event.target.tagName) > -1) {
 	        event.target.blur();
+	      }
+	      if (_this.preKeyCode == event.keyCode) {
+	        _this.preKeyCode = null;
+
+	        // ACTION
+	        _this.props.dispatch((0, _jnote.openDialog)('search', 'searchList', {
+	          action: 'getList',
+	          push: '/'
+	        }));
+	      } else {
+	        _this.preKeyCode = event.keyCode;
 	      }
 	    });
 
@@ -41616,7 +41628,6 @@
 	  }, {
 	    key: 'handleInputAction',
 	    value: function handleInputAction(event) {
-	      console.log(event.keyCode);
 	      if (event.keyCode == 27) {
 	        this.handleDialogClose();
 	      } else if (event.keyCode == 13) {

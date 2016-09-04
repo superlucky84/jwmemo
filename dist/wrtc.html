@@ -160,8 +160,39 @@ function wsOnMessage(result,result2){
 
       var pc = null;
 
-      mypeers[peer] = new webkitRTCPeerConnection({"iceServers": [{ "url": "stun:stun.l.google.com:19302" }]});
-      pc = peers[peer] = new webkitRTCPeerConnection({"iceServers": [{ "url": "stun:stun.l.google.com:19302" }]});
+      //mypeers[peer] = new webkitRTCPeerConnection({"iceServers": [{ "url": "stun:stun.l.google.com:19302" }]});
+      //pc = peers[peer] = new webkitRTCPeerConnection({"iceServers": [{ "url": "stun:stun.l.google.com:19302" }]});
+/*
+      var iceConfig = [
+        { "url": "stun:104.236.113.81:3478" },
+        { "url": "turn:104.236.113.81:3478", "username": "demo", "credential": "c5dcdebd926706f33065ec3b65bf103c" }
+      ];
+            'url': 'stun:stun.l.google.com:19302'
+*/
+
+      var iceConfig = {
+        iceServers: [
+          {
+            url: 'stun:104.236.113.81:3478'
+          },
+          {
+            url: 'turn:jj@104.236.113.81:3478?transport=udp',
+            credential: 'fd8f745ea7a07828e6690fa0d080e522',
+          },
+          {
+            url: 'turn:jj@104.236.113.81:3478?transport=tcp',
+            credential: 'fd8f745ea7a07828e6690fa0d080e522',
+          }
+        ]
+      }
+
+      //jj:fd8f745ea7a07828e6690fa0d080e522
+
+      //mypeers[peer] = new webkitRTCPeerConnection(null);
+      //pc = peers[peer] = new webkitRTCPeerConnection(null);
+      mypeers[peer] = new webkitRTCPeerConnection(iceConfig);
+      pc = peers[peer] = new webkitRTCPeerConnection(iceConfig);
+
 
       setEvent(pc,peer);
 

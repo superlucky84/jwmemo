@@ -26,14 +26,19 @@ export default class Write extends Component {
   }
 
   changeNote(event) {
+    let lastFalg = false;
+    if (this.props.writeNote.slice(-2) != event.target.value.slice(-2)) {
+      lastFalg = true;
+    }
+
     this.props.dispatch(updateForm('note',event.target.value));
 
-    if (this.scrollPercent > 97) {
-      this.props.dispatch(scrollChange(1));
+    if (lastFalg) {
+      this.props.dispatch(scrollChange(100));
     }
+
   }
   changeScroll(event) {
-
     let percent =  (event.target.scrollTop / (event.target.scrollHeight - event.target.clientHeight)) * 100;
     percent = Math.round(percent);
     this.scrollPercent = percent;

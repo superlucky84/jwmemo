@@ -24,11 +24,11 @@ export default class View extends Component {
       nextprops.dispatch(getOne(nextprops.routeParams.id));
     }
 
-    if (nextprops.previewScroll != this.props.previewScroll) {
+    //if (nextprops.previewScroll != this.props.previewScroll) {
       let $this = ReactDOM.findDOMNode(this);
       let result = (($this.scrollHeight - $this.clientHeight) * nextprops.previewScroll) / 100;
       ReactDOM.findDOMNode(this).scrollTop = result;
-    }
+    //}
   }
 
   /*

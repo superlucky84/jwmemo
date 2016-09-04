@@ -40159,11 +40159,11 @@
 	        nextprops.dispatch((0, _jnote.getOne)(nextprops.routeParams.id));
 	      }
 
-	      if (nextprops.previewScroll != this.props.previewScroll) {
-	        var $this = _reactDom2.default.findDOMNode(this);
-	        var result = ($this.scrollHeight - $this.clientHeight) * nextprops.previewScroll / 100;
-	        _reactDom2.default.findDOMNode(this).scrollTop = result;
-	      }
+	      //if (nextprops.previewScroll != this.props.previewScroll) {
+	      var $this = _reactDom2.default.findDOMNode(this);
+	      var result = ($this.scrollHeight - $this.clientHeight) * nextprops.previewScroll / 100;
+	      _reactDom2.default.findDOMNode(this).scrollTop = result;
+	      //}
 	    }
 
 	    /*
@@ -41761,16 +41761,20 @@
 	  }, {
 	    key: 'changeNote',
 	    value: function changeNote(event) {
+	      var lastFalg = false;
+	      if (this.props.writeNote.slice(-2) != event.target.value.slice(-2)) {
+	        lastFalg = true;
+	      }
+
 	      this.props.dispatch((0, _jnote.updateForm)('note', event.target.value));
 
-	      if (this.scrollPercent > 97) {
-	        this.props.dispatch((0, _jnote.scrollChange)(1));
+	      if (lastFalg) {
+	        this.props.dispatch((0, _jnote.scrollChange)(100));
 	      }
 	    }
 	  }, {
 	    key: 'changeScroll',
 	    value: function changeScroll(event) {
-
 	      var percent = event.target.scrollTop / (event.target.scrollHeight - event.target.clientHeight) * 100;
 	      percent = Math.round(percent);
 	      this.scrollPercent = percent;

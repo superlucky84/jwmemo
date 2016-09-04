@@ -39165,7 +39165,7 @@
 	      if (event.keyCode == 27 && ['INPUT'].indexOf(event.target.tagName) > -1) {
 	        event.target.blur();
 	      }
-	      if (_this.preKeyCode == event.keyCode) {
+	      if (_this.preKeyCode == event.keyCode && event.keyCode == 16) {
 	        _this.preKeyCode = null;
 
 	        // ACTION
@@ -41635,8 +41635,8 @@
 	      }
 	    }
 	  }, {
-	    key: 'componentDidUpdate',
-	    value: function componentDidUpdate() {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
 	      if (document.querySelector('.message input')) {
 	        document.querySelector('.message input').focus();
 	      } else {

@@ -42,7 +42,7 @@ export default class App extends Component {
       if( event.keyCode==27 && ['INPUT'].indexOf(event.target.tagName) > -1 ) {
         event.target.blur();
       }
-      if (this.preKeyCode == event.keyCode) {
+      if (this.preKeyCode == event.keyCode && event.keyCode == 16) {
         this.preKeyCode = null;
 
         // ACTION

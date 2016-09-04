@@ -38,15 +38,15 @@ export default class Dialog extends Component {
     }
   }
 
-  componentDidUpdate() {
+  componentDidMount() {
     if (document.querySelector('.message input')) {
       document.querySelector('.message input').focus();
     }
     else {
       document.querySelector('.cancel').focus();
     }
-
   }
+
 
   render() {
     return (

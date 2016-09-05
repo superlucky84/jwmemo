@@ -247,3 +247,9 @@ textarea {
 textarea.insert{
   color: #fff;
 }
+
+#searchString {
+  border-radius: 7px;
+  height: 45px;
+  border: 2px solid #bb0000;
+}

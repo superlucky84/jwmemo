@@ -39165,7 +39165,7 @@
 	      if (event.keyCode == 27 && ['INPUT'].indexOf(event.target.tagName) > -1) {
 	        event.target.blur();
 	      }
-	      if (_this.preKeyCode == event.keyCode && event.keyCode == 16) {
+	      if (_this.preKeyCode == event.keyCode && event.keyCode == 16 && ['INPUT','TEXTAREA'].indexOf(event.target.tagName) == -1) {
 	        _this.preKeyCode = null;
 
 	        // ACTION

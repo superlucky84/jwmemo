@@ -203,11 +203,13 @@ function wsOnMessage(result,result2){
 
 
 	  if (peer != ws.id) {
+        /*
       if(localStream){
         peers[peer].addStream(localStream);
       }
+      */
 		  pc.createOffer(
-			offerOptions
+        offerOptions
 		  ).then(
 			function(peer,pc,desc) {
 
@@ -314,7 +316,10 @@ function wsOnMessage(result,result2){
     }else {
 
 		console.log(peer,pc);
-	  pc.onicecandidate = function (e) {
+
+    console.log('MYPER',mypeers[peer]);
+	  //pc.onicecandidate = function (e) {
+	  mypeers[peer].onicecandidate = function (e) {
 	    if (e.candidate) {
 		  console.log("ECANDIDATE",e.candidate);
 		  ws.emit('candidate',peer, e.candidate);
@@ -334,7 +339,7 @@ function wsOnMessage(result,result2){
   ws.on('receivecandidate',function(otherPeerId,candidate) {
 
     var pc = peers[otherPeerId];
-    var pc = mypeers[otherPeerId];
+    //var pc = mypeers[otherPeerId];
 
     pc.addIceCandidate(new RTCIceCandidate(candidate)).then(
       function() {
@@ -344,6 +349,9 @@ function wsOnMessage(result,result2){
         console.log('icecandidate fail: '+error);
       }
     );
+
+
+
   });
 }
 

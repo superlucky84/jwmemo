@@ -138,6 +138,10 @@ function start(stream) {
 function wsOnMessage(result,result2){
 
   ws.on('remove', function(peer_item) {
+    mypeers[peer_item.id].removeStream(localStream);
+    mypeers[peer_item.id].close();
+    peers[peer_item.id].close();
+
     delete videos[peer_item.id];
     delete mypeers[peer_item.id];
     delete peers[peer_item.id];

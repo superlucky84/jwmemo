@@ -146,7 +146,7 @@ function wsOnMessage(result,result2){
 
   ws.on('getpeer', function(peer_item) {
 
-    var PeerConnection = getPeerConnection();
+    //var PeerConnection = getPeerConnection();
 
     peer_item.forEach(function (peerInfo) {
       var peer = peerInfo['id'];
@@ -318,13 +318,21 @@ function wsOnMessage(result,result2){
 		console.log(peer,pc);
 
     console.log('MYPER',mypeers[peer]);
-	  //pc.onicecandidate = function (e) {
+	  peers[peer].onicecandidate = function (e) {
+	    if (e.candidate) {
+		  console.log("ECANDIDATE",e.candidate);
+		  ws.emit('localcandidate',peer, e.candidate);
+	    }
+	  }
+
 	  mypeers[peer].onicecandidate = function (e) {
 	    if (e.candidate) {
 		  console.log("ECANDIDATE",e.candidate);
-		  ws.emit('candidate',peer, e.candidate);
+		  ws.emit('remotecandidate',peer, e.candidate);
 	    }
 	  }
+
+	  //mypeers[peer].onicecandidate = function (e) {
 
 
 	  console.log('EVENTBINDADDSTREAM');
@@ -336,10 +344,9 @@ function wsOnMessage(result,result2){
 
 
   }
-  ws.on('receivecandidate',function(otherPeerId,candidate) {
+  ws.on('receivelocalcandidate',function(otherPeerId,candidate) {
 
-    var pc = peers[otherPeerId];
-    //var pc = mypeers[otherPeerId];
+    var pc = mypeers[otherPeerId];
 
     pc.addIceCandidate(new RTCIceCandidate(candidate)).then(
       function() {
@@ -349,9 +356,19 @@ function wsOnMessage(result,result2){
         console.log('icecandidate fail: '+error);
       }
     );
+  });
+  ws.on('receiveremotecandidate',function(otherPeerId,candidate) {
 
+    var pc = peers[otherPeerId];
 
-
+    pc.addIceCandidate(new RTCIceCandidate(candidate)).then(
+      function() {
+        console.log('icecandidate success');
+      },
+      function(error) {
+        console.log('icecandidate fail: '+error);
+      }
+    );
   });
 }
 

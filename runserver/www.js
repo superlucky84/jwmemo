@@ -16,7 +16,7 @@ var httpApp = express();
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '80');
+var port = normalizePort(process.env.PORT || '7771');
 app.set('port', port);
 
 
@@ -27,7 +27,7 @@ app.set('port', port);
 
 
 
-if (port == '80') {
+if (port == '7771') {
   var httpsOption = { 
     key: fs.readFileSync(__dirname+'/../jssl.key'),
     cert: fs.readFileSync(__dirname+'/../1_superlucky.co.kr_bundle.crt')
@@ -37,12 +37,20 @@ if (port == '80') {
     console.log("Https server listening on port " + 443);
   });
 
+  /*
   httpApp.get("*", function (req, res, next) {
         res.redirect("https://" + req.headers.host + "" + req.path);
   });
   httpApp.set('port', 80);
 
   var server = http.createServer(httpApp).listen(80);
+  server.on('error', onError);
+  server.on('listening', onListening);
+  */
+
+  var server = http.createServer(app);
+
+  server.listen(port);
   server.on('error', onError);
   server.on('listening', onListening);
 

@@ -33,18 +33,20 @@ if (port == '7771') {
     cert: fs.readFileSync(__dirname+'/../super.crt')
   }
 
-  https.createServer(httpsOption, app).listen(443, function(){
+  https.createServer(httpsOption, app).listen(port, function(){
     console.log("Https server listening on port " + 443);
   });
 
+  /*
   httpApp.get("*", function (req, res, next) {
         res.redirect("https://" + req.headers.host + "" + req.path);
   });
-  httpApp.set('port', 80);
+  httpApp.set('port', 7772);
 
-  var server = http.createServer(httpApp).listen(80);
+  var server = http.createServer(httpApp).listen(7772);
   server.on('error', onError);
   server.on('listening', onListening);
+  */
 
 }
 else {

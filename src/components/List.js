@@ -40,6 +40,7 @@ export default class List extends Component {
               idx={idx}
               id={item._id}
               title={item.title}
+              tags={item.category}
             />
           ))
           }

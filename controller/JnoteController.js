@@ -118,9 +118,19 @@ router.get('/read', function (req, res, next) {
 
   var searchObj = {};
   if (req.query.searchString) {
-    searchObj.title = new RegExp(req.query.searchString, 'gi');
-
+    searchObj['$or'] = [];
+    var searchOr = searchObj["$or"];
+    //searchObj.title = new RegExp(req.query.searchString, 'gi');
+    searchOr.push({
+      title: new RegExp(req.query.searchString, 'gi')
+    });
+    searchOr.push({
+      category:{$in:[req.query.searchString]}
+    });
   }
+
+  //{category:{$in:["develop"]}}
+  //{ $or: [ { quantity: { $lt: 20 } }, { price: 10 } ] }
 
   JmemoModel.find(searchObj).sort({regdate: -1}).exec(function (error, lists) {
     var result = [];

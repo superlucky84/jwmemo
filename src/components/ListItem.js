@@ -4,7 +4,7 @@ import {  hashHistory } from 'react-router'
 import TagItem from './TagItem';
 
 /* IMPORT ACTIONS */
-import {toggleFavorite} from '../actions/jnote'
+import {toggleFavorite, openDialog} from '../actions/jnote'
 
 export default class ListItem extends Component {
 
@@ -20,9 +20,12 @@ export default class ListItem extends Component {
   }
 
   handleChangeFav(id, idx,e) {
-
-    this.props.dispatch(toggleFavorite(id, idx));
-
+    if (this.props.adminMode) {
+      this.props.dispatch(toggleFavorite(id, idx));
+    }
+    else {
+      this.props.dispatch(openDialog('alert','Only admin mode.'));
+    }
     e.stopPropagation();
   }
 

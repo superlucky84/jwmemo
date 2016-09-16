@@ -105,7 +105,7 @@ export default class App extends Component {
         let target = document.querySelector(`.list li[data-idx='${match[1]}']`);
 
         if ( !this.props.adminMode ) {
-          this.props.dispatch(openDialog('alert','Not AdminMode'));
+          this.props.dispatch(openDialog('alert','Only admin mode.'));
         }
         else if (match[1] == '') {
           this.props.dispatch(updateForm('sync'));

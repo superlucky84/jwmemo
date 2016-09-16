@@ -40,6 +40,7 @@ export default class List extends Component {
               favorite={item.favorite}
               tags={item.category}
               dispatch={this.props.dispatch}
+              adminMode={this.props.adminMode}
             />
           ))
           }

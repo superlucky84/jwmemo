@@ -39245,7 +39245,7 @@
 	              var _target = document.querySelector('.list li[data-idx=\'' + match[1] + '\']');
 
 	              if (!_this.props.adminMode) {
-	                _this.props.dispatch((0, _jnote.openDialog)('alert', 'Not AdminMode'));
+	                _this.props.dispatch((0, _jnote.openDialog)('alert', 'Only admin mode.'));
 	              } else if (match[1] == '') {
 	                _this.props.dispatch((0, _jnote.updateForm)('sync'));
 	                _reactRouter.hashHistory.push('/write/' + _this.props.params.id);
@@ -40076,7 +40076,8 @@
 	              title: item.title,
 	              favorite: item.favorite,
 	              tags: item.category,
-	              dispatch: _this2.props.dispatch
+	              dispatch: _this2.props.dispatch,
+	              adminMode: _this2.props.adminMode
 	            });
 	          })
 	        )
@@ -40144,9 +40145,11 @@
 	  }, {
 	    key: 'handleChangeFav',
 	    value: function handleChangeFav(id, idx, e) {
-
-	      this.props.dispatch((0, _jnote.toggleFavorite)(id, idx));
-
+	      if (this.props.adminMode) {
+	        this.props.dispatch((0, _jnote.toggleFavorite)(id, idx));
+	      } else {
+	        this.props.dispatch((0, _jnote.openDialog)('alert', 'Only admin mode.'));
+	      }
 	      e.stopPropagation();
 	    }
 	  }, {

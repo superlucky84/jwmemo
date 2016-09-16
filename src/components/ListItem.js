@@ -22,10 +22,6 @@ export default class ListItem extends Component {
 
   render() {
 
-
-    console.log(this.props.tags)
-
-
     return (
         <li
           data-idx={this.props.idx}

@@ -39165,7 +39165,8 @@
 	      if (event.keyCode == 27 && ['INPUT'].indexOf(event.target.tagName) > -1) {
 	        event.target.blur();
 	      }
-	      if (_this.preKeyCode == event.keyCode && event.keyCode == 16 && ['INPUT','TEXTAREA'].indexOf(event.target.tagName) == -1) {
+
+	      if (_this.preKeyCode == event.keyCode && event.keyCode == 16 && ['INPUT', 'TEXTAREA'].indexOf(event.target.tagName) == -1) {
 	        _this.preKeyCode = null;
 
 	        // ACTION
@@ -41859,7 +41860,7 @@
 	      var target = _reactDom2.default.findDOMNode(this.refs.textarea);
 
 	      vim.on_log = function (log) {
-	        if (log == 'delete range') {
+	        if (log.match(/(^act_paste|^delete)/)) {
 	          this.props.dispatch((0, _jnote.updateForm)('note', event.target.value));
 	        }
 	        if (log == 'set_mode INSERT') {

@@ -1142,6 +1142,7 @@ var act_delete_char = function(vim, cdata) {
   if (cdata.mode !== undefined) {
     vim.set_mode(INSERT)
   }
+  vim.log('delete_char')
 }
 
 var act_append = function(vim, cdata) {
@@ -1211,8 +1212,8 @@ var __paste = function(vim, cdata) {
   var pos = vim.get_pos()
   var buff = vim.get_clipboard()
   var t = vim.get_text()
-  vim.log('act_paste, length: ' + buff.length )
   vim.set_text( t.substr(0, pos) + buff + t.substr(pos) )
+  vim.log('act_paste, length: ' + buff.length )
 }
 
 var act_merge_lines = function(vim, cdata) {

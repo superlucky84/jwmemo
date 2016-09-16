@@ -76,7 +76,7 @@ export default class Write extends Component {
     let target = ReactDOM.findDOMNode(this.refs.textarea);
 
     vim.on_log = function(log) {
-      if (log == 'delete range') {
+      if (log.match(/(^act_paste|^delete)/) ) {
         this.props.dispatch(updateForm('note',event.target.value));
       }
       if (log == 'set_mode INSERT') {

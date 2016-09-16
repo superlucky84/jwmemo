@@ -31,6 +31,19 @@ export default class ListItem extends Component {
 
   render() {
 
+
+    let tags = [];
+
+    if (this.props.tags) {
+      tags = this.props.tags.reduce(function(prevArray, tag) {
+        let nextArray = prevArray;
+        if (tag) {
+          nextArray.push(tag);
+        }
+        return nextArray;
+      },[]);
+    }
+
     return (
         <li
           data-idx={this.props.idx}
@@ -39,7 +52,7 @@ export default class ListItem extends Component {
         >
           <div>
             {
-            this.props.tags.map((item,idx)=>(
+            tags.map((item,idx)=>(
               <TagItem 
                  key={idx}
                  tag={item}

@@ -61,8 +61,11 @@ export default function jnotereducer(state = initialStateList, action) {
     /* 쇼트컷 체인지 */
     case 'SHORTCUT_CHANGE':
 
-      new_state = Object.assign({},state);
-      new_state.shortcut.buffer = action.command;
+      new_state = Object.assign({},state,{
+        shortcut: Object.assign({},state.shortcut,{
+          buffer: action.command
+        })
+      });
 
       return new_state;
       break;

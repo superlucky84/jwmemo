@@ -40193,7 +40193,7 @@
 	      return _react2.default.createElement(
 	        'span',
 	        { className: 'tag' },
-	        this.props.tag
+	        this.props.tag.toUpperCase()
 	      );
 	    }
 	  }]);

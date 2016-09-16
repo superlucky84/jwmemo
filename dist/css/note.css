@@ -257,7 +257,7 @@ textarea.insert{
   border: 1px solid rgba(157, 98, 98, 0.56);
   background-color: rgba(157, 98, 98, 0.56);
   border-radius: 4px;
-  padding: 0 3px;
+  padding: 2px 3px 0px 3px;
   margin-right: 2px;
   font-size: 0.7em;
   vertical-align: middle;

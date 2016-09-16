@@ -20,7 +20,7 @@ export default class TagItem extends Component {
 
     return (
         <span className="tag">
-          {this.props.tag}
+          {this.props.tag.toUpperCase()}
         </span>
     );
 

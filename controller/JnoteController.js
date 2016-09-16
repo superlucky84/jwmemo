@@ -132,7 +132,7 @@ router.get('/read', function (req, res, next) {
   //{category:{$in:["develop"]}}
   //{ $or: [ { quantity: { $lt: 20 } }, { price: 10 } ] }
 
-  JmemoModel.find(searchObj).sort({regdate: -1}).exec(function (error, lists) {
+  JmemoModel.find(searchObj).sort({favorite: -1, regdate: -1 }).exec(function (error, lists) {
     var result = [];
     lists.forEach(function (list) {
       result.push(list);
@@ -166,19 +166,27 @@ router.post('/update', function (req, res, next) {
       return handleError(err);
     }
 
-
-    var note = getImgSave(req.body.note);
-    getDiffDel(jmemomodel.note,note, function() {
-
-      jmemomodel.title = req.body.title;
-      jmemomodel.note = note;
-      jmemomodel.category = req.body['category[]'];
+    if (req.body.favorite) {
+      jmemomodel.favorite = req.body.favorite
       jmemomodel.save(function (err) {
         if (err) return handleError(err);
         res.json(jmemomodel);
       }.bind(this));
+    }
 
-    });
+    if (req.body.title) {
+      var note = getImgSave(req.body.note);
+      getDiffDel(jmemomodel.note,note, function() {
+
+        jmemomodel.title = req.body.title;
+        jmemomodel.note = note;
+        jmemomodel.category = req.body['category[]'];
+        jmemomodel.save(function (err) {
+          if (err) return handleError(err);
+          res.json(jmemomodel);
+        }.bind(this));
+      });
+    }
 
 
   });

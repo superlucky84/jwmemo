@@ -97,6 +97,32 @@ export default function jnotereducer(state = initialStateList, action) {
 
       break;
 
+    case 'TOGGLE_FAVORITE':
+
+      new_state = JSON.parse(JSON.stringify(state));
+      let newFav = true;
+      if (state.lists[action.idx].favorite) {
+        newFav = false;
+      }
+
+
+      $.ajax({
+        type: 'POST',
+        async: false,
+        url: '/jnote/update',
+        data: {
+          id: action.id,
+          favorite: newFav
+        },
+        success: function(data) {
+        }
+      });
+
+      new_state.lists[action.idx].favorite = newFav;
+
+      return new_state;
+      break;
+
     /* 프리뷰모드 체인지 */
     case 'TOGGLE_PREVIEW':
 

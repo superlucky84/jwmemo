@@ -55,6 +55,18 @@ export function closeDialog () {
 }
 
 /**
+ * TOGGLE_FAVORITE
+ */
+export function toggleFavorite (id, idx) {
+  return {
+    type: 'TOGGLE_FAVORITE',
+    id,
+    idx
+  }
+}
+
+
+/**
  * TOGGLE_PREVIEW
  */
 export function togglePreview () {

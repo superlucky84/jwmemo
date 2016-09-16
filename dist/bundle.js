@@ -29075,6 +29075,30 @@
 
 	      break;
 
+	    case 'TOGGLE_FAVORITE':
+
+	      new_state = JSON.parse(JSON.stringify(state));
+	      var newFav = true;
+	      if (state.lists[action.idx].favorite) {
+	        newFav = false;
+	      }
+
+	      $.ajax({
+	        type: 'POST',
+	        async: false,
+	        url: '/jnote/update',
+	        data: {
+	          id: action.id,
+	          favorite: newFav
+	        },
+	        success: function success(data) {}
+	      });
+
+	      new_state.lists[action.idx].favorite = newFav;
+
+	      return new_state;
+	      break;
+
 	    /* 프리뷰모드 체인지 */
 	    case 'TOGGLE_PREVIEW':
 
@@ -39771,6 +39795,7 @@
 	exports.adminChange = adminChange;
 	exports.openDialog = openDialog;
 	exports.closeDialog = closeDialog;
+	exports.toggleFavorite = toggleFavorite;
 	exports.togglePreview = togglePreview;
 	exports.writeNote = writeNote;
 	exports.editNote = editNote;
@@ -39834,6 +39859,17 @@
 	function closeDialog() {
 	  return {
 	    type: 'CLOSE_DIALOG'
+	  };
+	}
+
+	/**
+	 * TOGGLE_FAVORITE
+	 */
+	function toggleFavorite(id, idx) {
+	  return {
+	    type: 'TOGGLE_FAVORITE',
+	    id: id,
+	    idx: idx
 	  };
 	}
 
@@ -39988,8 +40024,6 @@
 
 	var _ListItem2 = _interopRequireDefault(_ListItem);
 
-	var _jnote = __webpack_require__(268);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -39997,9 +40031,6 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	/* IMPORT ACTIONS */
-
 
 	var List = function (_Component) {
 	  _inherits(List, _Component);
@@ -40021,6 +40052,7 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var _this2 = this;
 
 	      var splitStyle = null;
 	      if (this.props.realleft) {
@@ -40042,7 +40074,9 @@
 	              idx: idx,
 	              id: item._id,
 	              title: item.title,
-	              tags: item.category
+	              favorite: item.favorite,
+	              tags: item.category,
+	              dispatch: _this2.props.dispatch
 	            });
 	          })
 	        )
@@ -40108,6 +40142,14 @@
 	      _reactRouter.hashHistory.push('/view/' + id);
 	    }
 	  }, {
+	    key: 'handleChangeFav',
+	    value: function handleChangeFav(id, idx, e) {
+
+	      this.props.dispatch((0, _jnote.toggleFavorite)(id, idx));
+
+	      e.stopPropagation();
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 
@@ -40115,6 +40157,7 @@
 	        'li',
 	        {
 	          'data-idx': this.props.idx,
+	          className: this.props.favorite ? 'fav' : '',
 	          onClick: this.handleChoickList.bind(this, this.props.id)
 	        },
 	        _react2.default.createElement(
@@ -40132,7 +40175,10 @@
 	          { className: 'title' },
 	          this.props.idx,
 	          '. ',
-	          this.props.title
+	          this.props.title,
+	          _react2.default.createElement('span', {
+	            onClick: this.handleChangeFav.bind(this, this.props.id, this.props.idx)
+	          })
 	        )
 	      );
 	    }

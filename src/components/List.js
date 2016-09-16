@@ -3,8 +3,6 @@ import {  hashHistory } from 'react-router';
 
 import ListItem from './ListItem';
 
-/* IMPORT ACTIONS */
-import {getOne} from '../actions/jnote'
 
 export default class List extends Component {
 
@@ -20,7 +18,6 @@ export default class List extends Component {
   }
 
   render() {
-
 
     let splitStyle = null;
     if(this.props.realleft){
@@ -40,7 +37,9 @@ export default class List extends Component {
               idx={idx}
               id={item._id}
               title={item.title}
+              favorite={item.favorite}
               tags={item.category}
+              dispatch={this.props.dispatch}
             />
           ))
           }

@@ -125,7 +125,7 @@ router.get('/read', function (req, res, next) {
       title: new RegExp(req.query.searchString, 'gi')
     });
     searchOr.push({
-      category:{$in:[req.query.searchString]}
+      category:{$in:[req.query.searchString.toLowerCase()]}
     });
   }
 

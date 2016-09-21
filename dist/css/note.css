@@ -252,6 +252,8 @@ textarea.insert{
   border-radius: 7px;
   height: 45px;
   border: 2px solid #bb0000;
+  outline: none;
+  padding: 0 10px;
 }
 .list .tag {
   border: 1px solid rgba(157, 98, 98, 0.56);

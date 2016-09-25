@@ -186,9 +186,9 @@ div.write textarea {
   display: table;
   position: relative;
   z-index: 999;
-  width: auto;
-  /*max-width: 355px;*/
-  min-width: 270px;
+  width: 80%;
+  max-width: 355px;
+  /* min-width: 270px; */
   height: 177px;
   margin: auto;
   margin-top: 15%;
@@ -254,6 +254,7 @@ textarea.insert{
   border: 2px solid #bb0000;
   outline: none;
   padding: 0 10px;
+  width: 100%;
 }
 .list .tag {
   border: 1px solid rgba(157, 98, 98, 0.56);

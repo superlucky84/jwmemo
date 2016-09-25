@@ -39193,7 +39193,7 @@
 	    value: function handleMouseUp(e) {
 
 	      var pageX = e.pageX;
-	      if (!pageX) {
+	      if (!pageX && e.touches) {
 	        if (e.touches.length == 0) {
 	          return;
 	        }
@@ -39451,6 +39451,20 @@
 	      this.props.dispatch((0, _jnote.openDialog)('confirm', 'test'));
 	    }
 	  }, {
+	    key: 'handleLogin',
+	    value: function handleLogin() {
+	      this.props.dispatch((0, _jnote.openDialog)('login', 'login'));
+
+	      this.props.dispatch((0, _jnote.openDialog)('login', 'password', {
+	        action: 'adminChange'
+	      }));
+	    }
+	  }, {
+	    key: 'handleLogout',
+	    value: function handleLogout() {
+	      this.props.dispatch((0, _jnote.adminChange)(false));
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 
@@ -39526,8 +39540,26 @@
 	      //BUTTON.push(<button key='login'>LOGIN</button>);
 	      //BUTTON.push(<button key='signin'>SIGNIN</button>);
 
+
+	      BUTTON.push(_react2.default.createElement(
+	        'button',
+	        {
+	          key: 'logout',
+	          onClick: this.handleLogout.bind(this)
+	        },
+	        'LOGOUT'
+	      ));
+
 	      if (!this.props.adminMode) {
-	        BUTTON = [];
+
+	        BUTTON = [_react2.default.createElement(
+	          'button',
+	          {
+	            key: 'login',
+	            onClick: this.handleLogin.bind(this)
+	          },
+	          'LOGIN'
+	        )];
 	      }
 
 	      return _react2.default.createElement(
@@ -41785,6 +41817,7 @@
 
 	    _this['deleteNote'] = _jnote.deleteNote;
 	    _this['getList'] = _jnote.getList;
+	    _this['adminChange'] = _jnote.adminChange;
 	    return _this;
 	  }
 
@@ -41796,16 +41829,25 @@
 	  }, {
 	    key: 'handleDialogSuccess',
 	    value: function handleDialogSuccess() {
+
 	      var successAction = this.props.dialog.successaction.action;
 	      var successPush = this.props.dialog.successaction.push;
 
 	      var param = "";
-	      if (document.querySelector('.message input')) {
+
+	      if (this.props.dialog.type == 'search') {
+
 	        param = document.querySelector('.message input').value;
+	        this.props.dispatch(this[successAction](param));
+	        _reactRouter.hashHistory.push(successPush);
+	      } else if (this.props.dialog.type == 'login') {
+
+	        param = document.querySelector('.message input').value;
+	        if (param.match(/^dufma$/)) {
+	          this.props.dispatch(this[successAction](true));
+	        }
 	      }
 
-	      this.props.dispatch(this[successAction](param));
-	      _reactRouter.hashHistory.push(successPush);
 	      this.handleDialogClose();
 	    }
 	  }, {
@@ -41829,6 +41871,14 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
+
+	      var BOX = null;
+	      if (this.props.dialog.type == 'search') {
+	        BOX = _react2.default.createElement('input', { type: 'text', onKeyDown: this.handleInputAction.bind(this), id: 'searchString' });
+	      } else if (this.props.dialog.type == 'login') {
+	        BOX = _react2.default.createElement('input', { type: 'password', onKeyDown: this.handleInputAction.bind(this), id: 'searchString' });
+	      }
+
 	      return _react2.default.createElement(
 	        'div',
 	        { id: 'dialog' },
@@ -41844,13 +41894,13 @@
 	              null,
 	              this.props.dialog.message,
 	              _react2.default.createElement('br', null),
-	              this.props.dialog.type == 'search' ? _react2.default.createElement('input', { type: 'text', onKeyDown: this.handleInputAction.bind(this), id: 'searchString' }) : null
+	              BOX
 	            )
 	          ),
 	          _react2.default.createElement(
 	            'div',
 	            { className: 'button' },
-	            this.props.dialog.type == 'confirm' || this.props.dialog.type == 'search' ? _react2.default.createElement(
+	            ['confirm', 'search', 'login'].indexOf(this.props.dialog.type) > -1 ? _react2.default.createElement(
 	              'button',
 	              { onClick: this.handleDialogSuccess.bind(this, event) },
 	              'Ok.'

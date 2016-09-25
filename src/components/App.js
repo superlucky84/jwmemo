@@ -40,7 +40,7 @@ export default class App extends Component {
   handleMouseUp(e) {
 
     let pageX = e.pageX;
-    if (!pageX) {
+    if (!pageX && e.touches) {
       if (e.touches.length == 0) {
         return;
       }

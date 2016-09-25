@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { hashHistory } from 'react-router'
 
 /* IMPORT ACTIONS */
-import {closeDialog, deleteNote, getList} from '../actions/jnote'
+import {closeDialog, deleteNote, getList, adminChange} from '../actions/jnote'
 
 export default class Dialog extends Component {
 
@@ -10,6 +10,7 @@ export default class Dialog extends Component {
     super(props);
     this['deleteNote'] = deleteNote;
     this['getList'] = getList;
+    this['adminChange'] = adminChange;
   } 
 
   handleDialogClose() {
@@ -17,16 +18,28 @@ export default class Dialog extends Component {
   }
 
   handleDialogSuccess() {
+
     let successAction = this.props.dialog.successaction.action;
     let successPush = this.props.dialog.successaction.push;
 
     let param = "";
-    if (document.querySelector('.message input')) {
+
+    if ( this.props.dialog.type == 'search' ) {
+
       param = document.querySelector('.message input').value;
+      this.props.dispatch(this[successAction](param));
+      hashHistory.push(successPush);
     }
 
-    this.props.dispatch(this[successAction](param));
-    hashHistory.push(successPush);
+    else if ( this.props.dialog.type == 'login' ) {
+
+      param = document.querySelector('.message input').value;
+      if ( param.match(/^dufma$/) ) {
+        this.props.dispatch(this[successAction](true));
+      }
+    }
+
+
     this.handleDialogClose();
   }
   handleInputAction(event) {
@@ -49,6 +62,17 @@ export default class Dialog extends Component {
 
 
   render() {
+
+
+    let BOX = null;
+    if ( this.props.dialog.type == 'search' ) {
+      BOX = <input type="text" onKeyDown={this.handleInputAction.bind(this)} id="searchString" />;
+    }
+    else if ( this.props.dialog.type == 'login' ) {
+      BOX = <input type="password" onKeyDown={this.handleInputAction.bind(this)} id="searchString" />
+    }
+
+
     return (
       <div id="dialog">
         <div className="dialog-shadow"></div>
@@ -57,17 +81,13 @@ export default class Dialog extends Component {
             <p>
               {this.props.dialog.message}
               <br/>
-              {
-                ( this.props.dialog.type == 'search' )
-                ? <input type="text" onKeyDown={this.handleInputAction.bind(this)} id="searchString" />
-                : null
-              }
+              {BOX}
             </p>
 
           </div>
           <div className="button">
             {
-              ( this.props.dialog.type == 'confirm' || this.props.dialog.type == 'search'  )
+              ( ['confirm','search','login'].indexOf(this.props.dialog.type) > -1 )
               ? <button onClick={this.handleDialogSuccess.bind(this,event)}>Ok.</button>
               : null
             }

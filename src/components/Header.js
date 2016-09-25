@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { hashHistory } from 'react-router'
 
 /* IMPORT ACTIONS */
-import {writeNote, editNote, deleteNote ,updateForm, togglePreview, openDialog} from '../actions/jnote'
+import {adminChange, writeNote, editNote, deleteNote ,updateForm, togglePreview, openDialog} from '../actions/jnote'
 
 export default class Header extends Component {
 
@@ -89,6 +89,18 @@ export default class Header extends Component {
     this.props.dispatch(openDialog('confirm','test'));
   }
 
+  handleLogin() {
+    this.props.dispatch(openDialog('login','login'));
+
+    this.props.dispatch(openDialog('login','password',{
+      action: 'adminChange'
+    }));
+
+  }
+  handleLogout() {
+    this.props.dispatch(adminChange(false));
+  }
+
   render() {
 
     let BUTTON = [];
@@ -96,6 +108,7 @@ export default class Header extends Component {
 
     this.viewType = this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/,"$1");
     this.noteId = this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/,"$2");
+
 
 
     switch ( this.viewType ) {
@@ -159,8 +172,23 @@ export default class Header extends Component {
     //BUTTON.push(<button key='login'>LOGIN</button>);
     //BUTTON.push(<button key='signin'>SIGNIN</button>);
     
+
+    BUTTON.push(
+      <button 
+        key='logout' 
+        onClick={this.handleLogout.bind(this)}
+      >LOGOUT</button>
+    );
+
     if ( !this.props.adminMode ) {
-      BUTTON = [];
+
+      BUTTON = [
+        <button 
+          key='login'
+          onClick={this.handleLogin.bind(this)}
+        >LOGIN</button>
+      ];
+
     }
 
     return (

@@ -41836,9 +41836,11 @@
 
 	      var param = "";
 
-	      if (this.props.dialog.type == 'search') {
+	      if (['search', 'confirm'].indexOf(this.props.dialog.type) > -1) {
 
-	        param = document.querySelector('.message input').value;
+	        if (document.querySelector('.message input')) {
+	          param = document.querySelector('.message input').value;
+	        }
 	        this.props.dispatch(this[successAction](param));
 	        _reactRouter.hashHistory.push(successPush);
 	      } else if (this.props.dialog.type == 'login') {
@@ -42092,20 +42094,22 @@
 
 	      var target = _reactDom2.default.findDOMNode(this.refs.textarea);
 
-	      vim.on_log = function (log) {
-	        if (log.match(/(^act_paste|^delete)/)) {
-	          this.props.dispatch((0, _jnote.updateForm)('note', event.target.value));
-	        }
-	        if (log == 'set_mode INSERT') {
-	          target.className = "insert";
-	        } else if (log == 'set_mode COMMAND') {
-	          target.className = "";
-	        }
-	      }.bind(this);
+	      if (vim) {
+	        vim.on_log = function (log) {
+	          if (log.match(/(^act_paste|^delete)/)) {
+	            this.props.dispatch((0, _jnote.updateForm)('note', event.target.value));
+	          }
+	          if (log == 'set_mode INSERT') {
+	            target.className = "insert";
+	          } else if (log == 'set_mode COMMAND') {
+	            target.className = "";
+	          }
+	        }.bind(this);
 
-	      if (target !== null) {
-	        vim.attach_to(target);
-	        target.focus();
+	        if (target !== null) {
+	          vim.attach_to(target);
+	          target.focus();
+	        }
 	      }
 	    }
 	  }, {

@@ -24,9 +24,11 @@ export default class Dialog extends Component {
 
     let param = "";
 
-    if ( this.props.dialog.type == 'search' ) {
+    if ( ['search','confirm'].indexOf(this.props.dialog.type) > -1 ) {
 
-      param = document.querySelector('.message input').value;
+      if (document.querySelector('.message input')) {
+        param = document.querySelector('.message input').value;
+      }
       this.props.dispatch(this[successAction](param));
       hashHistory.push(successPush);
     }

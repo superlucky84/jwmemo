@@ -75,22 +75,25 @@ export default class Write extends Component {
 
     let target = ReactDOM.findDOMNode(this.refs.textarea);
 
-    vim.on_log = function(log) {
-      if (log.match(/(^act_paste|^delete)/) ) {
-        this.props.dispatch(updateForm('note',event.target.value));
-      }
-      if (log == 'set_mode INSERT') {
-        target.className = "insert";
-      }
-      else if (log == 'set_mode COMMAND') {
-        target.className = "";
-      }
-    }.bind(this);
+    if (vim) {
+      vim.on_log = function(log) {
+        if (log.match(/(^act_paste|^delete)/) ) {
+          this.props.dispatch(updateForm('note',event.target.value));
+        }
+        if (log == 'set_mode INSERT') {
+          target.className = "insert";
+        }
+        else if (log == 'set_mode COMMAND') {
+          target.className = "";
+        }
+      }.bind(this);
 
-    if (target !== null) {
-      vim.attach_to( target );
-      target.focus();
+      if (target !== null) {
+        vim.attach_to( target );
+        target.focus();
+      }
     }
+
   }
 
   dragEnter(event) {

@@ -39192,15 +39192,16 @@
 	    key: 'handleMouseUp',
 	    value: function handleMouseUp(e) {
 
-	      var pageX = e.pageX;
-	      if (!pageX && e.touches) {
-	        if (e.touches.length == 0) {
-	          return;
-	        }
-	        pageX = e.touches[0].pageX;
-	      }
-
 	      if (this.state.downstate) {
+
+	        var pageX = e.pageX;
+	        if (!pageX && e.touches) {
+	          if (e.touches.length == 0) {
+	            return;
+	          }
+	          pageX = e.touches[0].pageX;
+	        }
+
 	        var realleft = Math.round(pageX / $('#container').width() * 100);
 	        this.changeShadowLeft(realleft);
 	      }

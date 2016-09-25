@@ -39,15 +39,17 @@ export default class App extends Component {
 
   handleMouseUp(e) {
 
-    let pageX = e.pageX;
-    if (!pageX && e.touches) {
-      if (e.touches.length == 0) {
-        return;
-      }
-      pageX = e.touches[0].pageX;
-    }
 
     if (this.state.downstate) {
+
+      let pageX = e.pageX;
+      if (!pageX && e.touches) {
+        if (e.touches.length == 0) {
+          return;
+        }
+        pageX = e.touches[0].pageX;
+      }
+
       let realleft =  Math.round((pageX / $('#container').width() ) * 100);
       this.changeShadowLeft(realleft);
     }

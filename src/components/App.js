@@ -39,8 +39,16 @@ export default class App extends Component {
 
   handleMouseUp(e) {
 
+    let pageX = e.pageX;
+    if (!pageX) {
+      if (e.touches.length == 0) {
+        return;
+      }
+      pageX = e.touches[0].pageX;
+    }
+
     if (this.state.downstate) {
-      let realleft =  Math.round((e.pageX / $('#container').width() ) * 100);
+      let realleft =  Math.round((pageX / $('#container').width() ) * 100);
       this.changeShadowLeft(realleft);
     }
   }
@@ -51,8 +59,12 @@ export default class App extends Component {
 
   handleMouseMove(e) {
     if (this.state.downstate) {
+      let pageX = e.pageX;
+      if (!pageX) {
+        pageX = e.touches[0].pageX;
+      }
       this.setState({
-        shadowleft: { left: e.pageX }
+        shadowleft: { left: pageX }
       });
     }
   }
@@ -103,6 +115,7 @@ export default class App extends Component {
             onMouseMove={this.handleMouseMove.bind(this,event)}
             onMouseUp={this.handleMouseUp.bind(this,event)}
             onMouseLeave={this.handleMouseLeave.bind(this)}
+            onTouchMove={this.handleMouseMove.bind(this,event)}
           >
             {DIALOG}
             {
@@ -119,6 +132,8 @@ export default class App extends Component {
             }
             <div 
               onMouseDown={this.handleMouseDown.bind(this)} 
+              onTouchStart={this.handleMouseDown.bind(this)} 
+              onTouchEnd={this.handleMouseUp.bind(this,event)}
               className="split"
               style={splitStyle}
             >

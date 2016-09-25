@@ -39192,8 +39192,16 @@
 	    key: 'handleMouseUp',
 	    value: function handleMouseUp(e) {
 
+	      var pageX = e.pageX;
+	      if (!pageX) {
+	        if (e.touches.length == 0) {
+	          return;
+	        }
+	        pageX = e.touches[0].pageX;
+	      }
+
 	      if (this.state.downstate) {
-	        var realleft = Math.round(e.pageX / $('#container').width() * 100);
+	        var realleft = Math.round(pageX / $('#container').width() * 100);
 	        this.changeShadowLeft(realleft);
 	      }
 	    }
@@ -39206,8 +39214,12 @@
 	    key: 'handleMouseMove',
 	    value: function handleMouseMove(e) {
 	      if (this.state.downstate) {
+	        var pageX = e.pageX;
+	        if (!pageX) {
+	          pageX = e.touches[0].pageX;
+	        }
 	        this.setState({
-	          shadowleft: { left: e.pageX }
+	          shadowleft: { left: pageX }
 	        });
 	      }
 	    }
@@ -39261,7 +39273,8 @@
 	          { id: 'container',
 	            onMouseMove: this.handleMouseMove.bind(this, event),
 	            onMouseUp: this.handleMouseUp.bind(this, event),
-	            onMouseLeave: this.handleMouseLeave.bind(this)
+	            onMouseLeave: this.handleMouseLeave.bind(this),
+	            onTouchMove: this.handleMouseMove.bind(this, event)
 	          },
 	          DIALOG,
 	          this.props.preview ? _react2.default.createElement(_View2.default, { viewType: 'preview', realleft: this.state.realleft }) : _react2.default.createElement(_List2.default, {
@@ -39272,6 +39285,8 @@
 	          }),
 	          _react2.default.createElement('div', {
 	            onMouseDown: this.handleMouseDown.bind(this),
+	            onTouchStart: this.handleMouseDown.bind(this),
+	            onTouchEnd: this.handleMouseUp.bind(this, event),
 	            className: 'split',
 	            style: splitStyle
 	          }),

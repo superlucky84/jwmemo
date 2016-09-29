@@ -60,7 +60,7 @@ var localStream = null;
 var videos = {};
 
 var offerOptions = {
-  offerToReceiveAudio: 1,
+  offerToReceiveAudio: 0,
   offerToReceiveVideo: 1,
   iceRestart: true
 };
@@ -158,9 +158,32 @@ function wsOnMessage(result,result2){
       if (Object.keys(peers).indexOf(peer) >= 0){ 
         return;
       }
-      else {
-        console.log('NEW PEER'+peer);
+
+      if (!videos[peer] && !videos[peer]) {
+
+
+        if (peerscreenAllow[peer]) {
+          var node = document.createElement("video");
+        }
+        else {
+          var node = document.createElement("div");
+        }
+        node.setAttribute('autoplay',"");
+        node.setAttribute('data-peer',peer);
+        node.innerHTML = "NO CAMARA";
+        videos[peer] = node;
+        console.log('CREATEVIDEO',peer);
+        document.getElementById('video-area').appendChild(node);
       }
+
+      if (peer == ws.id) {
+        if (localStream) {
+          videos[peer].srcObject = localStream;
+        }
+        return;
+      }
+
+      console.log('NEW PEER'+peer);
 
       var pc = null;
 
@@ -199,19 +222,21 @@ function wsOnMessage(result,result2){
 
       //jj:fd8f745ea7a07828e6690fa0d080e522
 
+
+
+	  if (peer != ws.id) {
+
       mypeers[peer] = new webkitRTCPeerConnection(iceConfig);
       pc = peers[peer] = new webkitRTCPeerConnection(iceConfig);
 
+      if(localStream){
+        console.log('ADDSTREAM',peer)
+        mypeers[peer].addStream(localStream);
+      }
 
       setEvent(pc,peer);
 
 
-	  if (peer != ws.id) {
-        /*
-      if(localStream){
-        peers[peer].addStream(localStream);
-      }
-      */
 		  pc.createOffer(
         offerOptions
 		  ).then(
@@ -249,9 +274,6 @@ function wsOnMessage(result,result2){
     var nativeRTCSessionDescription = getNativeRTCSessionDescription();
     var pc = mypeers[otherPeerId];
  
-    if (localStream) {
-      pc.addStream(localStream);
-    }
 
 
     pc.setRemoteDescription(new nativeRTCSessionDescription(sdp)).then(
@@ -299,29 +321,7 @@ function wsOnMessage(result,result2){
   function setEvent(pc,peer) {
 
 
-    if (peerscreenAllow[peer]) {
-      var node = document.createElement("video");
-    }
-    else {
-      var node = document.createElement("div");
-    }
-    node.setAttribute('autoplay',"");
-    node.setAttribute('data-peer',peer);
-    node.innerHTML = "NO CAMARA";
-    videos[peer] = node;
 
-    document.getElementById('video-area').appendChild(node);
-
-    if (peer == ws.id) {
-      if (localStream) {
-        videos[peer].srcObject = localStream;
-      }
-
-    }else {
-
-		console.log(peer,pc);
-
-    console.log('MYPER',mypeers[peer]);
 	  peers[peer].onicecandidate = function (e) {
 	    if (e.candidate) {
 		  console.log("ECANDIDATE",e.candidate);
@@ -338,11 +338,30 @@ function wsOnMessage(result,result2){
 
 	  //mypeers[peer].onicecandidate = function (e) {
 
+    if (peer == ws.id) {
+      if (localStream) {
+        videos[peer].srcObject = localStream;
+      }
+
+    }else {
+
+		console.log(peer,pc);
+
+    console.log('MYPER',mypeers[peer]);
+
 
 	  console.log('EVENTBINDADDSTREAM');
       pc.onaddstream = function (videos,peer, e) {
-        videos[peer].srcObject = e.stream;
-        console.log('pc2 received remote stream',peer,videos[peer]);
+        setTimeout(function(){
+
+          //videos[peer].srcObject = e.stream;
+          videos[peer].src = URL.createObjectURL(e.stream);
+
+          
+
+          console.log('pc2 received remote stream',e.stream,peer,videos[peer]);
+
+        },800);
       }.bind(this,videos,peer);
     }
 
@@ -351,6 +370,8 @@ function wsOnMessage(result,result2){
   ws.on('receivelocalcandidate',function(otherPeerId,candidate) {
 
     var pc = mypeers[otherPeerId];
+
+    console.log("ADDICECANDIDATE",otherPeerId);
 
     pc.addIceCandidate(new RTCIceCandidate(candidate)).then(
       function() {

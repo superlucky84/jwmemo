@@ -352,16 +352,14 @@ function wsOnMessage(result,result2){
 
 	  console.log('EVENTBINDADDSTREAM');
       pc.onaddstream = function (videos,peer, e) {
-        setTimeout(function(){
 
-          //videos[peer].srcObject = e.stream;
-          videos[peer].src = URL.createObjectURL(e.stream);
+        //videos[peer].srcObject = e.stream;
+        videos[peer].src = URL.createObjectURL(e.stream);
 
-          
+        
 
-          console.log('pc2 received remote stream',e.stream,peer,videos[peer]);
+        console.log('pc2 received remote stream',e.stream,peer,videos[peer]);
 
-        },800);
       }.bind(this,videos,peer);
     }
 

@@ -5,7 +5,7 @@ import { hashHistory } from 'react-router'
 /* IMPORT ACTIONS */
 import {adminChange, writeNote, editNote, deleteNote ,updateForm, togglePreview, openDialog} from '../actions/jnote'
 
-export default class Header extends Component {
+class Header extends Component {
 
   constructor(props) {
     super(props);

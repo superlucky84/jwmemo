@@ -234,7 +234,8 @@ function wsOnMessage(result,result2){
 
       if(localStream){
         console.log('ADDSTREAM',peer)
-        mypeers[peer].addStream(localStream);
+        //mypeers[peer].addStream(localStream);
+        peers[peer].addStream(localStream);
       }
 
       setEvent(pc,peer);
@@ -369,7 +370,7 @@ function wsOnMessage(result,result2){
 
 
 
-        pc.onaddstream = addstream.bind(this,videos,peer);
+        mypeers[peer].onaddstream = addstream.bind(this,videos,peer);
 
         pc.createOffer(
           offerOptions
@@ -440,7 +441,7 @@ function wsOnMessage(result,result2){
 
 
       console.log('EVENTBINDADDSTREAM');
-      pc.onaddstream = addstream.bind(this,videos,peer);
+      mypeers[peer].onaddstream = addstream.bind(this,videos,peer);
     }
 
 
@@ -484,7 +485,7 @@ function wsOnMessage(result,result2){
         }
       }
 
-      mypeers[peer].addStream(localStream);
+      peers[peer].addStream(localStream);
 
 
   });

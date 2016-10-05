@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import {updateForm, getOne, scrollChange} from '../actions/jnote'
 
 
-export default class Write extends Component {
+class Write extends Component {
 
   constructor(props) {
     super(props);

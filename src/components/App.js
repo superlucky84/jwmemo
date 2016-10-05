@@ -14,7 +14,7 @@ import Dialog from './Dialog'
 import {getList} from '../actions/jnote'
 
 
-export default class App extends Component {
+class App extends Component {
 
   constructor(props,children) {
     super(props);

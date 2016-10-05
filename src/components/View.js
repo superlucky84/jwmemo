@@ -6,7 +6,7 @@ import marked from 'marked';
 /* IMPORT ACTIONS */
 import {getOne, scrollChange} from '../actions/jnote'
 
-export default class View extends Component {
+class View extends Component {
 
   constructor(props) {
     super(props);

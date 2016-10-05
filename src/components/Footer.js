@@ -5,7 +5,7 @@ import { hashHistory } from 'react-router'
 /* IMPORT ACTIONS */
 import { shortcutChange, adminChange, updateForm, openDialog, editNote, writeNote, togglePreview} from '../actions/jnote'
 
-export default class Footer extends Component {
+class Footer extends Component {
 
   constructor(props) {
     super(props);

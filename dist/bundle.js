@@ -39437,7 +39437,9 @@
 	          location: this.props.location,
 	          params: this.props.params,
 	          preview: this.props.preview,
-	          adminMode: this.props.adminMode
+	          adminMode: this.props.adminMode,
+	          changeShadowLeft: this.changeShadowLeft.bind(this),
+	          realleft: this.state.realleft
 	        })
 	      );
 	    }
@@ -39944,17 +39946,19 @@
 	        event.target.blur();
 	      }
 
-	      if (_this.preKeyCode == event.keyCode && event.keyCode == 16 && ['INPUT', 'TEXTAREA'].indexOf(event.target.tagName) == -1) {
-	        _this.preKeyCode = null;
-
-	        // ACTION
-	        _this.props.dispatch((0, _jnote.openDialog)('search', 'searchList', {
+	      /*
+	      if (this.preKeyCode == event.keyCode && event.keyCode == 16 && ['INPUT','TEXTAREA'].indexOf(event.target.tagName) == -1 ) {
+	        this.preKeyCode = null;
+	         // ACTION
+	        this.props.dispatch(openDialog('search','searchList',{
 	          action: 'getList',
 	          push: '/'
 	        }));
-	      } else {
-	        _this.preKeyCode = event.keyCode;
 	      }
+	      else {
+	        this.preKeyCode = event.keyCode;
+	      }
+	      */
 	    });
 
 	    document.querySelector('body').addEventListener('keypress', function (event) {
@@ -40023,131 +40027,136 @@
 	                }
 	              }
 	            }
-
-	            /* 캔슬 */
-	            else if (event.keyCode == 13 && matchString.match(/^:q\s/g)) {
-	                // Previe 닫음
-	                if (_this.props.preview) {
-	                  _this.props.dispatch((0, _jnote.togglePreview)());
-	                }
-
-	                var noteId = _this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/, "$2");
-	                if (noteId) {
-	                  _reactRouter.hashHistory.push('/view/' + noteId);
-	                } else {
-	                  _reactRouter.hashHistory.push('/');
-	                }
+	            /* 검색 */
+	            else if (event.keyCode == 13 && matchString.match(/^\/(.*)\s/g)) {
+	                match = /^\/(.*)\s/g.exec(matchString);
+	                _this.props.dispatch((0, _jnote.getList)(match[1]));
 	              }
-	              /* 저장하기 나가기 */
-	              else if (event.keyCode == 13 && matchString.match(/^:w(q?)\s/g)) {
-	                  //else if (event.keyCode == 13 && match = /^:w(q?)\s/g.exec(matchString) ) {
-	                  match = /^:w(q?)\s/g.exec(matchString);
 
-	                  var _noteId = _this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/, "$2");
-	                  if ('write' == _this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/, "$1")) {
+	              /* 캔슬 */
+	              else if (event.keyCode == 13 && matchString.match(/^:q\s/g)) {
+	                  // Previe 닫음
+	                  if (_this.props.preview) {
+	                    _this.props.dispatch((0, _jnote.togglePreview)());
+	                  }
 
-	                    //if ( !this.props.adminMode ) {
-	                    //this.props.dispatch(openDialog('alert','Not AdminMode'));
-	                    //}
-	                    //else {
+	                  var noteId = _this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/, "$2");
+	                  if (noteId) {
+	                    _reactRouter.hashHistory.push('/view/' + noteId);
+	                  } else {
+	                    _reactRouter.hashHistory.push('/');
+	                  }
+	                }
+	                /* 저장하기 나가기 */
+	                else if (event.keyCode == 13 && matchString.match(/^:w(q?)\s/g)) {
+	                    //else if (event.keyCode == 13 && match = /^:w(q?)\s/g.exec(matchString) ) {
+	                    match = /^:w(q?)\s/g.exec(matchString);
 
-	                    // 수정
-	                    if (_noteId) {
-	                      _this.props.dispatch((0, _jnote.editNote)(_noteId));
-	                      if (match[1] == 'q') {
+	                    var _noteId = _this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/, "$2");
+	                    if ('write' == _this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/, "$1")) {
 
-	                        if (_this.props.preview) {
-	                          _this.props.dispatch((0, _jnote.togglePreview)());
-	                        }
+	                      //if ( !this.props.adminMode ) {
+	                      //this.props.dispatch(openDialog('alert','Not AdminMode'));
+	                      //}
+	                      //else {
 
-	                        _reactRouter.hashHistory.push('/view/' + _noteId);
-	                      }
-	                    }
-	                    // 생성
-	                    else {
-	                        _this.props.dispatch((0, _jnote.writeNote)());
-	                        setTimeout(function () {
+	                      // 수정
+	                      if (_noteId) {
+	                        _this.props.dispatch((0, _jnote.editNote)(_noteId));
+	                        if (match[1] == 'q') {
 
 	                          if (_this.props.preview) {
 	                            _this.props.dispatch((0, _jnote.togglePreview)());
 	                          }
-	                          _this.viewTargetTrigger(0);
-	                          if (match[1] != 'q') {
+
+	                          _reactRouter.hashHistory.push('/view/' + _noteId);
+	                        }
+	                      }
+	                      // 생성
+	                      else {
+	                          _this.props.dispatch((0, _jnote.writeNote)());
+	                          setTimeout(function () {
+
+	                            if (_this.props.preview) {
+	                              _this.props.dispatch((0, _jnote.togglePreview)());
+	                            }
+	                            _this.viewTargetTrigger(0);
+	                            if (match[1] != 'q') {
+	                              _this.props.dispatch((0, _jnote.updateForm)('sync'));
+	                              //let noteId = this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/,"$2");
+	                              _reactRouter.hashHistory.push('/write/' + _this.props.params.id);
+	                              document.querySelector('textarea').focus();
+	                              _this.props.dispatch((0, _jnote.togglePreview)());
+	                            }
+	                          }, 1000);
+	                        }
+	                      //}
+	                    }
+	                  }
+	                  /* 화면분할 균등 */
+	                  else if (matchString.match(/=/g)) {
+	                      _this.props.changeShadowLeft(50);
+	                    } else if (match = /([0-9]+)([<>])$/g.exec(matchString)) {
+
+	                      var changeLeft = _this.props.realleft;
+	                      if (match[2] == ">") {
+	                        changeLeft = _this.props.realleft + parseInt(match[1]);
+	                      } else if (match[2] == "<") {
+	                        changeLeft = _this.props.realleft - parseInt(match[1]);
+	                      }
+
+	                      if (changeLeft <= 0) {
+	                        changeLeft = 1;
+	                      } else if (changeLeft >= 100) {
+	                        changeLeft = 99;
+	                      }
+
+	                      _this.props.changeShadowLeft(changeLeft);
+	                    }
+	                    /* 관리자 권한으로 실행 */
+	                    else if (match = /^\?dufma (on|off|write|edit)/g.exec(matchString)) {
+
+	                        switch (match[1]) {
+	                          case 'on':
+	                          case 'off':
+	                            _this.props.dispatch((0, _jnote.adminChange)(match[1] == 'on' ? true : false));
+	                            break;
+	                          case 'write':
+	                            _this.props.dispatch((0, _jnote.updateForm)('title', ''));
+	                            _this.props.dispatch((0, _jnote.updateForm)('note', ''));
+	                            _reactRouter.hashHistory.push('/write');
+	                            document.querySelector('input').focus();
+
+	                            // Previe 열기
+	                            if (!_this.props.preview) {
+	                              _this.props.dispatch((0, _jnote.togglePreview)());
+	                            }
+
+	                            break;
+	                          case 'edit':
+	                            if (!_this.props.params.id) {
+	                              _this.props.dispatch((0, _jnote.openDialog)('alert', 'Please specify the target first.'));
+	                              return;
+	                            }
 	                            _this.props.dispatch((0, _jnote.updateForm)('sync'));
-	                            //let noteId = this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/,"$2");
 	                            _reactRouter.hashHistory.push('/write/' + _this.props.params.id);
 	                            document.querySelector('textarea').focus();
-	                            _this.props.dispatch((0, _jnote.togglePreview)());
-	                          }
-	                        }, 1000);
+
+	                            // Previe 열기
+	                            if (!_this.props.preview) {
+	                              _this.props.dispatch((0, _jnote.togglePreview)());
+	                            }
+
+	                            break;
+	                        }
 	                      }
-	                    //}
-	                  }
-	                }
-	                /* 화면분할 균등 */
-	                else if (matchString.match(/=/g)) {
-	                    _this.changeShadowLeft(50);
-	                  } else if (match = /([0-9]+)([<>])$/g.exec(matchString)) {
-
-	                    var changeLeft = _this.state.realleft;
-	                    if (match[2] == ">") {
-	                      changeLeft = _this.state.realleft + parseInt(match[1]);
-	                    } else if (match[2] == "<") {
-	                      changeLeft = _this.state.realleft - parseInt(match[1]);
-	                    }
-
-	                    if (changeLeft <= 0) {
-	                      changeLeft = 1;
-	                    } else if (changeLeft >= 100) {
-	                      changeLeft = 99;
-	                    }
-
-	                    _this.changeShadowLeft(changeLeft);
-	                  }
-	                  /* 관리자 권한으로 실행 */
-	                  else if (match = /^\?dufma (on|off|write|edit)/g.exec(matchString)) {
-
-	                      switch (match[1]) {
-	                        case 'on':
-	                        case 'off':
-	                          _this.props.dispatch((0, _jnote.adminChange)(match[1] == 'on' ? true : false));
-	                          break;
-	                        case 'write':
-	                          _this.props.dispatch((0, _jnote.updateForm)('title', ''));
-	                          _this.props.dispatch((0, _jnote.updateForm)('note', ''));
-	                          _reactRouter.hashHistory.push('/write');
-	                          document.querySelector('input').focus();
-
-	                          // Previe 열기
-	                          if (!_this.props.preview) {
-	                            _this.props.dispatch((0, _jnote.togglePreview)());
-	                          }
-
-	                          break;
-	                        case 'edit':
-	                          if (!_this.props.params.id) {
-	                            _this.props.dispatch((0, _jnote.openDialog)('alert', 'Please specify the target first.'));
-	                            return;
-	                          }
-	                          _this.props.dispatch((0, _jnote.updateForm)('sync'));
-	                          _reactRouter.hashHistory.push('/write/' + _this.props.params.id);
-	                          document.querySelector('textarea').focus();
-
-	                          // Previe 열기
-	                          if (!_this.props.preview) {
-	                            _this.props.dispatch((0, _jnote.togglePreview)());
-	                          }
-
-	                          break;
-	                      }
-	                    }
 
 	      clearTimeout(_this.timeoutState);
 	      _this.timeoutState = setTimeout(function () {
 
 	        var match = null;
 	        if (match = /([0-9]+)$/g.exec(matchString)) {
-	          _this.changeShadowLeft(parseInt(match[1]));
+	          _this.props.changeShadowLeft(parseInt(match[1]));
 	        }
 
 	        _this.props.dispatch((0, _jnote.shortcutChange)(''));

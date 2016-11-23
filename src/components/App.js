@@ -148,6 +148,8 @@ class App extends Component {
             params={this.props.params} 
             preview={this.props.preview}
             adminMode={this.props.adminMode}
+            changeShadowLeft={this.changeShadowLeft.bind(this)}
+            realleft={this.state.realleft} 
           />
         </div>
     );

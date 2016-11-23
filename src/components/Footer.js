@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { hashHistory } from 'react-router'
 
 /* IMPORT ACTIONS */
-import { shortcutChange, adminChange, updateForm, openDialog, editNote, writeNote, togglePreview} from '../actions/jnote'
+import { shortcutChange, adminChange, updateForm, openDialog, editNote, writeNote, togglePreview, getList } from '../actions/jnote'
 
 class Footer extends Component {
 
@@ -28,6 +28,7 @@ class Footer extends Component {
 
        
 
+      /*
       if (this.preKeyCode == event.keyCode && event.keyCode == 16 && ['INPUT','TEXTAREA'].indexOf(event.target.tagName) == -1 ) {
         this.preKeyCode = null;
 
@@ -36,11 +37,11 @@ class Footer extends Component {
           action: 'getList',
           push: '/'
         }));
-
       }
       else {
         this.preKeyCode = event.keyCode;
       }
+      */
     });
 
     document.querySelector('body').addEventListener('keypress', (event) => {
@@ -117,6 +118,11 @@ class Footer extends Component {
 
         }
       }
+      /* 검색 */
+      else if (event.keyCode == 13 && matchString.match(/^\/(.*)\s/g) ) {
+        match = /^\/(.*)\s/g.exec(matchString);
+        this.props.dispatch(getList(match[1]));
+      }
 
       /* 캔슬 */
       else if (event.keyCode == 13 && matchString.match(/^:q\s/g) ) {
@@ -181,22 +187,22 @@ class Footer extends Component {
       }
       /* 화면분할 균등 */
       else if ( matchString.match(/=/g) ) {
-        this.changeShadowLeft(50);
+        this.props.changeShadowLeft(50);
       }
       else if ( match = /([0-9]+)([<>])$/g.exec(matchString) ) {
 
-        let changeLeft = this.state.realleft;
+        let changeLeft = this.props.realleft;
         if (match[2] == ">") {
-          changeLeft = this.state.realleft + parseInt(match[1]);
+          changeLeft = this.props.realleft + parseInt(match[1]);
         }
         else if (match[2] == "<") {
-          changeLeft = this.state.realleft - parseInt(match[1]);
+          changeLeft = this.props.realleft - parseInt(match[1]);
         }
 
         if (changeLeft <= 0) { changeLeft = 1; }
         else if (changeLeft >= 100) { changeLeft = 99; }
 
-        this.changeShadowLeft(changeLeft);
+        this.props.changeShadowLeft(changeLeft);
       }
       /* 관리자 권한으로 실행 */
       else if ( match = /^\?dufma (on|off|write|edit)/g.exec(matchString) ) {
@@ -242,7 +248,7 @@ class Footer extends Component {
 
         let match = null;
         if ( match = /([0-9]+)$/g.exec(matchString) ) {
-          this.changeShadowLeft(parseInt(match[1]));
+          this.props.changeShadowLeft(parseInt(match[1]));
         }
 
         this.props.dispatch(shortcutChange(''));

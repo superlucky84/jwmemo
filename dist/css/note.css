@@ -105,6 +105,7 @@ div.list, div.view, div.preview ,div.view .markdown-body, div.preview .markdown-
   position: absolute;
   top: 0;
   bottom: 0;
+  word-break: break-all;
 }
 
 div.list, div.preview {

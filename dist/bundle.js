@@ -39415,10 +39415,10 @@
 	        _react2.default.createElement(
 	          'div',
 	          { id: 'container',
-	            onMouseMove: this.handleMouseMove.bind(this, event),
-	            onMouseUp: this.handleMouseUp.bind(this, event),
+	            onMouseMove: this.handleMouseMove.bind(this),
+	            onMouseUp: this.handleMouseUp.bind(this),
 	            onMouseLeave: this.handleMouseLeave.bind(this),
-	            onTouchMove: this.handleMouseMove.bind(this, event)
+	            onTouchMove: this.handleMouseMove.bind(this)
 	          },
 	          DIALOG,
 	          this.props.preview ? _react2.default.createElement(_View2.default, { viewType: 'preview', realleft: this.state.realleft }) : _react2.default.createElement(_List2.default, {
@@ -39430,7 +39430,7 @@
 	          _react2.default.createElement('div', {
 	            onMouseDown: this.handleMouseDown.bind(this),
 	            onTouchStart: this.handleMouseDown.bind(this),
-	            onTouchEnd: this.handleMouseUp.bind(this, event),
+	            onTouchEnd: this.handleMouseUp.bind(this),
 	            className: 'split',
 	            style: splitStyle
 	          }),
@@ -39940,13 +39940,15 @@
 
 	    document.querySelector('body').addEventListener('keydown', function (event) {
 
-	      if (event.shiftKey == true && (event.keyCode == 186 || event.keyCode == 191) && vim.m_mode == 'COMMAND' && ['TEXTAREA'].indexOf(event.target.tagName) > -1) {
+	      var keyCharCode = event.keyCode || event.charCode;
+
+	      if (event.shiftKey == true && (keyCharCode == 186 || keyCharCode == 59 || keyCharCode == 191) && vim.m_mode == 'COMMAND' && ['TEXTAREA'].indexOf(event.target.tagName) > -1) {
 	        event.target.blur();
 	        setTimeout(function () {
 	          event.target.focus();
 	        }, 900);
 	      }
-	      if (event.keyCode == 27 && ['INPUT'].indexOf(event.target.tagName) > -1) {
+	      if (keyCharCode == 27 && ['INPUT'].indexOf(event.target.tagName) > -1) {
 	        event.target.blur();
 	      }
 
@@ -39967,6 +39969,8 @@
 
 	    document.querySelector('body').addEventListener('keypress', function (event) {
 
+	      var keyCharCode = event.keyCode || event.charCode;
+
 	      if (['TEXTAREA', 'INPUT'].indexOf(event.target.tagName) > -1) {
 	        return;
 	      } else {
@@ -39978,7 +39982,7 @@
 	        shortcut = "";
 	      }
 
-	      var matchString = String(shortcut + String.fromCharCode(event.keyCode));
+	      var matchString = String(shortcut + String.fromCharCode(keyCharCode));
 	      _this.props.dispatch((0, _jnote.shortcutChange)(matchString));
 
 	      var match = null;
@@ -39989,12 +39993,12 @@
 	        _this.viewTargetTrigger(target);
 	      }
 	      /* 행 찾아가기2 */
-	      else if (event.keyCode == 13 && /^:([0-9]+)\s/g.exec(matchString)) {
+	      else if (keyCharCode == 13 && /^:([0-9]+)\s/g.exec(matchString)) {
 	          match = /^:([0-9]+)\s/g.exec(matchString);
 	          _this.viewTargetTrigger(match[1]);
 	        }
 	        /* 리스트에서 검색하기 */
-	        else if (event.keyCode == 13 && /^[:](s|search|list)\s/g.exec(matchString)) {
+	        else if (keyCharCode == 13 && /^[:](s|search|list)\s/g.exec(matchString)) {
 	            // ACTION
 	            _this.props.dispatch((0, _jnote.openDialog)('search', 'searchList', {
 	              action: 'getList',
@@ -40002,7 +40006,7 @@
 	            }));
 	          }
 	          /* 수정하기 */
-	          else if (event.keyCode == 13 && matchString.match(/:e[ ]?([0-9]*)\s/g)) {
+	          else if (keyCharCode == 13 && matchString.match(/:e[ ]?([0-9]*)\s/g)) {
 	              match = /:e[ ]?([0-9]*)/g.exec(matchString);
 	              var _target = document.querySelector('.list li[data-idx=\'' + match[1] + '\']');
 
@@ -40032,13 +40036,13 @@
 	              }
 	            }
 	            /* 검색 */
-	            else if (event.keyCode == 13 && matchString.match(/^\/(.*)\s/g)) {
+	            else if (keyCharCode == 13 && matchString.match(/^\/(.*)\s/g)) {
 	                match = /^\/(.*)\s/g.exec(matchString);
 	                _this.props.dispatch((0, _jnote.getList)(match[1]));
 	              }
 
 	              /* 캔슬 */
-	              else if (event.keyCode == 13 && matchString.match(/^:q\s/g)) {
+	              else if (keyCharCode == 13 && matchString.match(/^:q\s/g)) {
 	                  // Previe 닫음
 	                  if (_this.props.preview) {
 	                    _this.props.dispatch((0, _jnote.togglePreview)());
@@ -40052,8 +40056,8 @@
 	                  }
 	                }
 	                /* 저장하기 나가기 */
-	                else if (event.keyCode == 13 && matchString.match(/^:w(q?)\s/g)) {
-	                    //else if (event.keyCode == 13 && match = /^:w(q?)\s/g.exec(matchString) ) {
+	                else if (keyCharCode == 13 && matchString.match(/^:w(q?)\s/g)) {
+	                    //else if (keyCharCode == 13 && match = /^:w(q?)\s/g.exec(matchString) ) {
 	                    match = /^:w(q?)\s/g.exec(matchString);
 
 	                    var _noteId = _this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/, "$2");
@@ -42439,7 +42443,7 @@
 	            { className: 'button' },
 	            ['confirm', 'search', 'login'].indexOf(this.props.dialog.type) > -1 ? _react2.default.createElement(
 	              'button',
-	              { onClick: this.handleDialogSuccess.bind(this, event) },
+	              { onClick: this.handleDialogSuccess.bind(this) },
 	              'Ok.'
 	            ) : null,
 	            _react2.default.createElement(

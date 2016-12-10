@@ -90,7 +90,7 @@ export default class Dialog extends Component {
           <div className="button">
             {
               ( ['confirm','search','login'].indexOf(this.props.dialog.type) > -1 )
-              ? <button onClick={this.handleDialogSuccess.bind(this,event)}>Ok.</button>
+              ? <button onClick={this.handleDialogSuccess.bind(this)}>Ok.</button>
               : null
             }
             <button className='cancel' onClick={this.handleDialogClose.bind(this)}>Cancel.</button>

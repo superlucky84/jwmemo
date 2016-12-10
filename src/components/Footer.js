@@ -16,13 +16,15 @@ class Footer extends Component {
 
     document.querySelector('body').addEventListener('keydown', (event) => {
 
-      if (event.shiftKey == true && (event.keyCode == 186 || event.keyCode == 191) && vim.m_mode == 'COMMAND' && ['TEXTAREA'].indexOf(event.target.tagName) > -1 ) {
+      let keyCharCode = event.keyCode || event.charCode;
+
+      if (event.shiftKey == true && (keyCharCode == 186 || keyCharCode == 59 || keyCharCode == 191) && vim.m_mode == 'COMMAND' && ['TEXTAREA'].indexOf(event.target.tagName) > -1 ) {
         event.target.blur();
         setTimeout(() => {
           event.target.focus();
         },900);
       }
-      if( event.keyCode==27 && ['INPUT'].indexOf(event.target.tagName) > -1 ) {
+      if( keyCharCode==27 && ['INPUT'].indexOf(event.target.tagName) > -1 ) {
         event.target.blur();
       }
 
@@ -47,6 +49,8 @@ class Footer extends Component {
     document.querySelector('body').addEventListener('keypress', (event) => {
 
 
+      let keyCharCode = event.keyCode || event.charCode;
+
       if( ['TEXTAREA','INPUT'].indexOf(event.target.tagName) > -1 ) {
         return;
       }
@@ -59,7 +63,7 @@ class Footer extends Component {
         shortcut = "";
       }
 
-      let matchString = String(shortcut+String.fromCharCode(event.keyCode));
+      let matchString = String(shortcut+String.fromCharCode(keyCharCode));
       this.props.dispatch(shortcutChange(matchString));
 
       let match = null;
@@ -70,12 +74,12 @@ class Footer extends Component {
         this.viewTargetTrigger(target);
       }
       /* 행 찾아가기2 */
-      else if ( event.keyCode == 13 &&  /^:([0-9]+)\s/g.exec(matchString) ) {
+      else if ( keyCharCode == 13 &&  /^:([0-9]+)\s/g.exec(matchString) ) {
         match = /^:([0-9]+)\s/g.exec(matchString)
         this.viewTargetTrigger(match[1]);
       }
       /* 리스트에서 검색하기 */
-      else if ( event.keyCode == 13 && /^[:](s|search|list)\s/g.exec(matchString) ) {
+      else if ( keyCharCode == 13 && /^[:](s|search|list)\s/g.exec(matchString) ) {
         // ACTION
         this.props.dispatch(openDialog('search','searchList',{
           action: 'getList',
@@ -84,7 +88,7 @@ class Footer extends Component {
 
       }
       /* 수정하기 */
-      else if (event.keyCode == 13 && matchString.match(/:e[ ]?([0-9]*)\s/g) ) {
+      else if (keyCharCode == 13 && matchString.match(/:e[ ]?([0-9]*)\s/g) ) {
         match = /:e[ ]?([0-9]*)/g.exec(matchString);
         let target = document.querySelector(`.list li[data-idx='${match[1]}']`);
 
@@ -119,13 +123,13 @@ class Footer extends Component {
         }
       }
       /* 검색 */
-      else if (event.keyCode == 13 && matchString.match(/^\/(.*)\s/g) ) {
+      else if (keyCharCode == 13 && matchString.match(/^\/(.*)\s/g) ) {
         match = /^\/(.*)\s/g.exec(matchString);
         this.props.dispatch(getList(match[1]));
       }
 
       /* 캔슬 */
-      else if (event.keyCode == 13 && matchString.match(/^:q\s/g) ) {
+      else if (keyCharCode == 13 && matchString.match(/^:q\s/g) ) {
         // Previe 닫음
         if ( this.props.preview ) {
           this.props.dispatch(togglePreview());
@@ -140,8 +144,8 @@ class Footer extends Component {
         }
       }
       /* 저장하기 나가기 */
-      else if (event.keyCode == 13 && matchString.match(/^:w(q?)\s/g) ) {
-      //else if (event.keyCode == 13 && match = /^:w(q?)\s/g.exec(matchString) ) {
+      else if (keyCharCode == 13 && matchString.match(/^:w(q?)\s/g) ) {
+      //else if (keyCharCode == 13 && match = /^:w(q?)\s/g.exec(matchString) ) {
         match = /^:w(q?)\s/g.exec(matchString);
 
         let noteId = this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/,"$2");

@@ -260,7 +260,7 @@ function VIM(ctrees) {
 
   this.on_keydown = function(event){
     var p 
-    var m = __special_keys[ event.keyCode ]
+    var m = __special_keys[ event.keyCode || event.charCode ]
     if (undefined === m ) {
       p = true
     } else {
@@ -270,7 +270,7 @@ function VIM(ctrees) {
   }
 
   this.on_keypress = function(event){
-    var m = String.fromCharCode( event.keyCode )
+    var m = String.fromCharCode( event.keyCode || event.charCode )
     var p = this.on_key( m, event )
     return p
   }

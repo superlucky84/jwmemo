@@ -113,10 +113,10 @@ class App extends Component {
             adminMode={this.props.adminMode}
           />
           <div id="container"
-            onMouseMove={this.handleMouseMove.bind(this,event)}
-            onMouseUp={this.handleMouseUp.bind(this,event)}
+            onMouseMove={this.handleMouseMove.bind(this)}
+            onMouseUp={this.handleMouseUp.bind(this)}
             onMouseLeave={this.handleMouseLeave.bind(this)}
-            onTouchMove={this.handleMouseMove.bind(this,event)}
+            onTouchMove={this.handleMouseMove.bind(this)}
           >
             {DIALOG}
             {
@@ -134,7 +134,7 @@ class App extends Component {
             <div 
               onMouseDown={this.handleMouseDown.bind(this)} 
               onTouchStart={this.handleMouseDown.bind(this)} 
-              onTouchEnd={this.handleMouseUp.bind(this,event)}
+              onTouchEnd={this.handleMouseUp.bind(this)}
               className="split"
               style={splitStyle}
             >

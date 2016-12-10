@@ -153,6 +153,8 @@ div.view, div.write {
 
 div.view .markdown-body, div.write, div.preview .markdown-body {
   padding: 10px;
+  left: 0;
+  right: 0;
 }
 
 /*

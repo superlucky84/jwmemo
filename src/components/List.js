@@ -2,6 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import {  hashHistory } from 'react-router';
 
 import ListItem from './ListItem';
+import Scroll from './juc/Scroll';
+
 
 
 export default class List extends Component {
@@ -29,6 +31,9 @@ export default class List extends Component {
 
     return (
       <div className="list" style={splitStyle}>
+				<Scroll
+          realleft={this.props.realleft}
+        >
         <ul>
           {
           this.props.lists.map((item,idx)=>(
@@ -45,6 +50,7 @@ export default class List extends Component {
           ))
           }
         </ul>
+				</Scroll>
       </div>
     );
   }

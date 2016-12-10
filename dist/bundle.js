@@ -72,15 +72,15 @@
 
 	var _App2 = _interopRequireDefault(_App);
 
-	var _Empty = __webpack_require__(277);
+	var _Empty = __webpack_require__(281);
 
 	var _Empty2 = _interopRequireDefault(_Empty);
 
-	var _View = __webpack_require__(274);
+	var _View = __webpack_require__(276);
 
 	var _View2 = _interopRequireDefault(_View);
 
-	var _Write = __webpack_require__(278);
+	var _Write = __webpack_require__(282);
 
 	var _Write2 = _interopRequireDefault(_Write);
 
@@ -39279,13 +39279,17 @@
 
 	var _List2 = _interopRequireDefault(_List);
 
-	var _View = __webpack_require__(274);
+	var _View = __webpack_require__(276);
 
 	var _View2 = _interopRequireDefault(_View);
 
-	var _Dialog = __webpack_require__(276);
+	var _Dialog = __webpack_require__(279);
 
 	var _Dialog2 = _interopRequireDefault(_Dialog);
+
+	var _objectAssignShim = __webpack_require__(280);
+
+	var _objectAssignShim2 = _interopRequireDefault(_objectAssignShim);
 
 	var _jnote = __webpack_require__(269);
 
@@ -40244,6 +40248,10 @@
 
 	var _ListItem2 = _interopRequireDefault(_ListItem);
 
+	var _Scroll = __webpack_require__(274);
+
+	var _Scroll2 = _interopRequireDefault(_Scroll);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -40286,20 +40294,26 @@
 	        'div',
 	        { className: 'list', style: splitStyle },
 	        _react2.default.createElement(
-	          'ul',
-	          null,
-	          this.props.lists.map(function (item, idx) {
-	            return _react2.default.createElement(_ListItem2.default, {
-	              key: idx,
-	              idx: idx,
-	              id: item._id,
-	              title: item.title,
-	              favorite: item.favorite,
-	              tags: item.category,
-	              dispatch: _this2.props.dispatch,
-	              adminMode: _this2.props.adminMode
-	            });
-	          })
+	          _Scroll2.default,
+	          {
+	            realleft: this.props.realleft
+	          },
+	          _react2.default.createElement(
+	            'ul',
+	            null,
+	            this.props.lists.map(function (item, idx) {
+	              return _react2.default.createElement(_ListItem2.default, {
+	                key: idx,
+	                idx: idx,
+	                id: item._id,
+	                title: item.title,
+	                favorite: item.favorite,
+	                tags: item.category,
+	                dispatch: _this2.props.dispatch,
+	                adminMode: _this2.props.adminMode
+	              });
+	            })
+	          )
 	        )
 	      );
 	    }
@@ -40506,9 +40520,308 @@
 
 	var _reactRedux = __webpack_require__(186);
 
-	var _marked = __webpack_require__(275);
+	var _Util = __webpack_require__(275);
 
-	var _marked2 = _interopRequireDefault(_marked);
+	var _Util2 = _interopRequireDefault(_Util);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Scroll = function (_Component) {
+	  _inherits(Scroll, _Component);
+
+	  function Scroll(props) {
+	    _classCallCheck(this, Scroll);
+
+	    var _this = _possibleConstructorReturn(this, (Scroll.__proto__ || Object.getPrototypeOf(Scroll)).call(this, props));
+
+	    _this.scrollWrap = null;
+	    _this.scrollInner = null;
+	    _this.ps = null;
+	    _this.sc = null;
+	    _this.rating = 0;
+	    _this.op = _this.props.option ? _this.props.option : {};
+
+	    _this.scrollDragStandard = [];
+	    _this.drag = false;
+	    _this.scrollTime = null;
+	    _this.util = new _Util2.default();
+
+	    _this.isWebkit = 'WebkitAppearance' in document.documentElement.style;
+
+	    return _this;
+	  }
+
+	  _createClass(Scroll, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {}
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+
+	      this.scrollWrap = _reactDom2.default.findDOMNode(this);
+	      this.scrollInner = this.scrollWrap.querySelector('.jwscroll-inner');
+
+	      if (this.isWebkit !== true) {
+	        this.hiddenScroll();
+	      }
+	      this.addScroll();
+	      this.makeScrollPosition();
+	      this.setScrollTop();
+	      this.initEvent();
+	    }
+	  }, {
+	    key: 'componentDidReceiveProps',
+	    value: function componentDidReceiveProps(nextprops) {
+
+	      console.log(nextprops.realleft, this.props.realleft);
+	    }
+	  }, {
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps(nextprops) {
+
+	      if (nextprops.realleft != this.props.realleft && this.isWebkit !== true) {
+
+	        var jwscrollWrap = this.scrollWrap;
+	        var jwscroll = this.scrollInner;
+	        jwscroll.removeAttribute("style");
+	        jwscrollWrap.removeAttribute("style");
+	        this.hiddenScroll();
+	      }
+
+	      if (!this.props.viewType || this.props.viewType != 'preview') {
+	        return;
+	      }
+	      if (nextprops.previewScroll != this.props.previewScroll || nextprops.previewScroll == 100) {
+	        var $this = _reactDom2.default.findDOMNode(this).querySelector('.jwscroll-inner');
+	        var result = ($this.scrollHeight - $this.clientHeight) * nextprops.previewScroll / 100;
+	        $this.scrollTop = Number(result);
+	      }
+	    }
+	  }, {
+	    key: 'hiddenScroll',
+	    value: function hiddenScroll() {
+	      var jwscrollWrap = this.scrollWrap;
+	      var jwscroll = this.scrollInner;
+
+	      var scrollWidth = jwscroll.offsetWidth - jwscroll.clientWidth;
+	      var innerWidth = jwscrollWrap.offsetWidth + scrollWidth;
+	      jwscroll.style.width = innerWidth + "px";
+	      jwscrollWrap.style.width = innerWidth - scrollWidth + "px";
+	    }
+	  }, {
+	    key: 'addScroll',
+	    value: function addScroll() {
+	      var jwscrollWrap = this.scrollWrap;
+	      this.sc = document.createElement("div");
+	      this.ps = document.createElement("div");
+	      this.ps.className = "ps";
+	      this.sc.className = "sc";
+
+	      this.sc.appendChild(this.ps);
+	      jwscrollWrap.appendChild(this.sc);
+	    }
+	  }, {
+	    key: 'makeScrollPosition',
+	    value: function makeScrollPosition() {
+	      var jwscroll = _reactDom2.default.findDOMNode(this.scrollInner);
+	      var ps = this.ps;
+	      var scrollHeight = jwscroll.scrollHeight;
+	      var clientHeight = jwscroll.clientHeight;
+	      var posHeight = parseInt(clientHeight * (clientHeight / scrollHeight));
+	      ps.style.height = posHeight + "px";
+	      if (this.op.scrollShowAlways === true) ps.style.opacity = 1;
+	    }
+	  }, {
+	    key: 'setScrollTop',
+	    value: function setScrollTop() {
+	      var jwscroll = this.scrollInner;
+	      var ps = this.ps;
+	      var scrollHeight = jwscroll.scrollHeight;
+	      var clientHeight = jwscroll.clientHeight;
+	      this.rating = clientHeight / scrollHeight;
+	      var scrollTop = jwscroll.scrollTop * this.rating;
+	      ps.style.top = scrollTop + "px";
+	    }
+	  }, {
+	    key: 'scrollShy',
+	    value: function scrollShy() {
+	      var self = this;
+	      var ps = this.ps;
+	      self.util.addClass(ps, 'show');
+	      clearTimeout(this.scrollTime);
+	      self.scrollTime = setTimeout(function () {
+	        self.util.removeClass(ps, 'show');
+	      }, 1000);
+	    }
+	  }, {
+	    key: 'initEvent',
+	    value: function initEvent() {
+
+	      var self = this;
+
+	      document.addEventListener('mousemove', function (evt) {
+	        if (self.drag) {
+	          var changePx = evt.screenY - self.scrollDragStandard[0];
+	          var changeTop = changePx / self.rating;
+	          var scrollTop = self.scrollDragStandard[1] + changeTop;
+	          self.scrollInner.scrollTop = scrollTop;
+	        }
+	      });
+	      self.ps.addEventListener('mousedown', function (evt) {
+	        self.scrollDragStandard[0] = evt.screenY;
+	        self.scrollDragStandard[1] = self.scrollInner.scrollTop;
+	        self.drag = true;
+	      });
+	      self.ps.addEventListener('mouseup', function () {
+	        self.drag = false;
+	      });
+	      document.addEventListener('mouseup', function () {
+	        self.drag = false;
+	      });
+	      self.scrollInner.addEventListener('mouseenter', function () {
+	        if (self.scrollInner.scrollHeight != self.scrollInner.clientHeight) {
+	          self.scrollShy();
+	        }
+	      });
+	      self.sc.addEventListener('mouseenter', function () {
+	        self.util.addClass(self.ps, 'show');
+	      });
+	      self.sc.addEventListener('mouseleave', function () {
+	        self.util.removeClass(self.ps, 'show');
+	      });
+	      self.scrollInner.addEventListener('scroll', function () {
+	        self.setScrollTop();
+	        self.scrollShy();
+	      });
+	      self.scrollInner.addEventListener('DOMSubtreeModified', function () {
+	        setTimeout(function () {
+	          self.makeScrollPosition();
+	          self.setScrollTop();
+	        }, 30);
+	      });
+
+	      window.addEventListener('resize', function () {
+
+	        if (self.isWebkit !== true) {
+	          var jwscrollWrap = self.scrollWrap;
+	          var jwscroll = self.scrollInner;
+	          jwscroll.removeAttribute("style");
+	          jwscrollWrap.removeAttribute("style");
+
+	          self.hiddenScroll();
+	        }
+	        self.makeScrollPosition();
+	        self.setScrollTop();
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'jwscroll' },
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'jwscroll-inner' },
+	          this.props.children
+	        )
+	      );
+	    }
+	  }]);
+
+	  return Scroll;
+	}(_react.Component);
+
+	/**
+	 *  REDUX STATE 주입
+	 */
+
+
+	exports.default = (0, _reactRedux.connect)(function (state) {
+	  return {
+	    previewScroll: state.default.write.scroll
+	  };
+	})(Scroll);
+
+/***/ },
+/* 275 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Util = function () {
+	  function Util() {
+	    _classCallCheck(this, Util);
+	  }
+
+	  _createClass(Util, [{
+	    key: 'addClass',
+	    value: function addClass(target, _addClass) {
+	      var className = target.className;
+	      if (!new RegExp(_addClass, 'g').exec(className)) {
+	        className += " " + _addClass;
+	        target.className = className;
+	      }
+	    }
+	  }, {
+	    key: 'removeClass',
+	    value: function removeClass(target, _removeClass) {
+	      var className = target.className;
+	      if (new RegExp(_removeClass, 'g').exec(className)) {
+	        var regex = new RegExp(' ' + _removeClass, 'g');
+	        className = className.replace(regex, '');
+	        target.className = className;
+	      }
+	    }
+	  }]);
+
+	  return Util;
+	}();
+
+	exports.default = Util;
+
+/***/ },
+/* 276 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(34);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _Scroll = __webpack_require__(274);
+
+	var _Scroll2 = _interopRequireDefault(_Scroll);
+
+	var _ViewNote = __webpack_require__(277);
+
+	var _ViewNote2 = _interopRequireDefault(_ViewNote);
 
 	var _jnote = __webpack_require__(269);
 
@@ -40534,6 +40847,108 @@
 
 	  _createClass(View, [{
 	    key: 'componentDidMount',
+	    value: function componentDidMount() {}
+	  }, {
+	    key: 'render',
+	    value: function render() {
+
+	      var splitStyle = null;
+	      var classname = '';
+	      var scroll = 0;
+
+	      if (this.props.viewType == 'preview') {
+
+	        if (this.props.realleft) {
+	          var realright = 100 - this.props.realleft;
+	          splitStyle = {
+	            right: realright + "%"
+	          };
+
+	          classname = 'preview';
+	        }
+	      } else {
+
+	        if (this.props.realleft) {
+	          splitStyle = {
+	            left: "calc(" + this.props.realleft + "% + 7px)"
+	          };
+
+	          classname = 'view';
+	        }
+	      }
+
+	      return _react2.default.createElement(
+	        'div',
+	        {
+	          style: splitStyle,
+	          className: classname },
+	        _react2.default.createElement(
+	          _Scroll2.default,
+	          {
+	            viewType: this.props.viewType,
+	            realleft: this.props.realleft
+	          },
+	          _react2.default.createElement(_ViewNote2.default, this.props)
+	        )
+	      );
+	    }
+	  }]);
+
+	  return View;
+	}(_react.Component);
+
+	exports.default = View;
+
+/***/ },
+/* 277 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(34);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _reactRedux = __webpack_require__(186);
+
+	var _marked = __webpack_require__(278);
+
+	var _marked2 = _interopRequireDefault(_marked);
+
+	var _jnote = __webpack_require__(269);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	/* IMPORT ACTIONS */
+
+
+	var ViewNote = function (_Component) {
+	  _inherits(ViewNote, _Component);
+
+	  function ViewNote(props) {
+	    _classCallCheck(this, ViewNote);
+
+	    return _possibleConstructorReturn(this, (ViewNote.__proto__ || Object.getPrototypeOf(ViewNote)).call(this, props));
+	  }
+
+	  _createClass(ViewNote, [{
+	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 	      if (this.props.routeParams && this.props.routeParams.id) {
 	        this.props.dispatch((0, _jnote.getOne)(this.props.routeParams.id));
@@ -40545,12 +40960,6 @@
 	      if (nextprops.routeParams && nextprops.routeParams.id != this.props.params.id) {
 	        nextprops.dispatch((0, _jnote.getOne)(nextprops.routeParams.id));
 	      }
-
-	      //if (nextprops.previewScroll != this.props.previewScroll) {
-	      var $this = _reactDom2.default.findDOMNode(this);
-	      var result = ($this.scrollHeight - $this.clientHeight) * nextprops.previewScroll / 100;
-	      _reactDom2.default.findDOMNode(this).scrollTop = result;
-	      //}
 	    }
 
 	    /*
@@ -40582,37 +40991,19 @@
 	      var scroll = 0;
 
 	      if (this.props.viewType == 'preview') {
-
 	        note = (0, _marked2.default)(this.props.previewNote.toString(), { sanitize: false });
-	        classname = 'preview markdown-body';
-
-	        if (this.props.realleft) {
-	          var realright = 100 - this.props.realleft;
-	          splitStyle = {
-	            right: realright + "%"
-	          };
-	        }
 	      } else {
-
 	        note = (0, _marked2.default)(this.props.note.toString(), { sanitize: false });
-	        classname = 'view markdown-body';
-
-	        if (this.props.realleft) {
-	          splitStyle = {
-	            left: "calc(" + this.props.realleft + "% + 7px)"
-	          };
-	        }
 	      }
 
 	      return _react2.default.createElement('div', {
-	        style: splitStyle,
-	        className: classname
-	        //onScroll={this.changeScroll.bind(this)}
-	        , dangerouslySetInnerHTML: { __html: note } });
+	        className: 'markdown-body',
+	        dangerouslySetInnerHTML: { __html: note }
+	      });
 	    }
 	  }]);
 
-	  return View;
+	  return ViewNote;
 	}(_react.Component);
 
 	/**
@@ -40623,13 +41014,12 @@
 	exports.default = (0, _reactRedux.connect)(function (state) {
 	  return {
 	    note: state.default.view.note,
-	    previewNote: state.default.write.note,
-	    previewScroll: state.default.write.scroll
+	    previewNote: state.default.write.note
 	  };
-	})(View);
+	})(ViewNote);
 
 /***/ },
-/* 275 */
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -41922,7 +42312,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 276 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42069,10 +42459,78 @@
 	exports.default = Dialog;
 
 /***/ },
-/* 277 */
+/* 280 */
+/***/ function(module, exports) {
+
+	(function () {
+	    'use strict';
+
+	    // modified from https://github.com/ljharb/object.assign
+	    if (Object.assign && Object.preventExtensions) {
+	        var assignHasPendingExceptions = (function () {
+	            // Firefox 37 still has "pending exception" logic in its Object.assign implementation,
+	            // which is 72% slower than our shim, and Firefox 40's native implementation.
+	            var thrower = Object.preventExtensions({1: 2});
+	            try {
+	                Object.assign(thrower, 'xy');
+	            } catch (e) {
+	                return thrower[1] === 'y';
+	            }
+	        }());
+	        if (assignHasPendingExceptions) {
+	            delete Object.assign;
+	        }
+	    }
+
+	    if (!Object.assign) {
+	        var keys = Object.keys;
+	        var defineProperty = Object.defineProperty;
+	        var canBeObject = function (obj) {
+	            return typeof obj !== 'undefined' && obj !== null;
+	        };
+	        var hasSymbols = typeof Symbol === 'function' && typeof Symbol() === 'symbol';
+	        var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+	        var isEnumerableOn = function (obj) {
+	            return function isEnumerable(prop) {
+	                return propIsEnumerable.call(obj, prop);
+	            };
+	        };
+
+	        // per ES6 spec, this function has to have a length of 2
+	        var assignShim = function assign(target, source1) { //eslint-disable-line no-unused-vars
+	            if (!canBeObject(target)) {
+	                throw new TypeError('target must be an object');
+	            }
+	            var objTarget = Object(target);
+	            var s, source, i, props;
+	            for (s = 1; s < arguments.length; ++s) {
+	                source = Object(arguments[s]);
+	                props = keys(source);
+	                if (hasSymbols && Object.getOwnPropertySymbols) {
+	                    props.push.apply(props, Object.getOwnPropertySymbols(source).filter(isEnumerableOn(source)));
+	                }
+	                for (i = 0; i < props.length; ++i) {
+	                    objTarget[props[i]] = source[props[i]];
+	                }
+	            }
+	            return objTarget;
+	        };
+
+	        defineProperty(Object, 'assign', {
+	            value: assignShim,
+	            configurable: true,
+	            enumerable: false,
+	            writable: true
+	        });
+	    }
+	}());
+
+
+/***/ },
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -42083,6 +42541,14 @@
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(34);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _Scroll = __webpack_require__(274);
+
+	var _Scroll2 = _interopRequireDefault(_Scroll);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -42102,7 +42568,7 @@
 	  }
 
 	  _createClass(Empty, [{
-	    key: "render",
+	    key: 'render',
 	    value: function render() {
 	      var splitStyle = null;
 	      if (this.props.realleft) {
@@ -42112,9 +42578,19 @@
 	      }
 
 	      return _react2.default.createElement(
-	        "div",
-	        { className: "view", style: splitStyle },
-	        "Empty"
+	        'div',
+	        { className: 'view', style: splitStyle },
+	        _react2.default.createElement(
+	          _Scroll2.default,
+	          null,
+	          _react2.default.createElement(
+	            'div',
+	            {
+	              className: 'markdown-body'
+	            },
+	            'EMPTY'
+	          )
+	        )
 	      );
 	    }
 	  }]);
@@ -42125,7 +42601,7 @@
 	exports.default = Empty;
 
 /***/ },
-/* 278 */
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

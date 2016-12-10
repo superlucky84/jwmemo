@@ -1,5 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 
+import ReactDOM from 'react-dom'
+import Scroll from './juc/Scroll';
+
 
 export default class Empty extends Component {
 
@@ -16,7 +19,15 @@ export default class Empty extends Component {
     }
 
     return (
-      <div className="view" style={splitStyle}>Empty</div>
+      <div className="view" style={splitStyle}>
+
+        <Scroll>
+          <div
+            className="markdown-body"
+          >EMPTY</div>
+        </Scroll>
+
+      </div>
     );
   }
 }

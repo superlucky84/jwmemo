@@ -101,7 +101,7 @@ div.list li.fav div.title span {
   background-image: url('data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDIwIDIwIiB4bWw6c3BhY2U9InByZXNlcnZlIj48cG9seWdvbiBmaWxsPSIjRkZERjg4IiBwb2ludHM9IjEwLDAgMTMuMDksNi41ODMgMjAsNy42MzkgMTUsMTIuNzY0IDE2LjE4LDIwIDEwLDE2LjU4MyAzLjgyLDIwIDUsMTIuNzY0IDAsNy42MzkgNi45MSw2LjU4MyAiLz48L3N2Zz4='); 
 }
 
-div.list, div.view, div.preview, div.write, div.split, div.split-shadow  {
+div.list, div.view, div.preview ,div.view .markdown-body, div.preview .markdown-body, div.write, div.split, div.split-shadow  {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -113,9 +113,11 @@ div.list, div.preview {
   /*border: 1px solid green;*/
 }
 
+/*
 div.list {
   overflow-y: auto;
 }
+*/
 
 div.list ul {
   list-style-type: none;
@@ -148,13 +150,15 @@ div.view, div.write {
   right: 0;
 }
 
-div.view, div.write, div.preview {
+div.view .markdown-body, div.write, div.preview .markdown-body {
   padding: 10px;
 }
 
+/*
 div.view, div.preview {
   overflow-y: auto;
 }
+*/
 
 div.write input[type=text] {
   width: 100%;
@@ -264,4 +268,58 @@ textarea.insert{
   margin-right: 2px;
   font-size: 0.7em;
   vertical-align: middle;
+}
+
+
+
+/* JW SCROLL */
+.jwscroll {
+  position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+  box-sizing: border-box;
+  width: 100%;
+  overflow: hidden;
+  margin: 0;
+}
+.jwscroll-inner {
+  margin: 0;
+  position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.jwscroll .sc {
+  position: absolute;
+  box-sizing: border-box;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 7px;
+}
+.jwscroll .ps {
+  position: absolute;
+  border-radius: 5px;
+  background-color: rgba(52, 152, 219, 0.68);
+  left: 0;
+  right: 0;
+  opacity: 0;
+  cursor: default;
+  transition: opacity 800ms ease;
+}
+
+.jwscroll .ps.show {
+  opacity: 1;
+  transition: opacity 300ms ease;
+}
+
+.jwscroll-inner::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }

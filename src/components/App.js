@@ -8,7 +8,7 @@ import Footer from './Footer'
 import List from './List'
 import View from './View'
 import Dialog from './Dialog'
-
+import assgin from 'object-assign-shim'
 
 /* IMPORT ACTIONS */
 import {getList} from '../actions/jnote'
@@ -103,7 +103,6 @@ class App extends Component {
     if ( this.props.dialog.opened ) {
       DIALOG = <Dialog {...this.props} />;
     }
-
 
     return (
         <div id="app-container">

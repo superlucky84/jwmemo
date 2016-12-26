@@ -233,6 +233,7 @@ router.post('/upload', function (req, res) {
   var month = String(now.getMonth()+1);
   month = (month.length == 1)?"0"+month:month; 
   var day = String(now.getDate());
+  day = (day.length == 1)?"0"+day:day; 
   var dirpath = year+month+day;
 
   var pathString = __dirname+"/../uploads/"+dirpath;

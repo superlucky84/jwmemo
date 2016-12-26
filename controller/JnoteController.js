@@ -181,6 +181,7 @@ router.post('/update', function (req, res, next) {
         jmemomodel.title = req.body.title;
         jmemomodel.note = note;
         jmemomodel.category = req.body['category[]'];
+        jmemomodel.moddate = new Date();
         jmemomodel.save(function (err) {
           if (err) return handleError(err);
           res.json(jmemomodel);

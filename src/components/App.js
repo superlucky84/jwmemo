@@ -13,7 +13,6 @@ import assgin from 'object-assign-shim'
 /* IMPORT ACTIONS */
 import {getList} from '../actions/jnote'
 
-
 class App extends Component {
 
   constructor(props,children) {

@@ -326,3 +326,6 @@ textarea.insert{
   width: 0;
   height: 0;
 }
+.CodeMirror {
+  height: calc(100% - 125px) !important;
+}

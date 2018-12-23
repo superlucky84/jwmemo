@@ -39,7 +39,7 @@ gulp.task('watch', ['js'], function() {
   broSync.init({
     /* server: { baseDir: "./" }, */
     proxy: '0.0.0.0:3000',   // rails server 
-    port: 7000               // cloud9 proxied port to 80
+    port: 8080               // cloud9 proxied port to 80
   });
 
   gulp.watch(paths.view + '/**/*.ejs', ['js'])

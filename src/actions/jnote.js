@@ -35,6 +35,8 @@ export function adminChange (bool) {
  * OPEN_DIALOG
  */
 export function openDialog (dialogtype, message, successaction=null, failaction=null) {
+  console.log('OPEND');
+
   return {
     type: 'OPEN_DIALOG',
     dialogtype,

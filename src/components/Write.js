@@ -25,21 +25,26 @@ class Write extends Component {
     this.props.dispatch(updateForm('title',event.target.value));
   }
 
-  changeNote(event) {
+  changeNote() {
+    console.log('CHANGENOTE');
+    /*
     let lastFalg = false;
     if (this.props.writeNote.slice(-2) != event.target.value.slice(-2)) {
       lastFalg = true;
     }
+    */
 
-    this.props.dispatch(updateForm('note',event.target.value));
+    let target = ReactDOM.findDOMNode(this.refs.textarea);
+    this.props.dispatch(updateForm('note', target.value));
 
-    if (lastFalg) {
-      this.props.dispatch(scrollChange(100));
-    }
+    // if (lastFalg) {
+    //   this.props.dispatch(scrollChange(100));
+    // }
 
   }
-  changeScroll(event) {
-    let percent =  (event.target.scrollTop / (event.target.scrollHeight - event.target.clientHeight)) * 100;
+  changeScroll(eventTarget) {
+    console.log('sss');
+    let percent =  (eventTarget.scrollTop / (eventTarget.scrollHeight - eventTarget.clientHeight)) * 100;
     percent = Math.round(percent);
     this.scrollPercent = percent;
     this.props.dispatch(scrollChange(percent));
@@ -75,6 +80,52 @@ class Write extends Component {
 
     let target = ReactDOM.findDOMNode(this.refs.textarea);
 
+    console.log(target);
+
+    CodeMirror.Vim.defineEx('wsave', 'w', params => {
+      console.log('wsave', params);
+    });
+
+    CodeMirror.Vim.defineEx('qsave', 'q', params => {
+      console.log('qsave', params);
+    });
+
+
+    const editor = CodeMirror.fromTextArea(target, {
+      lineNumbers: true,
+      keyMap: "vim",
+    });
+
+
+
+
+    let keys = '';
+    CodeMirror.on(editor, 'vim-keypress', function(key) {
+      keys = keys + key;
+      console.log('keypress', keys);
+    });
+    CodeMirror.on(editor, 'vim-command-done', info => {
+      keys = '';
+
+      console.log(info);
+
+      setTimeout(() => {
+        editor.save();
+        this.changeNote();
+      });
+
+      console.log('vim-command-done-save', keys);
+    });
+    CodeMirror.on(editor, 'vim-mode-change', function(info) {
+      console.log('vim-mode-change', info.mode);
+    });
+    CodeMirror.on(editor, 'scroll', info => {
+      console.log('scroll', info);
+      this.changeScroll(info.display.scrollbars.vert);
+    });
+
+
+    /*
     if (vim) {
       vim.on_log = function(log) {
         if (log.match(/(^act_paste|^delete)/) ) {
@@ -93,6 +144,7 @@ class Write extends Component {
         target.focus();
       }
     }
+    */
 
   }
 
@@ -151,10 +203,10 @@ class Write extends Component {
         <textarea 
           ref="textarea"
           placeholder="Memo" 
-          onDragEnter={this.dragEnter.bind(this)}
-          onDragOver={this.dragEnter.bind(this)}
-          onDrop={this.onDrop.bind(this)}
-          onChange={this.changeNote.bind(this)} 
+          // onDragEnter={this.dragEnter.bind(this)}
+          // onDragOver={this.dragEnter.bind(this)}
+          // onDrop={this.onDrop.bind(this)}
+          // onChange={this.changeNote.bind(this)} 
           onScroll={this.changeScroll.bind(this)}
           value={this.props.writeNote}
         />

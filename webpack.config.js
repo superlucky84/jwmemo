@@ -1,25 +1,30 @@
 module.exports = {
-    entry: {
-        javascript: "./src/index.js"
-    },
+  entry: {
+    javascript: "./src/index.js"
+  },
 
-    output: {
-        path: __dirname + "/dist",
-        filename: "bundle.js",
-        publicPath: '/'
-    },
+  output: {
+    path: __dirname + "/dist",
+    filename: "bundle.js",
+    publicPath: '/'
+  },
 
-    module: {
-        loaders: [
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                loader: 'babel-loader',
-                query: {
-                    presets: ["react", "es2015", "stage-0"],
-                    cacheDirectory: true
-                }
-            }
-        ]
-    }
+  devServer: {
+    lazy: true,
+    filename: 'bundle.js'
+  },
+
+  module: {
+    loaders: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader',
+        query: {
+          presets: ["react", "es2015", "stage-0"],
+          cacheDirectory: true
+        }
+      }
+    ]
+  }
 };

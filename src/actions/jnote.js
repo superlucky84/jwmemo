@@ -8,7 +8,7 @@ export function scrollChange (scroll) {
   return {
     type: 'SCROLL_CHANGE',
     scroll
-  }
+  };
 }
 
 /**
@@ -18,7 +18,7 @@ export function shortcutChange (command) {
   return {
     type: 'SHORTCUT_CHANGE',
     command
-  }
+  };
 }
 
 /**
@@ -28,7 +28,7 @@ export function adminChange (bool) {
   return {
     type: 'ADMIN_CHANGE',
     bool
-  }
+  };
 }
 
 /**
@@ -43,7 +43,7 @@ export function openDialog (dialogtype, message, successaction=null, failaction=
     message,
     successaction,
     failaction
-  }
+  };
 }
 
 /**
@@ -53,7 +53,7 @@ export function openDialog (dialogtype, message, successaction=null, failaction=
 export function closeDialog () {
   return {
     type: 'CLOSE_DIALOG',
-  }
+  };
 }
 
 /**
@@ -64,7 +64,7 @@ export function toggleFavorite (id, idx) {
     type: 'TOGGLE_FAVORITE',
     id,
     idx
-  }
+  };
 }
 
 
@@ -74,7 +74,7 @@ export function toggleFavorite (id, idx) {
 export function togglePreview () {
   return {
     type: 'TOGGLE_PREVIEW'
-  }
+  };
 }
 
 /**
@@ -83,7 +83,7 @@ export function togglePreview () {
 export function writeNote () {
   return {
     type: 'WRITENOTE'
-  }
+  };
 }
 
 /**
@@ -93,7 +93,7 @@ export function editNote (id) {
   return {
     type: 'EDITNOTE',
     id
-  }
+  };
 }
 
 /**
@@ -102,7 +102,7 @@ export function editNote (id) {
 export function deleteNote () {
   return {
     type: 'DELETENOTE',
-  }
+  };
 }
 
 /**
@@ -112,7 +112,7 @@ export function getList (searchString) {
   return {
     type: 'GETLIST',
     searchString
-  }
+  };
 }
 
 /**
@@ -122,7 +122,7 @@ export function getOne (id) {
   return {
     type: 'GETONE',
     id
-  }
+  };
 }
 
 
@@ -130,5 +130,5 @@ export function updateForm (type, text) {
   return {
     type: 'UPDATEFORM_' + type.toUpperCase(),
     text 
-  }
+  };
 }

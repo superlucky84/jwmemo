@@ -14,13 +14,11 @@ class Footer extends Component {
     this.timeoutState = null;
     this.preKeyCode = null;
 
-    /*
     document.querySelector('body').addEventListener('keydown', (event) => {
 
       let keyCharCode = event.keyCode || event.charCode;
 
-      // if (event.shiftKey == true && (keyCharCode == 186 || keyCharCode == 59 || keyCharCode == 191) && vim.m_mode == 'COMMAND' && ['TEXTAREA'].indexOf(event.target.tagName) > -1 ) {
-      if (event.shiftKey == true && (keyCharCode == 186 || keyCharCode == 59 || keyCharCode == 191)  && ['TEXTAREA'].indexOf(event.target.tagName) > -1 ) {
+      if (event.shiftKey == true && (keyCharCode == 186 || keyCharCode == 59 || keyCharCode == 191) && CodeMirror.Vim.jwmode == 'normal' && ['TEXTAREA'].indexOf(event.target.tagName) > -1 ) {
         event.target.blur();
         setTimeout(() => {
           event.target.focus();
@@ -31,7 +29,6 @@ class Footer extends Component {
       }
 
        
-
       //if (this.preKeyCode == event.keyCode && event.keyCode == 16 && ['INPUT','TEXTAREA'].indexOf(event.target.tagName) == -1 ) {
       //  this.preKeyCode = null;
 
@@ -45,7 +42,6 @@ class Footer extends Component {
       //  this.preKeyCode = event.keyCode;
       //}
     });
-    */
 
     document.querySelector('body').addEventListener('keypress', (event) => {
 
@@ -93,10 +89,7 @@ class Footer extends Component {
         match = /:e[ ]?([0-9]*)/g.exec(matchString);
         let target = document.querySelector(`.list li[data-idx='${match[1]}']`);
 
-        if ( !this.props.adminMode ) {
-          this.props.dispatch(openDialog('alert','Only admin mode.'));
-        }
-        else if (match[1] == '') {
+        if (match[1] == '') {
           this.props.dispatch(updateForm('sync'));
           hashHistory.push('/write/'+this.props.params.id);
           document.querySelector('textarea').focus();
@@ -152,10 +145,9 @@ class Footer extends Component {
         let noteId = this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/,"$2");
         if ('write' == this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/,"$1")) {
 
-          //if ( !this.props.adminMode ) {
-            //this.props.dispatch(openDialog('alert','Not AdminMode'));
-          //}
-          //else {
+          if ( !this.props.adminMode ) {
+            this.props.dispatch(openDialog('alert','You have no authority.'));
+          } else {
 
               // 수정
               if (noteId) {
@@ -187,7 +179,7 @@ class Footer extends Component {
                   }
                 },1000);
               }
-          //}
+          }
         }
       }
       /* 화면분할 균등 */
@@ -209,44 +201,6 @@ class Footer extends Component {
 
         this.props.changeShadowLeft(changeLeft);
       }
-      /* 관리자 권한으로 실행 */
-      else if ( match = /^\?dufma (on|off|write|edit)/g.exec(matchString) ) {
-
-        switch(match[1]) {
-          case 'on':
-          case 'off':
-            this.props.dispatch(adminChange((match[1]=='on')?true:false));
-            break;
-          case 'write':
-            this.props.dispatch(updateForm('title',''));
-            this.props.dispatch(updateForm('note',''));
-            hashHistory.push('/write');
-            document.querySelector('input').focus();
-
-            // Previe 열기
-            if ( !this.props.preview ) {
-              this.props.dispatch(togglePreview());
-            }
-
-            break;
-          case 'edit':
-            if (!this.props.params.id) {
-              this.props.dispatch(openDialog('alert','Please specify the target first.'));
-              return;
-            }
-            this.props.dispatch(updateForm('sync'));
-            hashHistory.push('/write/'+this.props.params.id);
-            document.querySelector('textarea').focus();
-
-            // Previe 열기
-            if ( !this.props.preview ) {
-              this.props.dispatch(togglePreview());
-            }
-
-            break;
-        }
-      }
-
 
       clearTimeout(this.timeoutState);
       this.timeoutState = setTimeout(() => {
@@ -258,11 +212,6 @@ class Footer extends Component {
 
         this.props.dispatch(shortcutChange(''));
         this.timeoutState = null;
-        /*
-        if (document.querySelector('textarea')) {
-          document.querySelector('textarea').focus();
-        }
-        */
       },900);
 
     });

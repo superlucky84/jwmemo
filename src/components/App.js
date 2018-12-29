@@ -1,17 +1,17 @@
 import React, { Component, PropTypes } from 'react';
-import { hashHistory } from 'react-router'
+import { hashHistory } from 'react-router';
 import { connect } from 'react-redux';
-import { Link, browserHistory } from 'react-router'
+import { Link, browserHistory } from 'react-router';
 
-import Header from './Header'
-import Footer from './Footer'
-import List from './List'
-import View from './View'
-import Dialog from './Dialog'
-import assgin from 'object-assign-shim'
+import Header from './Header';
+import Footer from './Footer';
+import List from './List';
+import View from './View';
+import Dialog from './Dialog';
+import assgin from 'object-assign-shim';
 
 /* IMPORT ACTIONS */
-import {getList} from '../actions/jnote'
+import {getList} from '../actions/jnote';
 
 class App extends Component {
 
@@ -22,8 +22,7 @@ class App extends Component {
     this.state = {
       downstate: false,
       realleft: 30
-    }
-
+    };
   }
 
 

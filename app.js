@@ -21,7 +21,8 @@ app.set('view engine', 'ejs');
 
 app.use(favicon(__dirname + '/dist/img/jinw-memo.ico'));
 app.use(logger('dev'));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
+//app.use(bodyParser({limit: '50mb'}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use('/dist', express.static(__dirname + '/dist'));

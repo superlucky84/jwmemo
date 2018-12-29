@@ -89,6 +89,7 @@ class Write extends Component {
     this.editor = CodeMirror.fromTextArea(target, {
       lineNumbers: true,
       keyMap: "vim",
+      lineWrapping: true
     });
 
     CodeMirror.on(this.editor, 'vim-command-done', info => {

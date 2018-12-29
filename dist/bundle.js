@@ -43831,7 +43831,8 @@
 	      CodeMirror.Vim.jwmode = 'normal';
 	      this.editor = CodeMirror.fromTextArea(target, {
 	        lineNumbers: true,
-	        keyMap: "vim"
+	        keyMap: "vim",
+	        lineWrapping: true
 	      });
 
 	      CodeMirror.on(this.editor, 'vim-command-done', function (info) {

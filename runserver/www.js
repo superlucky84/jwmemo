@@ -28,26 +28,23 @@ app.set('port', port);
 
 
 if (port == '7771') {
+  /*
   var httpsOption = { 
-    key: fs.readFileSync(__dirname+'/../super.key'),
-    cert: fs.readFileSync(__dirname+'/../super.crt')
+    key: fs.readFileSync('/etc/letsencrypt/live/memo.superlucky.co.kr/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/memo.superlucky.co.kr/fullchain.pem')
   }
 
   https.createServer(httpsOption, app).listen(port, function(){
     console.log("Https server listening on port " + 443);
   });
+  */
 
-  /*
-     httpApp.get("*", function (req, res, next) {
-     res.redirect("https://" + req.headers.host + "" + req.path);
-     });
-     httpApp.set('port', 7772);
 
-     var server = http.createServer(httpApp).listen(7772);
-     server.on('error', onError);
-     server.on('listening', onListening);
-     */
+  var server = http.createServer(app);
 
+  server.listen(port);
+  server.on('error', onError);
+  server.on('listening', onListening);
 }
 else {
   var server = http.createServer(app);

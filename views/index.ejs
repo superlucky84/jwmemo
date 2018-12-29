@@ -8,12 +8,15 @@
     <!--link type="text/css" rel="stylesheet" href="dist/css/jnote.css"  /-->
     <link type="text/css" rel="stylesheet" href="dist/css/note.css" />
     <link type="text/css" rel="stylesheet" href="dist/css/markdown.css" />
+    <link type="text/css" rel="stylesheet" href="dist/css/dialog.css" />
+    <link type="text/css" rel="stylesheet" href="dist/css/codemirror.css" />
   </head>
   <body>
     <div id="jnote"></div>
-    <script src="dist/jsvim.js"></script>
+    <script src="dist/codemirror.js"></script>
+    <script src="dist/dialog.js"></script>
+    <script src="dist/vi.js"></script>
     <script>
-
       var isMobile = {
         Android: function () {
            return navigator.userAgent.match(/Android/i) == null ? false : true;
@@ -34,12 +37,6 @@
            return (isMobile.Android() || isMobile.BlackBerry() || isMobile.IOS() || isMobile.Opera() || isMobile.Windows());
         }
       };
-
-
-      var vim = null;
-      if (isMobile.any() === false) {
-        vim = new VIM();
-      }
 
     </script>
     <script src="dist/bundle.js"></script>

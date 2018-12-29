@@ -14,11 +14,13 @@ class Footer extends Component {
     this.timeoutState = null;
     this.preKeyCode = null;
 
+    /*
     document.querySelector('body').addEventListener('keydown', (event) => {
 
       let keyCharCode = event.keyCode || event.charCode;
 
-      if (event.shiftKey == true && (keyCharCode == 186 || keyCharCode == 59 || keyCharCode == 191) && vim.m_mode == 'COMMAND' && ['TEXTAREA'].indexOf(event.target.tagName) > -1 ) {
+      // if (event.shiftKey == true && (keyCharCode == 186 || keyCharCode == 59 || keyCharCode == 191) && vim.m_mode == 'COMMAND' && ['TEXTAREA'].indexOf(event.target.tagName) > -1 ) {
+      if (event.shiftKey == true && (keyCharCode == 186 || keyCharCode == 59 || keyCharCode == 191)  && ['TEXTAREA'].indexOf(event.target.tagName) > -1 ) {
         event.target.blur();
         setTimeout(() => {
           event.target.focus();
@@ -30,21 +32,20 @@ class Footer extends Component {
 
        
 
-      /*
-      if (this.preKeyCode == event.keyCode && event.keyCode == 16 && ['INPUT','TEXTAREA'].indexOf(event.target.tagName) == -1 ) {
-        this.preKeyCode = null;
+      //if (this.preKeyCode == event.keyCode && event.keyCode == 16 && ['INPUT','TEXTAREA'].indexOf(event.target.tagName) == -1 ) {
+      //  this.preKeyCode = null;
 
-        // ACTION
-        this.props.dispatch(openDialog('search','searchList',{
-          action: 'getList',
-          push: '/'
-        }));
-      }
-      else {
-        this.preKeyCode = event.keyCode;
-      }
-      */
+      //  // ACTION
+      //  this.props.dispatch(openDialog('search','searchList',{
+      //    action: 'getList',
+      //    push: '/'
+      //  }));
+      //}
+      //else {
+      //  this.preKeyCode = event.keyCode;
+      //}
     });
+    */
 
     document.querySelector('body').addEventListener('keypress', (event) => {
 
@@ -290,7 +291,7 @@ class Footer extends Component {
       <footer>
         {
           ( this.props.shortcutBuffer )
-          ? <div className="left">{shortcut}</div>
+          ? <div id="command-display" className="left">{shortcut}</div>
           : null
         }
 

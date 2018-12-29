@@ -39,12 +39,12 @@ if (port == '7771') {
   });
   */
 
+
   var server = http.createServer(app);
 
   server.listen(port);
   server.on('error', onError);
   server.on('listening', onListening);
-
 }
 else {
   var server = http.createServer(app);
@@ -87,19 +87,19 @@ function onError(error) {
     ? 'Pipe ' + port
     : 'Port ' + port;
 
-  // handle specific listen errors with friendly messages
-  switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+      case 'EACCES':
+        console.error(bind + ' requires elevated privileges');
       process.exit(1);
       break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+      case 'EADDRINUSE':
+        console.error(bind + ' is already in use');
       process.exit(1);
       break;
-    default:
-      throw error;
-  }
+      default:
+        throw error;
+    }
 }
 
 /**
@@ -111,5 +111,5 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+    debug('Listening on ' + bind);
 }

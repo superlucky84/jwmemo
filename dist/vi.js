@@ -4353,13 +4353,11 @@
         var command;
         var commandName;
         if (!params.commandName) {
-          console.log('a');
           // If only a line range is defined, move to the line.
           if (params.line !== undefined) {
             commandName = 'move';
           }
         } else {
-          console.log('b', params.commandName);
           command = this.matchCommand_(params.commandName);
           if (command) {
             commandName = command.name;

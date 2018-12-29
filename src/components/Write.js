@@ -1,9 +1,10 @@
-import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom'
-import { connect } from 'react-redux';
+import React, {Component, PropTypes} from 'react';
+import ReactDOM from 'react-dom';
+import {connect} from 'react-redux';
+import {hashHistory} from 'react-router';
 
 /* IMPORT ACTIONS */
-import {updateForm, getOne, scrollChange} from '../actions/jnote'
+import {updateForm, getOne, scrollChange, togglePreview, editNote, writeNote} from '../actions/jnote';
 
 
 class Write extends Component {
@@ -11,9 +12,14 @@ class Write extends Component {
   constructor(props) {
     super(props);
     this.scrollPercent = 0;
+    this.editor = null;
   }
 
   componentWillReceiveProps(nextprops) {
+    if (!this.props.writeNote) {
+      this.editor.setValue(nextprops.writeNote);
+    }
+
     if (nextprops.writeScroll != this.props.writeScroll) {
       let $this = ReactDOM.findDOMNode(this.refs.textarea);
       let result = (($this.scrollHeight - $this.clientHeight) * nextprops.writeScroll) / 100;
@@ -21,29 +27,28 @@ class Write extends Component {
     }
   }
 
+  componentDidUpdate (nextprops) {
+  }
+
   changeTitle(event) {
     this.props.dispatch(updateForm('title',event.target.value));
   }
 
   changeNote() {
-    console.log('CHANGENOTE');
-    /*
+    let target = ReactDOM.findDOMNode(this.refs.textarea);
     let lastFalg = false;
-    if (this.props.writeNote.slice(-2) != event.target.value.slice(-2)) {
+    if (this.props.writeNote.slice(-2) != target.value.slice(-2)) {
       lastFalg = true;
     }
-    */
 
-    let target = ReactDOM.findDOMNode(this.refs.textarea);
     this.props.dispatch(updateForm('note', target.value));
 
-    // if (lastFalg) {
-    //   this.props.dispatch(scrollChange(100));
-    // }
+    if (lastFalg) {
+      this.props.dispatch(scrollChange(100));
+    }
 
   }
   changeScroll(eventTarget) {
-    console.log('sss');
     let percent =  (eventTarget.scrollTop / (eventTarget.scrollHeight - eventTarget.clientHeight)) * 100;
     percent = Math.round(percent);
     this.scrollPercent = percent;
@@ -80,72 +85,31 @@ class Write extends Component {
 
     let target = ReactDOM.findDOMNode(this.refs.textarea);
 
-    console.log(target);
-
-    CodeMirror.Vim.defineEx('wsave', 'w', params => {
-      console.log('wsave', params);
-    });
-
-    CodeMirror.Vim.defineEx('qsave', 'q', params => {
-      console.log('qsave', params);
-    });
-
-
-    const editor = CodeMirror.fromTextArea(target, {
+    CodeMirror.Vim.jwmode = 'normal';
+    this.editor = CodeMirror.fromTextArea(target, {
       lineNumbers: true,
       keyMap: "vim",
     });
 
-
-
-
-    let keys = '';
-    CodeMirror.on(editor, 'vim-keypress', function(key) {
-      keys = keys + key;
-      console.log('keypress', keys);
-    });
-    CodeMirror.on(editor, 'vim-command-done', info => {
-      keys = '';
-
-      console.log(info);
-
+    CodeMirror.on(this.editor, 'vim-command-done', info => {
       setTimeout(() => {
-        editor.save();
+        this.editor.save();
         this.changeNote();
       });
+    });
 
-      console.log('vim-command-done-save', keys);
+    CodeMirror.on(this.editor, 'vim-mode-change', function(info) {
+      CodeMirror.Vim.jwmode = info.mode;
     });
-    CodeMirror.on(editor, 'vim-mode-change', function(info) {
-      console.log('vim-mode-change', info.mode);
-    });
-    CodeMirror.on(editor, 'scroll', info => {
-      console.log('scroll', info);
+
+    CodeMirror.on(this.editor, 'scroll', info => {
       this.changeScroll(info.display.scrollbars.vert);
     });
 
-
-    /*
-    if (vim) {
-      vim.on_log = function(log) {
-        if (log.match(/(^act_paste|^delete)/) ) {
-          this.props.dispatch(updateForm('note',event.target.value));
-        }
-        if (log == 'set_mode INSERT') {
-          target.className = "insert";
-        }
-        else if (log == 'set_mode COMMAND') {
-          target.className = "";
-        }
-      }.bind(this);
-
-      if (target !== null) {
-        vim.attach_to( target );
-        target.focus();
-      }
-    }
-    */
-
+    this.editor.display.lineDiv.addEventListener('dragenter', this.dragEnter.bind(this));
+    this.editor.display.lineDiv.addEventListener('dragover', this.dragEnter.bind(this));
+    this.editor.display.lineDiv.addEventListener('drop', this.onDrop.bind(this));
+    this.editor.focus();
   }
 
   dragEnter(event) {
@@ -153,11 +117,12 @@ class Write extends Component {
   }
   onDrop(event) {
     let self = this;
-    let value_target = event.target;
+    let value_target = this.refs.textarea;
     let file = event.dataTransfer.files[0];      
     let formdata = new FormData();
-    formdata.append("pict", file);
     let xhr = new XMLHttpRequest();
+
+    formdata.append("pict", file);
 
     xhr.open("POST", "/jnote/upload");  
     xhr.send(formdata);
@@ -166,11 +131,14 @@ class Write extends Component {
          if(xhr.status >= 200 && xhr.status < 300){
            var result = JSON.parse(xhr.responseText);
            var img = "\n![]("+String(result.filepath)+")\n";
-           value_target.value = value_target.value+img;
-           self.props.dispatch(updateForm('note',value_target.value));
+           value_target.value = value_target.value + img;
+
+           self.editor.setValue(value_target.value);
+           self.editor.save();
+           self.changeNote();
          }
       } 
-    }
+    };
 
     event.stopPropagation();
     event.preventDefault(); 
@@ -185,7 +153,7 @@ class Write extends Component {
     if (this.props.realleft) {
       splitStyle = {
         left: "calc("+this.props.realleft+"% + 2px)"
-      }
+      };
     }
 
     return (
@@ -203,11 +171,7 @@ class Write extends Component {
         <textarea 
           ref="textarea"
           placeholder="Memo" 
-          // onDragEnter={this.dragEnter.bind(this)}
-          // onDragOver={this.dragEnter.bind(this)}
-          // onDrop={this.onDrop.bind(this)}
-          // onChange={this.changeNote.bind(this)} 
-          onScroll={this.changeScroll.bind(this)}
+          onChange={this.changeNote.bind(this)} 
           value={this.props.writeNote}
         />
       </div>
@@ -219,10 +183,10 @@ class Write extends Component {
  *  REDUX STATE 주입
  */
 export default connect(function (state) {
-    return {
-      writeTitle: state.default.write.title,
-      writeNote: state.default.write.note,
-      writeTags: state.default.write.tags,
-      writeScroll: state.default.write.scroll
-    };
+  return {
+    writeTitle: state.default.write.title,
+    writeNote: state.default.write.note,
+    writeTags: state.default.write.tags,
+    writeScroll: state.default.write.scroll
+  };
 })(Write);

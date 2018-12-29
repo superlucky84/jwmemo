@@ -170,35 +170,34 @@ export default function jnotereducer(state = initialStateList, action) {
 
     /* 글수정 */
     case 'EDITNOTE':
-
       $.ajax({
-      type: 'POST',
-      async: false,
-      url: '/jnote/update',
-      data: {
-        id: state.write.noteId,
-        title: state.write.title,
-        note: state.write.note,
-        category: state.write.tags
-      },
-      success: function(data) {
+        type: 'POST',
+        async: false,
+        url: '/jnote/update',
+        data: {
+          id: state.write.noteId,
+          title: state.write.title,
+          note: state.write.note,
+          category: state.write.tags
+        },
+        success: function(data) {
 
-        let choiceTarget = null;
-        state.lists.forEach(function(item,idx){
-          if(item._id == data._id){
-            choiceTarget = idx;
-            return;
-          }
-        });
+          let choiceTarget = null;
+          state.lists.forEach(function(item,idx){
+            if(item._id == data._id){
+              choiceTarget = idx;
+              return;
+            }
+          });
 
-        new_state = Object.assign({},state);
-        new_state.lists[choiceTarget] = data;
+          new_state = Object.assign({},state);
+          new_state.lists[choiceTarget] = data;
 
-      }
-    });
+        }
+      });
 
-    return new_state;
-    break;
+      return new_state;
+      break;
 
     /* wirte 내용을 view 내용과 상태 동기화 */
     case 'UPDATEFORM_SYNC':

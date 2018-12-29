@@ -30326,7 +30326,6 @@
 
 	    /* 글수정 */
 	    case 'EDITNOTE':
-
 	      $.ajax({
 	        type: 'POST',
 	        async: false,
@@ -40358,7 +40357,6 @@
 	      downstate: false,
 	      realleft: 30
 	    };
-
 	    return _this;
 	  }
 
@@ -40597,6 +40595,11 @@
 	    key: 'handleWriteMemo',
 	    value: function handleWriteMemo() {
 
+	      if (!this.props.adminMode) {
+	        this.props.dispatch((0, _jnote.openDialog)('alert', 'You have no authority.'));
+	        return;
+	      };
+
 	      // Previe 닫음
 	      if (this.props.preview) {
 	        this.props.dispatch((0, _jnote.togglePreview)());
@@ -40724,29 +40727,25 @@
 	          ));
 	          break;
 	      }
-	      //BUTTON.push(<button key='login'>LOGIN</button>);
-	      //BUTTON.push(<button key='signin'>SIGNIN</button>);
-
-
-	      BUTTON.push(_react2.default.createElement(
-	        'button',
-	        {
-	          key: 'logout',
-	          onClick: this.handleLogout.bind(this)
-	        },
-	        'LOGOUT'
-	      ));
 
 	      if (!this.props.adminMode) {
-
-	        BUTTON = [_react2.default.createElement(
+	        BUTTON.push(_react2.default.createElement(
 	          'button',
 	          {
 	            key: 'login',
 	            onClick: this.handleLogin.bind(this)
 	          },
 	          'LOGIN'
-	        )];
+	        ));
+	      } else {
+	        BUTTON.push(_react2.default.createElement(
+	          'button',
+	          {
+	            key: 'logout',
+	            onClick: this.handleLogout.bind(this)
+	          },
+	          'LOGOUT'
+	        ));
 	      }
 
 	      return _react2.default.createElement(
@@ -40982,23 +40981,24 @@
 	    _this.timeoutState = null;
 	    _this.preKeyCode = null;
 
-	    /*
-	    document.querySelector('body').addEventListener('keydown', (event) => {
-	       let keyCharCode = event.keyCode || event.charCode;
-	       // if (event.shiftKey == true && (keyCharCode == 186 || keyCharCode == 59 || keyCharCode == 191) && vim.m_mode == 'COMMAND' && ['TEXTAREA'].indexOf(event.target.tagName) > -1 ) {
-	      if (event.shiftKey == true && (keyCharCode == 186 || keyCharCode == 59 || keyCharCode == 191)  && ['TEXTAREA'].indexOf(event.target.tagName) > -1 ) {
+	    document.querySelector('body').addEventListener('keydown', function (event) {
+
+	      var keyCharCode = event.keyCode || event.charCode;
+
+	      if (event.shiftKey == true && (keyCharCode == 186 || keyCharCode == 59 || keyCharCode == 191) && CodeMirror.Vim.jwmode == 'normal' && ['TEXTAREA'].indexOf(event.target.tagName) > -1) {
 	        event.target.blur();
-	        setTimeout(() => {
+	        setTimeout(function () {
 	          event.target.focus();
-	        },900);
+	        }, 900);
 	      }
-	      if( keyCharCode==27 && ['INPUT'].indexOf(event.target.tagName) > -1 ) {
+	      if (keyCharCode == 27 && ['INPUT'].indexOf(event.target.tagName) > -1) {
 	        event.target.blur();
 	      }
-	        
-	       //if (this.preKeyCode == event.keyCode && event.keyCode == 16 && ['INPUT','TEXTAREA'].indexOf(event.target.tagName) == -1 ) {
+
+	      //if (this.preKeyCode == event.keyCode && event.keyCode == 16 && ['INPUT','TEXTAREA'].indexOf(event.target.tagName) == -1 ) {
 	      //  this.preKeyCode = null;
-	       //  // ACTION
+
+	      //  // ACTION
 	      //  this.props.dispatch(openDialog('search','searchList',{
 	      //    action: 'getList',
 	      //    push: '/'
@@ -41008,7 +41008,6 @@
 	      //  this.preKeyCode = event.keyCode;
 	      //}
 	    });
-	    */
 
 	    document.querySelector('body').addEventListener('keypress', function (event) {
 
@@ -41053,9 +41052,7 @@
 	              match = /:e[ ]?([0-9]*)/g.exec(matchString);
 	              var _target = document.querySelector('.list li[data-idx=\'' + match[1] + '\']');
 
-	              if (!_this.props.adminMode) {
-	                _this.props.dispatch((0, _jnote.openDialog)('alert', 'Only admin mode.'));
-	              } else if (match[1] == '') {
+	              if (match[1] == '') {
 	                _this.props.dispatch((0, _jnote.updateForm)('sync'));
 	                _reactRouter.hashHistory.push('/write/' + _this.props.params.id);
 	                document.querySelector('textarea').focus();
@@ -41106,42 +41103,41 @@
 	                    var _noteId = _this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/, "$2");
 	                    if ('write' == _this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/, "$1")) {
 
-	                      //if ( !this.props.adminMode ) {
-	                      //this.props.dispatch(openDialog('alert','Not AdminMode'));
-	                      //}
-	                      //else {
+	                      if (!_this.props.adminMode) {
+	                        _this.props.dispatch((0, _jnote.openDialog)('alert', 'You have no authority.'));
+	                      } else {
 
-	                      // 수정
-	                      if (_noteId) {
-	                        _this.props.dispatch((0, _jnote.editNote)(_noteId));
-	                        if (match[1] == 'q') {
-
-	                          if (_this.props.preview) {
-	                            _this.props.dispatch((0, _jnote.togglePreview)());
-	                          }
-
-	                          _reactRouter.hashHistory.push('/view/' + _noteId);
-	                        }
-	                      }
-	                      // 생성
-	                      else {
-	                          _this.props.dispatch((0, _jnote.writeNote)());
-	                          setTimeout(function () {
+	                        // 수정
+	                        if (_noteId) {
+	                          _this.props.dispatch((0, _jnote.editNote)(_noteId));
+	                          if (match[1] == 'q') {
 
 	                            if (_this.props.preview) {
 	                              _this.props.dispatch((0, _jnote.togglePreview)());
 	                            }
-	                            _this.viewTargetTrigger(0);
-	                            if (match[1] != 'q') {
-	                              _this.props.dispatch((0, _jnote.updateForm)('sync'));
-	                              //let noteId = this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/,"$2");
-	                              _reactRouter.hashHistory.push('/write/' + _this.props.params.id);
-	                              document.querySelector('textarea').focus();
-	                              _this.props.dispatch((0, _jnote.togglePreview)());
-	                            }
-	                          }, 1000);
+
+	                            _reactRouter.hashHistory.push('/view/' + _noteId);
+	                          }
 	                        }
-	                      //}
+	                        // 생성
+	                        else {
+	                            _this.props.dispatch((0, _jnote.writeNote)());
+	                            setTimeout(function () {
+
+	                              if (_this.props.preview) {
+	                                _this.props.dispatch((0, _jnote.togglePreview)());
+	                              }
+	                              _this.viewTargetTrigger(0);
+	                              if (match[1] != 'q') {
+	                                _this.props.dispatch((0, _jnote.updateForm)('sync'));
+	                                //let noteId = this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/,"$2");
+	                                _reactRouter.hashHistory.push('/write/' + _this.props.params.id);
+	                                document.querySelector('textarea').focus();
+	                                _this.props.dispatch((0, _jnote.togglePreview)());
+	                              }
+	                            }, 1000);
+	                          }
+	                      }
 	                    }
 	                  }
 	                  /* 화면분할 균등 */
@@ -41164,43 +41160,6 @@
 
 	                      _this.props.changeShadowLeft(changeLeft);
 	                    }
-	                    /* 관리자 권한으로 실행 */
-	                    else if (match = /^\?dufma (on|off|write|edit)/g.exec(matchString)) {
-
-	                        switch (match[1]) {
-	                          case 'on':
-	                          case 'off':
-	                            _this.props.dispatch((0, _jnote.adminChange)(match[1] == 'on' ? true : false));
-	                            break;
-	                          case 'write':
-	                            _this.props.dispatch((0, _jnote.updateForm)('title', ''));
-	                            _this.props.dispatch((0, _jnote.updateForm)('note', ''));
-	                            _reactRouter.hashHistory.push('/write');
-	                            document.querySelector('input').focus();
-
-	                            // Previe 열기
-	                            if (!_this.props.preview) {
-	                              _this.props.dispatch((0, _jnote.togglePreview)());
-	                            }
-
-	                            break;
-	                          case 'edit':
-	                            if (!_this.props.params.id) {
-	                              _this.props.dispatch((0, _jnote.openDialog)('alert', 'Please specify the target first.'));
-	                              return;
-	                            }
-	                            _this.props.dispatch((0, _jnote.updateForm)('sync'));
-	                            _reactRouter.hashHistory.push('/write/' + _this.props.params.id);
-	                            document.querySelector('textarea').focus();
-
-	                            // Previe 열기
-	                            if (!_this.props.preview) {
-	                              _this.props.dispatch((0, _jnote.togglePreview)());
-	                            }
-
-	                            break;
-	                        }
-	                      }
 
 	      clearTimeout(_this.timeoutState);
 	      _this.timeoutState = setTimeout(function () {
@@ -41212,11 +41171,6 @@
 
 	        _this.props.dispatch((0, _jnote.shortcutChange)(''));
 	        _this.timeoutState = null;
-	        /*
-	        if (document.querySelector('textarea')) {
-	          document.querySelector('textarea').focus();
-	        }
-	        */
 	      }, 900);
 	    });
 	    return _this;
@@ -43771,6 +43725,8 @@
 
 	var _reactRedux = __webpack_require__(204);
 
+	var _reactRouter = __webpack_require__(225);
+
 	var _jnote = __webpack_require__(296);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -43793,18 +43749,26 @@
 	    var _this = _possibleConstructorReturn(this, (Write.__proto__ || Object.getPrototypeOf(Write)).call(this, props));
 
 	    _this.scrollPercent = 0;
+	    _this.editor = null;
 	    return _this;
 	  }
 
 	  _createClass(Write, [{
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextprops) {
+	      if (!this.props.writeNote) {
+	        this.editor.setValue(nextprops.writeNote);
+	      }
+
 	      if (nextprops.writeScroll != this.props.writeScroll) {
 	        var $this = _reactDom2.default.findDOMNode(this.refs.textarea);
 	        var result = ($this.scrollHeight - $this.clientHeight) * nextprops.writeScroll / 100;
 	        $this.scrollTop = result;
 	      }
 	    }
+	  }, {
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate(nextprops) {}
 	  }, {
 	    key: 'changeTitle',
 	    value: function changeTitle(event) {
@@ -43813,25 +43777,21 @@
 	  }, {
 	    key: 'changeNote',
 	    value: function changeNote() {
-	      console.log('CHANGENOTE');
-	      /*
-	      let lastFalg = false;
-	      if (this.props.writeNote.slice(-2) != event.target.value.slice(-2)) {
+	      var target = _reactDom2.default.findDOMNode(this.refs.textarea);
+	      var lastFalg = false;
+	      if (this.props.writeNote.slice(-2) != target.value.slice(-2)) {
 	        lastFalg = true;
 	      }
-	      */
 
-	      var target = _reactDom2.default.findDOMNode(this.refs.textarea);
 	      this.props.dispatch((0, _jnote.updateForm)('note', target.value));
 
-	      // if (lastFalg) {
-	      //   this.props.dispatch(scrollChange(100));
-	      // }
+	      if (lastFalg) {
+	        this.props.dispatch((0, _jnote.scrollChange)(100));
+	      }
 	    }
 	  }, {
 	    key: 'changeScroll',
 	    value: function changeScroll(eventTarget) {
-	      console.log('sss');
 	      var percent = eventTarget.scrollTop / (eventTarget.scrollHeight - eventTarget.clientHeight) * 100;
 	      percent = Math.round(percent);
 	      this.scrollPercent = percent;
@@ -43868,65 +43828,31 @@
 
 	      var target = _reactDom2.default.findDOMNode(this.refs.textarea);
 
-	      console.log(target);
-
-	      CodeMirror.Vim.defineEx('wsave', 'w', function (params) {
-	        console.log('wsave', params);
-	      });
-
-	      CodeMirror.Vim.defineEx('qsave', 'q', function (params) {
-	        console.log('qsave', params);
-	      });
-
-	      var editor = CodeMirror.fromTextArea(target, {
+	      CodeMirror.Vim.jwmode = 'normal';
+	      this.editor = CodeMirror.fromTextArea(target, {
 	        lineNumbers: true,
 	        keyMap: "vim"
 	      });
 
-	      var keys = '';
-	      CodeMirror.on(editor, 'vim-keypress', function (key) {
-	        keys = keys + key;
-	        console.log('keypress', keys);
-	      });
-	      CodeMirror.on(editor, 'vim-command-done', function (info) {
-	        keys = '';
-
-	        console.log(info);
-
+	      CodeMirror.on(this.editor, 'vim-command-done', function (info) {
 	        setTimeout(function () {
-	          editor.save();
+	          _this2.editor.save();
 	          _this2.changeNote();
 	        });
+	      });
 
-	        console.log('vim-command-done-save', keys);
+	      CodeMirror.on(this.editor, 'vim-mode-change', function (info) {
+	        CodeMirror.Vim.jwmode = info.mode;
 	      });
-	      CodeMirror.on(editor, 'vim-mode-change', function (info) {
-	        console.log('vim-mode-change', info.mode);
-	      });
-	      CodeMirror.on(editor, 'scroll', function (info) {
-	        console.log('scroll', info);
+
+	      CodeMirror.on(this.editor, 'scroll', function (info) {
 	        _this2.changeScroll(info.display.scrollbars.vert);
 	      });
 
-	      /*
-	      if (vim) {
-	        vim.on_log = function(log) {
-	          if (log.match(/(^act_paste|^delete)/) ) {
-	            this.props.dispatch(updateForm('note',event.target.value));
-	          }
-	          if (log == 'set_mode INSERT') {
-	            target.className = "insert";
-	          }
-	          else if (log == 'set_mode COMMAND') {
-	            target.className = "";
-	          }
-	        }.bind(this);
-	         if (target !== null) {
-	          vim.attach_to( target );
-	          target.focus();
-	        }
-	      }
-	      */
+	      this.editor.display.lineDiv.addEventListener('dragenter', this.dragEnter.bind(this));
+	      this.editor.display.lineDiv.addEventListener('dragover', this.dragEnter.bind(this));
+	      this.editor.display.lineDiv.addEventListener('drop', this.onDrop.bind(this));
+	      this.editor.focus();
 	    }
 	  }, {
 	    key: 'dragEnter',
@@ -43937,11 +43863,12 @@
 	    key: 'onDrop',
 	    value: function onDrop(event) {
 	      var self = this;
-	      var value_target = event.target;
+	      var value_target = this.refs.textarea;
 	      var file = event.dataTransfer.files[0];
 	      var formdata = new FormData();
-	      formdata.append("pict", file);
 	      var xhr = new XMLHttpRequest();
+
+	      formdata.append("pict", file);
 
 	      xhr.open("POST", "/jnote/upload");
 	      xhr.send(formdata);
@@ -43951,7 +43878,10 @@
 	            var result = JSON.parse(xhr.responseText);
 	            var img = "\n![](" + String(result.filepath) + ")\n";
 	            value_target.value = value_target.value + img;
-	            self.props.dispatch((0, _jnote.updateForm)('note', value_target.value));
+
+	            self.editor.setValue(value_target.value);
+	            self.editor.save();
+	            self.changeNote();
 	          }
 	        }
 	      };
@@ -43988,12 +43918,8 @@
 	        }),
 	        _react2.default.createElement('textarea', {
 	          ref: 'textarea',
-	          placeholder: 'Memo'
-	          // onDragEnter={this.dragEnter.bind(this)}
-	          // onDragOver={this.dragEnter.bind(this)}
-	          // onDrop={this.onDrop.bind(this)}
-	          // onChange={this.changeNote.bind(this)} 
-	          , onScroll: this.changeScroll.bind(this),
+	          placeholder: 'Memo',
+	          onChange: this.changeNote.bind(this),
 	          value: this.props.writeNote
 	        })
 	      );

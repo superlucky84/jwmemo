@@ -1,10 +1,10 @@
 import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom';
 import Scroll from './juc/Scroll';
 import ViewNote from './ViewNote';
 
 /* IMPORT ACTIONS */
-import {getOne, scrollChange} from '../actions/jnote'
+import {getOne, scrollChange} from '../actions/jnote';
 
 export default class View extends Component {
 
@@ -40,7 +40,7 @@ export default class View extends Component {
       if (this.props.realleft) {
         splitStyle = {
           left: "calc("+this.props.realleft+"% + 7px)"
-        }
+        };
 
         classname = 'view';
       }

@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { hashHistory } from 'react-router'
+import { hashHistory } from 'react-router';
 
 /* IMPORT ACTIONS */
-import {adminChange, writeNote, editNote, deleteNote ,updateForm, togglePreview, openDialog} from '../actions/jnote'
+import {adminChange, writeNote, editNote, deleteNote ,updateForm, togglePreview, openDialog} from '../actions/jnote';
 
 class Header extends Component {
 
@@ -50,6 +50,11 @@ class Header extends Component {
   }
 
   handleWriteMemo() {
+
+    if ( !this.props.adminMode ) {
+      this.props.dispatch(openDialog('alert','You have no authority.'));
+      return;
+    };
 
     // Previe 닫음
     if ( this.props.preview ) {
@@ -169,26 +174,22 @@ class Header extends Component {
         );
         break;
     }
-    //BUTTON.push(<button key='login'>LOGIN</button>);
-    //BUTTON.push(<button key='signin'>SIGNIN</button>);
-    
 
-    BUTTON.push(
-      <button 
-        key='logout' 
-        onClick={this.handleLogout.bind(this)}
-      >LOGOUT</button>
-    );
 
     if ( !this.props.adminMode ) {
-
-      BUTTON = [
+      BUTTON.push(
         <button 
           key='login'
           onClick={this.handleLogin.bind(this)}
         >LOGIN</button>
-      ];
-
+      );
+    } else {
+      BUTTON.push(
+        <button 
+          key='logout' 
+          onClick={this.handleLogout.bind(this)}
+        >LOGOUT</button>
+      );
     }
 
     return (

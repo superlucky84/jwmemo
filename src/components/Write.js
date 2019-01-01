@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import ReactDOM from 'react-dom';
+import dispatcher from '../dispatcher.js';
 import {connect} from 'react-redux';
 import {hashHistory} from 'react-router';
 
@@ -31,7 +32,7 @@ class Write extends Component {
   }
 
   changeTitle(event) {
-    this.props.dispatch(updateForm('title',event.target.value));
+    dispatcher(updateForm('title', event.target.value));
   }
 
   changeNote() {
@@ -41,10 +42,10 @@ class Write extends Component {
       lastFalg = true;
     }
 
-    this.props.dispatch(updateForm('note', target.value));
+    dispatcher(updateForm('note', target.value))
 
     if (lastFalg) {
-      this.props.dispatch(scrollChange(100));
+      dispatcher(scrollChange(100));
     }
 
   }
@@ -52,7 +53,7 @@ class Write extends Component {
     let percent =  (eventTarget.scrollTop / (eventTarget.scrollHeight - eventTarget.clientHeight)) * 100;
     percent = Math.round(percent);
     this.scrollPercent = percent;
-    this.props.dispatch(scrollChange(percent));
+    dispatcher(scrollChange(percent));
   }
 
   changeTag(event) {
@@ -74,13 +75,13 @@ class Write extends Component {
       tags = newTag;
     }
 
-    this.props.dispatch(updateForm('tags',tags));
+    dispatcher(updateForm('tags',tags));
   }
 
   componentDidMount() {
     if (this.props.routeParams.id) {
-      this.props.dispatch(getOne(this.props.routeParams.id));
-      this.props.dispatch(updateForm('sync'));
+      dispatcher(getOne(this.props.routeParams.id));
+      dispatcher(updateForm('sync'));
     }
 
     let target = ReactDOM.findDOMNode(this.refs.textarea);

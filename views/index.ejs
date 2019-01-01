@@ -16,29 +16,7 @@
     <script src="dist/codemirror.js"></script>
     <script src="dist/dialog.js"></script>
     <script src="dist/vi.js"></script>
-    <script>
-      var isMobile = {
-        Android: function () {
-           return navigator.userAgent.match(/Android/i) == null ? false : true;
-        },
-        BlackBerry: function () {
-           return navigator.userAgent.match(/BlackBerry/i) == null ? false : true;
-        },
-        IOS: function () {
-           return navigator.userAgent.match(/iPhone|iPad|iPod/i) == null ? false : true;
-        },
-        Opera: function () {
-           return navigator.userAgent.match(/Opera Mini/i) == null ? false : true;
-        },
-        Windows: function () {
-           return navigator.userAgent.match(/IEMobile/i) == null ? false : true;
-        },
-        any: function () {
-           return (isMobile.Android() || isMobile.BlackBerry() || isMobile.IOS() || isMobile.Opera() || isMobile.Windows());
-        }
-      };
-
-    </script>
-    <script src="dist/bundle.js"></script>
+    <script src="dist/vendors.bundle.js"></script>
+    <script src="dist/main.bundle.js"></script>
   </body>
 </html>

@@ -4,8 +4,6 @@ import {  hashHistory } from 'react-router';
 import ListItem from './ListItem';
 import Scroll from './juc/Scroll';
 
-
-
 export default class List extends Component {
 
   constructor(props) {
@@ -44,7 +42,6 @@ export default class List extends Component {
               title={item.title}
               favorite={item.favorite}
               tags={item.category}
-              dispatch={this.props.dispatch}
               adminMode={this.props.adminMode}
             />
           ))

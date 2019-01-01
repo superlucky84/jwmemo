@@ -1,12 +1,13 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import { applyMiddleware, compose, createStore, combineReducers } from 'redux'
-import { Provider } from 'react-redux'
-import { Router, Route, IndexRoute, browserHistory, hashHistory  } from 'react-router'
-import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { applyMiddleware, compose, createStore, combineReducers } from 'redux';
+import { Provider } from 'react-redux';
+import { Router, Route, IndexRoute, browserHistory, hashHistory  } from 'react-router';
+import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
+import {initStoreDispatch} from './dispatcher.js';
 
 
-import * as reducers from './reducers/jnote'
+import * as reducers from './reducers/jnote';
 
 
 import App from './components/App';
@@ -18,13 +19,16 @@ import Write from './components/Write';
 const reducer = combineReducers({
   ...reducers,
   routing: routerReducer
-})
+});
 
 const store = createStore(
   reducer,
   //DevTools.instrument()
-)
-const history = syncHistoryWithStore(hashHistory, store)
+);
+
+initStoreDispatch(store);
+
+const history = syncHistoryWithStore(hashHistory, store);
 
 ReactDOM.render(
   <Provider store={store}>
@@ -38,7 +42,7 @@ ReactDOM.render(
       </Router>
   </Provider>,
   document.getElementById('jnote')
-)
+);
 
 
 

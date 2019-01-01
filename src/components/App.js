@@ -8,14 +8,14 @@ import Footer from './Footer';
 import List from './List';
 import View from './View';
 import Dialog from './Dialog';
-import assgin from 'object-assign-shim';
+import dispatcher from '../dispatcher.js';
 
 /* IMPORT ACTIONS */
 import {getList} from '../actions/jnote';
 
 class App extends Component {
 
-  constructor(props,children) {
+  constructor(props, children) {
     super(props);
 
 
@@ -28,7 +28,7 @@ class App extends Component {
 
   componentDidMount() {
     /** * 리스트를 가져온다 */
-    this.props.dispatch(getList());
+    dispatcher(getList());
   }
 
   handleMouseDown() {
@@ -105,7 +105,6 @@ class App extends Component {
     return (
         <div id="app-container">
           <Header 
-            dispatch={this.props.dispatch} 
             location={this.props.location} 
             preview={this.props.preview}
             adminMode={this.props.adminMode}
@@ -124,7 +123,6 @@ class App extends Component {
               : 
                 <List 
                     lists={this.props.lists}
-                    dispatch={this.props.dispatch}
                     adminMode={this.props.adminMode}
                     realleft={this.state.realleft} 
                 />

@@ -35,8 +35,6 @@ export function adminChange (bool) {
  * OPEN_DIALOG
  */
 export function openDialog (dialogtype, message, successaction=null, failaction=null) {
-  console.log('OPEND');
-
   return {
     type: 'OPEN_DIALOG',
     dialogtype,
@@ -82,7 +80,8 @@ export function togglePreview () {
  */
 export function writeNote () {
   return {
-    type: 'WRITENOTE'
+    type: 'WRITENOTE',
+    data: null
   };
 }
 
@@ -92,7 +91,9 @@ export function writeNote () {
 export function editNote (id) {
   return {
     type: 'EDITNOTE',
-    id
+    id,
+    idx: null,
+    data: null
   };
 }
 
@@ -102,6 +103,7 @@ export function editNote (id) {
 export function deleteNote () {
   return {
     type: 'DELETENOTE',
+    idx: null
   };
 }
 
@@ -111,7 +113,8 @@ export function deleteNote () {
 export function getList (searchString) {
   return {
     type: 'GETLIST',
-    searchString
+    searchString,
+    list: []
   };
 }
 
@@ -121,7 +124,8 @@ export function getList (searchString) {
 export function getOne (id) {
   return {
     type: 'GETONE',
-    id
+    id,
+    info: {}
   };
 }
 

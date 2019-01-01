@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { hashHistory } from 'react-router';
-
+import dispatcher from '../dispatcher.js';
 /* IMPORT ACTIONS */
 import {adminChange, writeNote, editNote, deleteNote ,updateForm, togglePreview, openDialog} from '../actions/jnote';
 
@@ -14,31 +14,30 @@ class Header extends Component {
 
   handleChangeWritepage() {
 
-    this.props.dispatch(updateForm('title',''));
-    this.props.dispatch(updateForm('note',''));
+    dispatcher(updateForm('title',''));
+    dispatcher(updateForm('note',''));
     hashHistory.push('/write');
 
     // Previe 열기
     if ( !this.props.preview ) {
-      this.props.dispatch(togglePreview());
+      dispatcher(togglePreview());
     }
   }
 
   handleEditMemo() {
-
-    this.props.dispatch(updateForm('sync'));
+    dispatcher(updateForm('sync'));
     hashHistory.push('/write/'+this.noteId);
 
     // Previe 열기
     if ( !this.props.preview ) {
-      this.props.dispatch(togglePreview());
+      dispatcher(togglePreview());
     }
   }
   handleWriteCancel() {
 
     // Previe 닫음
     if ( this.props.preview ) {
-      this.props.dispatch(togglePreview());
+      dispatcher(togglePreview());
     }
 
     if (this.noteId) {
@@ -49,61 +48,67 @@ class Header extends Component {
     }
   }
 
-  handleWriteMemo() {
+  async handleWriteMemo() {
 
     if ( !this.props.adminMode ) {
-      this.props.dispatch(openDialog('alert','You have no authority.'));
+      dispatcher(openDialog('alert','You have no authority.'));
       return;
     };
 
     // Previe 닫음
     if ( this.props.preview ) {
-      this.props.dispatch(togglePreview());
+      await dispatcher(togglePreview());
     }
 
     // 수정
     if (this.noteId) {
-      this.props.dispatch(editNote(this.noteId));
+      await dispatcher(editNote(this.noteId));
+
       hashHistory.push('/view/'+this.noteId);
     }
     // 생성
     else {
-      this.props.dispatch(writeNote());
+      dispatcher(writeNote());
     }
   }
 
   handleDeleteMemo() {
 
+    if ( !this.props.adminMode ) {
+      dispatcher(openDialog('alert','You have no authority.'));
+      return;
+    };
+
     // Previe 닫음
     if ( this.props.preview ) {
-      this.props.dispatch(togglePreview());
+      dispatcher(togglePreview());
     }
 
     // ACTION
-    this.props.dispatch(openDialog('confirm','Really?',{
+    dispatcher(openDialog('confirm', 'Really?', {
       action: 'deleteNote',
       push: '/'
     }));
   }
 
   handleShowPreview() {
-    this.props.dispatch(togglePreview());
+    dispatcher(togglePreview());
   }
 
   handleOpenDailog() {
-    this.props.dispatch(openDialog('confirm','test'));
+    dispatcher(openDialog('confirm','test'));
   }
 
   handleLogin() {
-    this.props.dispatch(openDialog('login','login'));
+    dispatcher(openDialog('login','login'));
 
-    this.props.dispatch(openDialog('login','password',{
+    dispatcher(openDialog('login','password',{
       action: 'adminChange'
     }));
 
   }
   handleLogout() {
-    this.props.dispatch(adminChange(false));
+    dispatcher(adminChange(false));
   }
 
   render() {

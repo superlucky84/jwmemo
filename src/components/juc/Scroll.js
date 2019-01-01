@@ -1,12 +1,9 @@
 import  React,{Component} from 'react';
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import Util from '../lib/Util';
 
-
-
 class Scroll extends Component {
-
   constructor(props) {
     super(props);
 
@@ -23,10 +20,6 @@ class Scroll extends Component {
     this.util = new Util();
 
     this.isWebkit = 'WebkitAppearance' in document.documentElement.style;
-
-  }
-
-  componentWillMount() {
   }
 
   componentDidMount() {
@@ -43,16 +36,8 @@ class Scroll extends Component {
     this.initEvent();
   }
 
-  componentDidReceiveProps(nextprops) {
-
-    console.log(nextprops.realleft , this.props.realleft);
-
-  }
-
   componentWillReceiveProps(nextprops) {
-
     if (nextprops.realleft != this.props.realleft && this.isWebkit !== true) {
-
       var jwscrollWrap = this.scrollWrap;
       var jwscroll = this.scrollInner;
       jwscroll.removeAttribute("style");
@@ -63,6 +48,7 @@ class Scroll extends Component {
     if (!this.props.viewType || this.props.viewType!='preview' ) {
       return;
     }
+
     if (nextprops.previewScroll != this.props.previewScroll || nextprops.previewScroll==100 ) {
       let $this = ReactDOM.findDOMNode(this).querySelector('.jwscroll-inner');
       let result = (($this.scrollHeight - $this.clientHeight) * nextprops.previewScroll) / 100;

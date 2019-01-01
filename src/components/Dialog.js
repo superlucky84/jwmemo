@@ -1,8 +1,9 @@
 import React, { Component, PropTypes } from 'react';
-import { hashHistory } from 'react-router'
+import { hashHistory } from 'react-router';
+import dispatcher from '../dispatcher.js';
 
 /* IMPORT ACTIONS */
-import {closeDialog, deleteNote, getList, adminChange} from '../actions/jnote'
+import {closeDialog, deleteNote, getList, adminChange} from '../actions/jnote';
 
 export default class Dialog extends Component {
 
@@ -14,10 +15,10 @@ export default class Dialog extends Component {
   } 
 
   handleDialogClose() {
-    this.props.dispatch(closeDialog());
+    dispatcher(closeDialog());
   }
 
-  handleDialogSuccess() {
+  async handleDialogSuccess() {
 
     let successAction = this.props.dialog.successaction.action;
     let successPush = this.props.dialog.successaction.push;
@@ -29,7 +30,7 @@ export default class Dialog extends Component {
       if (document.querySelector('.message input')) {
         param = document.querySelector('.message input').value;
       }
-      this.props.dispatch(this[successAction](param));
+      await dispatcher(this[successAction](param));
       hashHistory.push(successPush);
     }
 
@@ -37,7 +38,7 @@ export default class Dialog extends Component {
 
       param = document.querySelector('.message input').value;
       if ( param.match(/^dufma$/) ) {
-        this.props.dispatch(this[successAction](true));
+        dispatcher(this[successAction](true));
       }
     }
 

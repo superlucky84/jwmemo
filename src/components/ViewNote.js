@@ -1,11 +1,12 @@
 import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom';
+import dispatcher from '../dispatcher.js';
 import { connect } from 'react-redux';
 import marked from 'marked';
 
 
 /* IMPORT ACTIONS */
-import {getOne} from '../actions/jnote'
+import {getOne} from '../actions/jnote';
 
 class ViewNote extends Component {
 
@@ -15,28 +16,19 @@ class ViewNote extends Component {
 
   componentDidMount() {
     if (this.props.routeParams && this.props.routeParams.id) {
-      this.props.dispatch(getOne(this.props.routeParams.id));
+      dispatcher(getOne(this.props.routeParams.id));
     }
   }
 
 
   componentWillReceiveProps(nextprops) {
     if (nextprops.routeParams && (nextprops.routeParams.id != this.props.params.id)) {
-      nextprops.dispatch(getOne(nextprops.routeParams.id));
+
+      dispatcher(getOne(nextprops.routeParams.id));
     }
   }
 
-  /*
-  changeScroll(event) {
-    let percent =  (event.target.scrollTop / (event.target.scrollHeight - event.target.clientHeight)) * 100;
-    percent = Math.round(percent);
-    this.props.dispatch(scrollChange(percent));
-  }
-  */
-
-
   render() {
-
     marked.setOptions({
       renderer: new marked.Renderer(),
       gfm: true,

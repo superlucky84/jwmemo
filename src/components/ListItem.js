@@ -1,10 +1,10 @@
-import React, { Component, PropTypes } from 'react';
-import {  hashHistory } from 'react-router'
-
+import React, {Component, PropTypes} from 'react';
+import {hashHistory} from 'react-router';
+import dispatcher from '../dispatcher.js';
 import TagItem from './TagItem';
 
 /* IMPORT ACTIONS */
-import {toggleFavorite, openDialog} from '../actions/jnote'
+import {toggleFavorite, openDialog} from '../actions/jnote';
 
 export default class ListItem extends Component {
 
@@ -21,10 +21,9 @@ export default class ListItem extends Component {
 
   handleChangeFav(id, idx,e) {
     if (this.props.adminMode) {
-      this.props.dispatch(toggleFavorite(id, idx));
-    }
-    else {
-      this.props.dispatch(openDialog('alert','Only admin mode.'));
+      dispatcher(toggleFavorite(id, idx));
+    } else {
+      dispatcher(openDialog('alert','Only admin mode.'));
     }
     e.stopPropagation();
   }
@@ -66,7 +65,6 @@ export default class ListItem extends Component {
               onClick={this.handleChangeFav.bind(this,this.props.id,this.props.idx)}
             />
           </div>
-
         </li>
     );
 

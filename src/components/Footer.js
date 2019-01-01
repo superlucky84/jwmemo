@@ -1,9 +1,10 @@
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
-import { hashHistory } from 'react-router'
+import React, {Component, PropTypes} from 'react';
+import {connect} from 'react-redux';
+import {hashHistory} from 'react-router';
+import dispatcher from '../dispatcher.js';
 
 /* IMPORT ACTIONS */
-import { shortcutChange, adminChange, updateForm, openDialog, editNote, writeNote, togglePreview, getList } from '../actions/jnote'
+import { shortcutChange, adminChange, updateForm, openDialog, editNote, writeNote, togglePreview, getList } from '../actions/jnote';
 
 class Footer extends Component {
 
@@ -33,7 +34,7 @@ class Footer extends Component {
       //  this.preKeyCode = null;
 
       //  // ACTION
-      //  this.props.dispatch(openDialog('search','searchList',{
+      //  dispatcher(openDialog('search','searchList',{
       //    action: 'getList',
       //    push: '/'
       //  }));
@@ -61,7 +62,7 @@ class Footer extends Component {
       }
 
       let matchString = String(shortcut+String.fromCharCode(keyCharCode));
-      this.props.dispatch(shortcutChange(matchString));
+      dispatcher(shortcutChange(matchString));
 
       let match = null;
       /* 행 찾아가기 */
@@ -78,7 +79,7 @@ class Footer extends Component {
       /* 리스트에서 검색하기 */
       else if ( keyCharCode == 13 && /^[:](s|search|list)\s/g.exec(matchString) ) {
         // ACTION
-        this.props.dispatch(openDialog('search','searchList',{
+        dispatcher(openDialog('search','searchList',{
           action: 'getList',
           push: '/'
         }));
@@ -90,28 +91,28 @@ class Footer extends Component {
         let target = document.querySelector(`.list li[data-idx='${match[1]}']`);
 
         if (match[1] == '') {
-          this.props.dispatch(updateForm('sync'));
+          dispatcher(updateForm('sync'));
           hashHistory.push('/write/'+this.props.params.id);
           document.querySelector('textarea').focus();
 
           // Previe 열기
           if ( !this.props.preview ) {
-            this.props.dispatch(togglePreview());
+            dispatcher(togglePreview());
           }
 
         }
         else if (!target) {
-          this.props.dispatch(openDialog('alert','Not Found Idx'));
+          dispatcher(openDialog('alert','Not Found Idx'));
         }
         else {
           target.click();
-          this.props.dispatch(updateForm('sync'));
+          dispatcher(updateForm('sync'));
           hashHistory.push('/write/'+this.props.params.id);
           document.querySelector('textarea').focus();
 
           // Previe 열기
           if ( !this.props.preview ) {
-            this.props.dispatch(togglePreview());
+            dispatcher(togglePreview());
           }
 
         }
@@ -119,14 +120,14 @@ class Footer extends Component {
       /* 검색 */
       else if (keyCharCode == 13 && matchString.match(/^\/(.*)\s/g) ) {
         match = /^\/(.*)\s/g.exec(matchString);
-        this.props.dispatch(getList(match[1]));
+        dispatcher(getList(match[1]));
       }
 
       /* 캔슬 */
       else if (keyCharCode == 13 && matchString.match(/^:q\s/g) ) {
         // Previe 닫음
         if ( this.props.preview ) {
-          this.props.dispatch(togglePreview());
+          dispatcher(togglePreview());
         }
 
         let noteId = this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/,"$2");
@@ -146,16 +147,16 @@ class Footer extends Component {
         if ('write' == this.props.location.pathname.replace(/\/([^\/]*)[\w\/]*/,"$1")) {
 
           if ( !this.props.adminMode ) {
-            this.props.dispatch(openDialog('alert','You have no authority.'));
+            dispatcher(openDialog('alert','You have no authority.'));
           } else {
 
               // 수정
               if (noteId) {
-                this.props.dispatch(editNote(noteId));
+                dispatcher(editNote(noteId));
                 if (match[1] == 'q') {
 
                   if ( this.props.preview ) {
-                    this.props.dispatch(togglePreview());
+                    dispatcher(togglePreview());
                   }
 
                   hashHistory.push('/view/'+noteId);
@@ -163,19 +164,20 @@ class Footer extends Component {
               }
               // 생성
               else {
-                this.props.dispatch(writeNote());
+                dispatcher(writeNote());
                 setTimeout(() => {
 
                   if ( this.props.preview ) {
-                    this.props.dispatch(togglePreview());
+                    dispatcher(togglePreview());
                   }
                   this.viewTargetTrigger(0);
                   if (match[1] != 'q') {
-                    this.props.dispatch(updateForm('sync'));
+                    dispatcher(updateForm('sync'));
+
                     //let noteId = this.props.location.pathname.replace(/\/([^\/]*)\/?(([\w\/]*))?/,"$2");
                     hashHistory.push('/write/'+this.props.params.id);
                     document.querySelector('textarea').focus();
-                    this.props.dispatch(togglePreview());
+                    dispatcher(togglePreview());
                   }
                 },1000);
               }
@@ -210,7 +212,8 @@ class Footer extends Component {
           this.props.changeShadowLeft(parseInt(match[1]));
         }
 
-        this.props.dispatch(shortcutChange(''));
+        dispatcher(shortcutChange(''));
+
         this.timeoutState = null;
       },900);
 
@@ -220,7 +223,7 @@ class Footer extends Component {
   viewTargetTrigger(idx) {
     let target = document.querySelector(`.list li[data-idx='${idx}']`);
     if (!target) {
-      this.props.dispatch(openDialog('alert','Not Found Idx'));
+      dispatcher(openDialog('alert','Not Found Idx'));
     }
     else {
       target.click();
@@ -228,7 +231,6 @@ class Footer extends Component {
   }
 
   render() {
-
     let shortcut = String(this.props.shortcutBuffer).replace(//g,'^W');
     let privateChar = /(.*)\?(.*)/g.exec(shortcut);
     if (privateChar) {

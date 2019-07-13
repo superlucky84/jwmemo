@@ -29,7 +29,7 @@ export default class View extends Component {
       if(this.props.realleft){
         let realright = 100 - this.props.realleft;
         splitStyle = {
-          right: realright+"%"
+          right: `calc(${realright}% + 5px)`
         };
 
         classname = 'preview';

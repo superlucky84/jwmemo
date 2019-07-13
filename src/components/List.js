@@ -23,7 +23,7 @@ export default class List extends Component {
     if(this.props.realleft){
       let realright = 100 - this.props.realleft;
       splitStyle = {
-        right: realright+"%"
+        right: `calc(${realright}% + 5px)`
       };
     }
 

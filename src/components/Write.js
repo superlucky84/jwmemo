@@ -42,7 +42,7 @@ class Write extends Component {
       lastFalg = true;
     }
 
-    dispatcher(updateForm('note', target.value))
+    dispatcher(updateForm('note', target.value));
 
     if (lastFalg) {
       dispatcher(scrollChange(100));

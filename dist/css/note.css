@@ -327,5 +327,5 @@ textarea.insert{
   height: 0;
 }
 .CodeMirror {
-  height: calc(100% - 125px) !important;
+  height: calc(100% - 90px) !important;
 }

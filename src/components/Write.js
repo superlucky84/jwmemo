@@ -154,7 +154,7 @@ class Write extends Component {
     let splitStyle = null;
     if (this.props.realleft) {
       splitStyle = {
-        left: "calc("+this.props.realleft+"% + 2px)"
+        left: "calc("+this.props.realleft+"% + 7px)"
       };
     }
 

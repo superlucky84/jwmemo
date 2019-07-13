@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom';
 import Scroll from './juc/Scroll';
 
 
@@ -14,8 +14,8 @@ export default class Empty extends Component {
     let splitStyle = null;
     if (this.props.realleft) {
       splitStyle = {
-        left: "calc("+this.props.realleft+"% + 2px)"
-      }
+        left: "calc("+this.props.realleft+"% + 7px)"
+      };
     }
 
     return (

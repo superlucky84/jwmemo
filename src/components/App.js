@@ -36,10 +36,7 @@ class App extends Component {
   }
 
   handleMouseUp(e) {
-
-
     if (this.state.downstate) {
-
       let pageX = e.pageX;
       if (!pageX && e.touches) {
         if (e.touches.length == 0) {
@@ -47,8 +44,10 @@ class App extends Component {
         }
         pageX = e.touches[0].pageX;
       }
+      const container = document.getElementById('container');
+      const containerWidth = container.clientWidth;
+      const realleft =  Math.round((pageX / containerWidth ) * 100);
 
-      let realleft =  Math.round((pageX / $('#container').width() ) * 100);
       this.changeShadowLeft(realleft);
     }
   }
@@ -59,12 +58,9 @@ class App extends Component {
 
   handleMouseMove(e) {
     if (this.state.downstate) {
-      let pageX = e.pageX;
-      if (!pageX) {
-        pageX = e.touches[0].pageX;
-      }
+      const pageX = e.pageX || e.touches[0].pageX;
       this.setState({
-        shadowleft: { left: pageX }
+        shadowleft: { left: `calc(${pageX - 5}px)` }
       });
     }
   }
@@ -77,15 +73,9 @@ class App extends Component {
 
 
   render() {
-
-    //const { user, error, params, hostname, env, locale, dialog } = this.props;
-    //<Link to="/view">View</Link>
-    //<Link to="/">Home</Link>
-
-
     let realleft = this.state.realleft;
     let splitStyle = {
-      left: realleft+"%"
+      left: `calc(${realleft}% - 3px)`
     };
 
     let SPLITSHADOW =  null;

@@ -16,7 +16,7 @@ async function request(url, data, method = 'GET') {
   };
 
   if (method === 'POST') {
-    requestOption.contentType = 'application/x-www-form-urlencoded; charset=UTF-8';
+    requestOption.contentType = 'application/json; charset=UTF-8';
   }
 
   return await ajax(requestOption);

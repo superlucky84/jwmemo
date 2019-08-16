@@ -148,7 +148,6 @@ router.get('/read/:id', function (req, res, next) {
 
     var result = {};
     JmemoModel.findOne({_id: req.params.id},{note:1, title:1, category:1},function (error,view) {
-      console.log(view);
       result = view;
       res.json(result);
     });
@@ -167,7 +166,7 @@ router.post('/update', function (req, res, next) {
     }
 
     if (req.body.favorite) {
-      jmemomodel.favorite = req.body.favorite
+      jmemomodel.favorite = req.body.favorite;
       jmemomodel.save(function (err) {
         if (err) return handleError(err);
         res.json(jmemomodel);

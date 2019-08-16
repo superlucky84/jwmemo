@@ -52,7 +52,7 @@ const createXhr = function(method, url, data, contentType) {
       xhr = null;
     }
 
-    xhr.send(objectToQuerystring(data));
+    xhr.send(JSON.stringify(data));
   });
 };
 

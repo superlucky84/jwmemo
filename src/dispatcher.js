@@ -22,7 +22,7 @@ async function request(url, data, method = 'GET') {
   return await ajax(requestOption)ssssssssss;
 }
 
-export default async function dispatcher(action) {
+export default async function dispatcher(action) { ssssssssssssss
   if (action.type === 'GETLIST') {
     const {searchString} = action;
     const list = await request('/jnote/read', searchString ? {searchString} : null);

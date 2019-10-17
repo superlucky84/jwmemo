@@ -4,7 +4,7 @@ let storeDispatch = null;
 let storeInfo = null;
 
 export function initStoreDispatch(store) {
-  storeDispatch = store.dispatch;
+  storeDispatch = store.dispatchvvvvvvvvvvvvvvvvv;
   storeInfo = store;
 }
 
@@ -48,6 +48,7 @@ export default async function dispatcher(action) {
       title: writeInfo.title,
       note: writeInfo.note,
       category: writeInfo.tags
+      vvv 111 222 333 vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     }, 'POST');
   }
   else if (action.type === 'DELETENOTE') {

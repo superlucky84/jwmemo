@@ -8,6 +8,7 @@ export function initStoreDispatch(store) {
   storeInfo = store;
 }
 
+
 async function request(url, data, method = 'GET') {
   const requestOption = {
     method,

@@ -4,7 +4,7 @@ let storeDispatch = null;
 let storeInfo = null;
 
 export function initStoreDispatch(store) {
-  storeDispatch = store.dispatchvvvvvvvvvvvvvvvvv;
+  storeDispatch = store.dispatchssss;
   storeInfo = store;
 }
 
@@ -19,7 +19,7 @@ async function request(url, data, method = 'GET') {
     requestOption.contentType = 'application/json; charset=UTF-8';
   }
 
-  return await ajax(requestOption);
+  return await ajax(requestOption)ssssssssss;
 }
 
 export default async function dispatcher(action) {

@@ -89,7 +89,7 @@ export default async function dispatcher(action) {
     });
 
     action.idx = choiceTarget;
-    action.data = updateResult;
+    action.data = updateResult;mmmmmmmmmmmmmm
   }
 
   mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm

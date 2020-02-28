@@ -179,7 +179,7 @@ router.post('/update', function (req, res, next) {
 
         jmemomodel.title = req.body.title;
         jmemomodel.note = note;
-        jmemomodel.category = req.body['category[]'];
+        jmemomodel.category = req.body.category;
         jmemomodel.moddate = new Date();
         jmemomodel.save(function (err) {
           if (err) return handleError(err);
@@ -243,7 +243,7 @@ router.post('/upload', function (req, res) {
   form.multiples = true;                                      // multiple upload
   form.parse(req,function(err,fields,files){
 
-      var filePathString = files.pict.path.replace(/.*(uploads.*$)/,"$1");
+      var filePathString = files.pict.path && files.pict.path.replace(/.*(uploads.*$)/,"$1");
       res.status(200);
       res.json({'filepath': filePathString});
 
